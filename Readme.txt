@@ -207,7 +207,7 @@ enum item_id_t {
 6. NMP Items
 -------------------------------------------------------------------------------
 
-    Example of a message which carry these items between gnodeB and MME.
+    Example of a message which carry these items between gnodeB and AMF.
     1) IMSI, 2) UE Secret and 3) 40 byte random string.
    
     IMSI is a type1 item because it is an 8 byte fixed value.
