@@ -402,7 +402,6 @@ UE ------ gnodeB --------- UPF -------- Internet
 -------------------------------------------------------------------------------   
 12. Performance data 
 -------------------------------------------------------------------------------   
-
    Time taken to successfully attach 65536 users (with PDN connectivity) into 
    core network is around 45 seconds with few prints.
    
@@ -411,13 +410,10 @@ UE ------ gnodeB --------- UPF -------- Internet
 -------------------------------------------------------------------------------   
 13. Code browsing 
 -------------------------------------------------------------------------------   
-
-You can use my favourite "ctags" or your tool to browse this codebase in linux environment.
-
+   You can use "ctags" in linux. 
 
 
 Thankyou so much for reading such a big file. Please contact me on my email id for any questions.
-
 Abhishek Bhati
 ab.bhati@gmail.com
 
