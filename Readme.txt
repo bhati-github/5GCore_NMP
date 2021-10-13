@@ -240,14 +240,14 @@ enum item_id_t {
     I personally call the combination of N1, N2 and N3 in this diagram as 'Call Triangle'. 
 
  
-                   AMF 
-                 /    \
-                /      \
-            N1 /        \ N2
-              /          \
-             /            \
-UE ------ gnodeB --------- UPF -------- Internet 
-    Air             N3            N6
+                      AMF 
+                    /    \
+                   /      \
+               N1 /        \ N2
+                 /          \
+                /            \
+   UE ------ gnodeB --------- UPF -------- Internet 
+       Air             N3            N6
 
 
    The code inside this demonstration project illustrates the use of NMP protocol 
@@ -262,6 +262,42 @@ UE ------ gnodeB --------- UPF -------- Internet
    integrated within AMF.
 
 
+
+
+   This diagram illustrates the situation if we have to connect multiple 
+   gnodeB's and UPF together in a large 5G network. All these gnodeB's and 
+   UPF will be controlled by single AMF instance. 
+   This AMF will setup the session in an appropriate UPF and N3 network 
+   GTP-U tunnel parameters will be setup in either side of the
+   N3 path (gnodeB ..... UPF).
+
+                                       
+
+                                                |-----|             
+                         N1 network switch <----| AMF |----> N2 network switch
+                                                |-----|
+             
+                                                       
+             to n1 network                                         to n2 network
+                |                                                         |
+                |                                                         |
+   UE ------ gnodeB_1 -- to n3 network                 to n3 network -- UPF_1 -------- Internet 
+       Air                                       
+                     
+             to n1 network                                         to n2 network    
+               |                                                          |
+               |                                                          |
+   UE -----  gnodeB_2 -- to n3 network                  to n3 network -- UPF_2 -------- Internet
+                                                        
+                                         
+             to n1 network                                         to n2 network
+              |                                                           |
+              |                                                           |
+   UE -----  gnodeB_N -- to n3 network                  to n3 network -- UPF_N -------- Internet
+
+
+
+                      
 -------------------------------------------------------------------------------
 8. Steps to establish a session inside UPF.
 -------------------------------------------------------------------------------
