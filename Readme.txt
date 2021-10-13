@@ -269,7 +269,7 @@ enum item_id_t {
    UPF will be controlled by single AMF instance. 
    This AMF will setup the session in an appropriate UPF and N3 network 
    GTP-U tunnel parameters will be setup in either side of the
-   N3 path (gnodeB ..... UPF).
+   N3 path (gnodeB ..... UPF). 
 
                                        
 
