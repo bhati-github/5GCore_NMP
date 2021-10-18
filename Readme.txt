@@ -411,7 +411,7 @@ enum item_id_t {
 11. Steps to run the binaries 
 -------------------------------------------------------------------------------   
     Open three terminal windows in linux machine. 
-    -> Left side terminal executes AMF binary.
+    -> Left side terminal executes gnodeB binary.
     -> Middle terminal executes AMF binary.
     -> Right side terminal executes UPF control plane binary. 
        Actual UPF is not required for NMP demonstration.
