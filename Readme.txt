@@ -20,6 +20,19 @@ README:
     So, this leads to idea of Network Message Protocol (NMP) and eventually 
     this demonstration project.
 
+    As you may be aware that HTTP REST based API's are used currently in 5G core 
+    network for inter-node communications. 
+    HTTP REST (Representational State Transfer) concept is to send complete state 
+    even if you wish to modify a single 2 byte element in target node. 
+    So, for just trying to communicate a 2 byte change in state, you are transferring 
+    entire state (in KB) towards target node. 
+    
+    Imagine if your state grows to 10 MB in size for some reason, are you going 
+    to send your complete state of 10 MB (spanning across multiple fragmented packets) 
+    towards target node? Obviously, HTTP REST is not a good choice for future telecom designs.
+    
+    Ideally, communicate only what is required to be communicated. Not entire language dictionary.
+    
     
     Fundamental Idea behind NMP: 
     
