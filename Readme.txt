@@ -457,10 +457,6 @@ enum item_id_t {
    
    Without print statements, it takes about 30 seconds..
 
--------------------------------------------------------------------------------   
-13. Code browsing 
--------------------------------------------------------------------------------   
-   You can use "ctags" in linux. 
 
 
 Thankyou so much for reading such a big file. Please contact me on my email id for any questions.
