@@ -29,9 +29,10 @@ README:
     
     Imagine if your state grows to 10 MB in size for some reason, are you going 
     to send your complete state of 10 MB (spanning across multiple fragmented packets) 
-    towards target node? Obviously, HTTP REST is not a good choice for future telecom designs.
+    towards target node? This is a terrible waste of Internet bandwidth.
+    Obviously, HTTP REST is not a good choice for future telecom designs.
     
-    Ideally, communicate only what is required to be communicated. Not entire language dictionary.
+    
     
     
     Fundamental Idea behind NMP: 
