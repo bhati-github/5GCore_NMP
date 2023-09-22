@@ -10,6 +10,16 @@ README:
     In general, this protocol is not restricted to use only in telecommunication
     network node interfaces. Instead, it is a generic information exchange protocol 
     which can be used across IP networks.
+    
+    Another aim of this demonstration project is to showcase that a single protocol can 
+    be used across telecom networks. 
+
+    Finally, aim is to completely eliminate following protocols from telecom networks.
+    -> SCTP (protocol between e2nodes and AMF, protocol between e2nodes and O-RAN RIC)
+    -> NG-AP (protocol between gnodeB and AMF)
+    -> REST based communication methods. 
+     
+    
 
 -------------------------------------------------------------------------------
 2. Motivation behind idea and implementation of this protocol
