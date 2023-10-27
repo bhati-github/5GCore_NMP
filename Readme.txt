@@ -288,27 +288,27 @@ enum item_id_t {
 
                                        
 
-                                                |-----|             
-                         N1 network switch <----| AMF |----> N2 network switch
-                                                |-----|
+                                           |-----|             
+         to/from n1 network  <-------------| AMF |----------------> to/from n2 network
+                                           |-----|
              
                                                        
-             to n1 network                                         to n2 network
-                |                                                         |
-                |                                                         |
-   UE ------ gnodeB_1 -- to n3 network                 to n3 network -- UPF_1 -------- Internet 
+         to/from n1 network                                                 to/from n2 network
+                |                                                                  |
+                |                                                                  |
+   UE ------ gnodeB_1 -- to/from n3 network                 to/from n3 network -- UPF_1 -------- Internet 
        Air                                       
                      
-             to n1 network                                         to n2 network    
-               |                                                          |
-               |                                                          |
-   UE -----  gnodeB_2 -- to n3 network                  to n3 network -- UPF_2 -------- Internet
+         to/from n1 network                                                 to/from n2 network    
+               |                                                                   |
+               |                                                                   |
+   UE -----  gnodeB_2 -- to/from n3 network                 to/from n3 network -- UPF_2 -------- Internet
                                                         
                                          
-             to n1 network                                         to n2 network
-              |                                                           |
-              |                                                           |
-   UE -----  gnodeB_N -- to n3 network                  to n3 network -- UPF_N -------- Internet
+         to/from n1 network                                                 to/from n2 network
+              |                                                                     |
+              |                                                                     |
+   UE -----  gnodeB_N -- to/from n3 network                  to/from n3 network -- UPF_N -------- Internet
 
 
 
@@ -366,40 +366,38 @@ enum item_id_t {
 -------------------------------------------------------------------------------   
 10. Network Diagram
 -------------------------------------------------------------------------------
-   
-           amf_n1(10.10.10.2)     -------  amf_n2(10.10.10.3)
+                      eth1                    eth2
+                  (10.10.10.2/24) -------  (10.10.10.3/24)
         --------------------------| AMF |---------------------------------
-        |   N1                    -------                 N2             |
+        |   N1 network            -------          N2 network            |
         |                                                                |
         |                                                                |
-        | gnb_n1                                                         |upf_n2
-        |(10.10.10.1)                                                    |(10.10.10.4)
+        |  eth1                                                          |  eth1
+        |(10.10.10.1/24)                                                 |(10.10.10.4/24)
      --------                                                         ---------
------|gnodeB|                                                         | UPF   |---------- Internet
- Air --------                                                         ---------
-        |                            N3                                  |  
+-----|gnodeB|                                                         | UPF   | ------------------------------- Internet
+ Air --------                                                         ---------  eth3 (pulic IP address or NAT capable private IP address)
+        |                            N3 network                          |  
         |----------------------------------------------------------------|
-         gnb_n3 (3.3.3.2)                                 upf_n3 (3.3.3.1)     
+      eth2 (3.3.3.2/24)                                             eth2 (3.3.3.1/24)     
                                                                 
    
     We need 3 machines to run the simulation and each machine should have these network interfaces:
     gnodeB machine eth0: used for login into the machine (it is connected to your lab network)
-    gnodeB machine eth1: used to connect to AMF (10.10.10.1/24)
-    gnodeB machine eth2: used to connect to UPF data plane (3.3.3.2/24)
-                         but this simulation don't need this eth2 interface, 
-			 only required when a real upf data plane is connected)
+    gnodeB machine eth1: 10.10.10.1/24 and connected to AMF via N1 network
+    gnodeB machine eth2: 3.3.3.2/24 and connected to UPF via N3 network
+                         In this simulation, we don't need this eth2 interface.
+			 It is required only when a real upf data plane is connected for GTP-U packet transfer.
 			 
     AMF machine eth0: used for login into the machine (it is connected to your lab network)
-    AMF machine eth1: used to connect to gnodeB machine (10.10.10.2/24)
-    AMF machine eth2: used to connect to UPF control plane (10.10.10.3/24)
-    You can use a single interface eth2 to assign two IP 
-    addresses (10.10.10.2/24 and 10.10.10.3/24) on it. Its up to you.
-    
+    AMF machine eth1: 10.10.10.2/24 and connected to gnodeB via N1 network
+    AMF machine eth2: 10.10.10.3/24 and connected to UPF via N2 network
+
+
     UPF machine eth0: used for login into the machine (it is connected to your lab network)
-    UPF machine eth1: used to connect to AMF machine (10.10.10.4/24)
-    UPF machine eth2: used to connect to gnodeB N3 interface (3.3.3.1/24). 
-                      Actual user data comes on this interface in real world.
-    UPF machine eth3: connect to Internet world. This is known as N6 interface. (Not required for simulation)
+    UPF machine eth1: 10.10.10.4/24 and connected to AMF via N2 network
+    UPF machine eth2: 3.3.3.1/24 and connected to gnodeB via N3 network. GTP-U traffic flows on this interface. 
+    UPF machine eth3: Connected to Internet world. This is known as N6 interface. (Not required for simulation)
     
      
     
@@ -415,11 +413,10 @@ enum item_id_t {
     amf_n1   = 10.1.1.2/24
     amf_n2   = 10.1.1.3/24
     upf_n2   = 10.1.1.4/24
-    gnb_n3 and upf_n3 can retain same values from 3.3.3.0/24 subnet
-
     Please note that if you are changing the ip addresses, you have to change the IP address
     of gnodeB inside amf/src/amf_main.c file for gnodeB registration code.
-         
+
+    However, gnb-eth2 and upf-eth2 interfaces can retain same values from 3.3.3.0/24 subnet
 	
 
 -------------------------------------------------------------------------------   
@@ -463,4 +460,4 @@ enum item_id_t {
 Thankyou so much for reading such a big file. Please contact me on my email id for any questions.
 Abhishek Bhati
 ab.bhati@gmail.com
-
+https://www.linkedin.com/in/abhishek-bhati-2166b15a/
