@@ -372,12 +372,15 @@ enum item_id_t {
         |   N1 network            -------          N2 network            |
         |                                                                |
         |                                                                |
-        |  eth1                                                          |  eth1
+        | eth1                                                           | eth1
         |(10.10.10.1/24)                                                 |(10.10.10.4/24)
      --------                                                         ---------
------|gnodeB|                                                         | UPF   | ------------------------------- Internet
- Air --------                                                         ---------  eth3 (pulic IP address or NAT capable private IP address)
-        |                            N3 network                          |  
+-----|gnodeB|                                                         | UPF   | ---------------------------- Internet
+ Air --------                                                         ---------  
+        |                                                                | eth3 
+        |                                                                |(pulic IP / NAT capable private IP address) 
+        |                                                                |
+        |                       N3 network                               |
         |----------------------------------------------------------------|
       eth2 (3.3.3.2/24)                                             eth2 (3.3.3.1/24)     
                                                                 
