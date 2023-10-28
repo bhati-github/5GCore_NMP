@@ -346,25 +346,8 @@ enum item_id_t {
   user is roaming around in a specific PLMN area which has a set of AMF, UPF and multiple gnodeB's.
   
   
-
--------------------------------------------------------------------------------
-9. How to make binary images ?
--------------------------------------------------------------------------------
-
-   Makefiles are really simple and the only thing to be done here is as follows:
-   
-   cd gnb
-   make clean;make
-   
-   cd amf
-   make clean;make
-   
-   cd upf
-   make clean;make
-   
-
 -------------------------------------------------------------------------------   
-10. Network Diagram for 3 different lab machines (gnodeB, amf, upf)
+9. Network Diagram for 3 different lab machines (gnodeB, amf, upf)
 -------------------------------------------------------------------------------
                       eth1                    eth2
                   (10.10.10.2/24) -------  (20.20.20.3/24)
@@ -416,7 +399,7 @@ enum item_id_t {
     1. Run AMF in middle terminal as follows:
        cd 5GCore_NMP/amf/
        make clean;make
-       sudo ./amf -amfn1ip 10.10.10.2 -amfn2ip 20.20.20.3 -upfn2ip 20.20.20.4 -upfn3ip 3.3.3.5
+       sudo ./amf -amfn1ip 10.10.10.2 -amfn2ip 20.20.20.3 -upfn2ip 20.20.20.4 -upfn3ip 3.3.3.5 -gnbreg 10.10.10.1 3.3.3.6
 	
     2. Run UPF in right terminal as follows:
        cd 5GCore_NMP/upf/
@@ -435,8 +418,9 @@ enum item_id_t {
     sudo tcpdump -i <interface_name> udp port 1208 -vvxx 
 	
 
+
 --------------------------------------------------------------------------------------   
-11. Steps to run the network simulation in single virtual machine (Preferred approach)
+10. Steps to run the network simulation in single virtual machine (Preferred approach)
 --------------------------------------------------------------------------------------   
     You need to have 6 additional interfaces attached to the VM.
 
@@ -493,6 +477,7 @@ virsh attach-interface --domain testvm --type network --source testvm --model vi
 
 
     New network will look as follows:
+
                           ens9                ens10
                (192.168.10.22/24) -------  (192.168.10.23/24)
         --------------------------| AMF |---------------------------------
@@ -523,7 +508,7 @@ virsh attach-interface --domain testvm --type network --source testvm --model vi
     1. Run AMF in middle terminal as follows:
        cd 5GCore_NMP/amf/
        make clean;make
-       sudo ./amf -amfn1ip 192.168.10.22 -amfn2ip 192.168.10.23 -upfn2ip 192.168.10.24 -upfn3ip 192.168.10.25
+       sudo ./amf -amfn1ip 192.168.10.22 -amfn2ip 192.168.10.23 -upfn2ip 192.168.10.24 -upfn3ip 192.168.10.25 -gnbreg 192.168.10.21 192.168.10.26
 	
     2. Run UPF in right terminal as follows:
        cd 5GCore_NMP/upf/
@@ -542,7 +527,7 @@ virsh attach-interface --domain testvm --type network --source testvm --model vi
     sudo tcpdump -i <interface_name> udp port 1208 -vvxx 
 
 -------------------------------------------------------------------------------   
-12. Performance data 
+11. Performance data 
 -------------------------------------------------------------------------------   
    Time taken to successfully attach 65536 users (with PDN connectivity) into 
    core network is around 45 seconds with few prints.
