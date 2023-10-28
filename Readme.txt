@@ -364,16 +364,16 @@ enum item_id_t {
    
 
 -------------------------------------------------------------------------------   
-10. Network Diagram
+10. Network Diagram for 3 different lab machines (gnodeB, amf, upf)
 -------------------------------------------------------------------------------
                       eth1                    eth2
-                  (10.10.10.2/24) -------  (10.10.10.3/24)
+                  (10.10.10.2/24) -------  (20.20.20.3/24)
         --------------------------| AMF |---------------------------------
         |   N1 network            -------          N2 network            |
         |                                                                |
         |                                                                |
         | eth1                                                           | eth1
-        |(10.10.10.1/24)                                                 |(10.10.10.4/24)
+        |(10.10.10.1/24)                                                 |(20.20.20.4/24)
      --------                                                         ---------
 -----|gnodeB|                                                         | UPF   | ---------------------------- Internet
  Air --------                                                         ---------  
@@ -382,74 +382,165 @@ enum item_id_t {
         |                                                                |
         |                       N3 network                               |
         |----------------------------------------------------------------|
-      eth2 (3.3.3.2/24)                                             eth2 (3.3.3.1/24)     
+      eth2 (3.3.3.6/24)                                             eth2 (3.3.3.5/24)     
                                                                 
    
     We need 3 machines to run the simulation and each machine should have these network interfaces:
     gnodeB machine eth0: used for login into the machine (it is connected to your lab network)
     gnodeB machine eth1: 10.10.10.1/24 and connected to AMF via N1 network
-    gnodeB machine eth2: 3.3.3.2/24 and connected to UPF via N3 network
+    gnodeB machine eth2: 3.3.3.6/24 and connected to UPF via N3 network
                          In this simulation, we don't need this eth2 interface.
 			 It is required only when a real upf data plane is connected for GTP-U packet transfer.
 			 
     AMF machine eth0: used for login into the machine (it is connected to your lab network)
     AMF machine eth1: 10.10.10.2/24 and connected to gnodeB via N1 network
-    AMF machine eth2: 10.10.10.3/24 and connected to UPF via N2 network
+    AMF machine eth2: 20.20.20.3/24 and connected to UPF via N2 network
 
 
     UPF machine eth0: used for login into the machine (it is connected to your lab network)
-    UPF machine eth1: 10.10.10.4/24 and connected to AMF via N2 network
-    UPF machine eth2: 3.3.3.1/24 and connected to gnodeB via N3 network. GTP-U traffic flows on this interface. 
+    UPF machine eth1: 20.20.20.4/24 and connected to AMF via N2 network
+    UPF machine eth2: 3.3.3.5/24 and connected to gnodeB via N3 network. GTP-U traffic flows on this interface. 
     UPF machine eth3: Connected to Internet world. This is known as N6 interface. (Not required for simulation)
     
-     
-    
-    As of now, only call setup interfaces are required for simulation of call setup.
-
-    You can see that N1 and N2 interface IP addresses belong to same subnet (10.10.10.0/24)
-    and data path (GTP-U packets on N3 interface) is a different subnet.
-
-    You can easily replace 10.10.10.0/24 subnet with your lab environment management network.
-    For example: If your lab managment network is 10.1.1.0/24
-    Then these ip addresses will be suitable for simulation.
-    gnb_n1   = 10.1.1.1/24
-    amf_n1   = 10.1.1.2/24
-    amf_n2   = 10.1.1.3/24
-    upf_n2   = 10.1.1.4/24
-    Please note that if you are changing the ip addresses, you have to change the IP address
-    of gnodeB inside amf/src/amf_main.c file for gnodeB registration code.
-
-    However, gnb-eth2 and upf-eth2 interfaces can retain same values from 3.3.3.0/24 subnet
-	
-
--------------------------------------------------------------------------------   
-11. Steps to run the binaries 
--------------------------------------------------------------------------------   
-    Open three terminal windows in linux machine. 
-    -> Left side terminal executes gnodeB binary.
-    -> Middle terminal executes AMF binary.
-    -> Right side terminal executes UPF control plane binary. 
+    ============================================================================================================
+    Steps to simulate the network in 3 separate machines (gnb, amf and upf) 
+    ============================================================================================================
+    Open a terminal window in each of the linux machine. 
+    -> Left side terminal executes 'gnb' binary in gnb machine.
+    -> Middle terminal executes 'amf' binary in amf machine.
+    -> Right side terminal executes UPF control plane binary in upf machine. 
        Actual UPF is not required for NMP demonstration.
-    
     
     (Use -debug option as an extra command line argument to see the parsed messages)
 
     1. Run AMF in middle terminal as follows:
-       sudo ./amf -amfn1ip 10.10.10.2 -amfn2ip 10.10.10.3 -upfn2ip 10.10.10.4 -upfn3ip 3.3.3.1
+       cd 5GCore_NMP/amf/
+       make clean;make
+       sudo ./amf -amfn1ip 10.10.10.2 -amfn2ip 20.20.20.3 -upfn2ip 20.20.20.4 -upfn3ip 3.3.3.5
 	
     2. Run UPF in right terminal as follows:
-       sudo ./upf -upfn2ip 10.10.10.4 -amfn2ip 10.10.10.3
+       cd 5GCore_NMP/upf/
+       make clean;make
+       sudo ./upf -upfn2ip 20.20.20.4 -amfn2ip 20.20.20.3
 
     3. At the end, run gnodeB in left side terminal.
        ( -c option tells how many user attach requests to be simulated )
-       sudo ./gnb -gnbn1ip 10.10.10.1 -gnbn3ip 3.3.3.2 -amfn1ip 10.10.10.2 -c 10
-	
+       sudo ./gnb -gnbn1ip 10.10.10.1 -gnbn3ip 3.3.3.6 -amfn1ip 10.10.10.2 -c 10
+       or
+       sudo ./gnb -gnbn1ip 10.10.10.1 -gnbn3ip 3.3.3.6 -amfn1ip 10.10.10.2 -c 10 -debug  
+
     You can capture the call setup packets via tcpdump on any machine. 
     (NMP message UDP port is 1208)
 	
     sudo tcpdump -i <interface_name> udp port 1208 -vvxx 
 	
+
+--------------------------------------------------------------------------------------   
+11. Steps to run the network simulation in single virtual machine (Preferred approach)
+--------------------------------------------------------------------------------------   
+    You need to have 6 additional interfaces attached to the VM.
+
+    When you first create a linux kvm 'testvm', it only has one default interface.
+    For example:    en3: 192.168.10.2/24  mac: 52:54:00:4a:2c:b2
+
+    If you want to add 6 additional interface to this linux kvm, perform these steps.
+
+virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b3 --config --live
+virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b4 --config --live
+virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b5 --config --live
+virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b6 --config --live
+virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b7 --config --live
+virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b8 --config --live
+
+    ============================================================================================================
+    Now, If you check output of "ip a" command inside your linux kvm. It will show you 6 additional interfaces..
+    ============================================================================================================
+    ens8: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 52:54:00:4a:2c:b3 brd ff:ff:ff:ff:ff:ff
+    
+    ens9: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 52:54:00:4a:2c:b4 brd ff:ff:ff:ff:ff:ff
+
+    ens10: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 52:54:00:4a:2c:b5 brd ff:ff:ff:ff:ff:ff
+    
+    ens11: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 52:54:00:4a:2c:b6 brd ff:ff:ff:ff:ff:ff
+
+    ens12: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 52:54:00:4a:2c:b7 brd ff:ff:ff:ff:ff:ff
+
+    ens13: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 52:54:00:4a:2c:b8 brd ff:ff:ff:ff:ff:ff
+
+    ===================================================================================================
+    Bring up these interfaces and assign IP address to each of them from the default subnet of your vm
+    ===================================================================================================
+    sudo ip link set ens8 up 
+    sudo ip link set ens9 up 
+    sudo ip link set ens10 up
+    sudo ip link set ens11 up 
+    sudo ip link set ens12 up 
+    sudo ip link set ens13 up
+
+    sudo ip addr add 192.168.10.21/24 dev ens8 
+    sudo ip addr add 192.168.10.22/24 dev ens9 
+    sudo ip addr add 192.168.10.23/24 dev ens10  
+    sudo ip addr add 192.168.10.24/24 dev ens11 
+    sudo ip addr add 192.168.10.25/24 dev ens12
+    sudo ip addr add 192.168.10.26/24 dev ens13  
+
+
+
+    New network will look as follows:
+                          ens9                ens10
+               (192.168.10.22/24) -------  (192.168.10.23/24)
+        --------------------------| AMF |---------------------------------
+        |   N1 network            -------          N2 network            |
+        |                                                                |
+        |                                                                |
+        | ens8                                                           | ens11
+        |(192.168.10.21/24)                                              |(192.168.10.24/24)
+     --------                                                         ---------
+-----|gnodeB|                                                         | UPF   | ---------------------------- Internet
+ Air --------                                                         ---------  
+        |                                                                | Interface to Internet not required as of now...
+        |                                                                |(pulic IP / NAT capable private IP address) 
+        |                                                                |
+        |                       N3 network                               |
+        |----------------------------------------------------------------|
+      ens13 (192.168.10.26/24)                                   ens12 (192.168.10.25/24)   
+
+
+    Once again, open three terminal windows from same vm. 
+    -> Left side terminal executes 'gnb' binary.
+    -> Middle terminal executes 'amf' binary.
+    -> Right side terminal executes UPF control plane binary. 
+       Actual UPF is not required for NMP demonstration.
+    
+    (Use -debug option as an extra command line argument to see the parsed messages)
+
+    1. Run AMF in middle terminal as follows:
+       cd 5GCore_NMP/amf/
+       make clean;make
+       sudo ./amf -amfn1ip 192.168.10.22 -amfn2ip 192.168.10.23 -upfn2ip 192.168.10.24 -upfn3ip 192.168.10.25
 	
+    2. Run UPF in right terminal as follows:
+       cd 5GCore_NMP/upf/
+       make clean;make
+       sudo ./upf -upfn2ip 192.168.10.24 -amfn2ip 192.168.10.23
+
+    3. At the end, run gnodeB in left side terminal.
+       ( -c option tells how many user attach requests to be simulated )
+       sudo ./gnb -gnbn1ip 192.168.10.21 -gnbn3ip 192.168.10.26 -amfn1ip 192.168.10.22 -c 10
+       or
+       sudo ./gnb -gnbn1ip 192.168.10.21 -gnbn3ip 192.168.10.26 -amfn1ip 192.168.10.22 -c 10 -debug
+	
+    You can capture the call setup packets via tcpdump on any machine. 
+    (NMP message UDP port is 1208)
+	
+    sudo tcpdump -i <interface_name> udp port 1208 -vvxx 
+
 -------------------------------------------------------------------------------   
 12. Performance data 
 -------------------------------------------------------------------------------   
