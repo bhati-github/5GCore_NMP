@@ -167,33 +167,33 @@ listen_for_n1_messages()
     int n = 0;
     int len = 0;
     char string[128];
-    uint32_t enb_addr = 0;
-    uint16_t enb_port = 0;
-    struct sockaddr_in  enb_sockaddr;
+    uint32_t gnb_addr = 0;
+    uint16_t gnb_port = 0;
+    struct sockaddr_in  gnb_sockaddr;
     nmp_msg_data_t nmp_n1_rcvd_msg_data;
 
     while(1)
     {	
         ///////////////////////////////////////////////
-        // Wait for request messages from EnodeB..
+        // Wait for request messages from gnodeB..
         ///////////////////////////////////////////////
         len = sizeof(struct sockaddr_in);
-        memset(&enb_sockaddr, 0x0, sizeof(struct sockaddr_in));
+        memset(&gnb_sockaddr, 0x0, sizeof(struct sockaddr_in));
         n = recvfrom(g__amf_config.amf_n1_socket_id,
                     (char *)g__n1_rcvd_msg_buffer,
                      MSG_BUFFER_LEN,
                      MSG_WAITALL,
-                    (struct sockaddr *)&(enb_sockaddr),
+                    (struct sockaddr *)&(gnb_sockaddr),
                     (socklen_t *)&len);
 
-        enb_addr = htonl(enb_sockaddr.sin_addr.s_addr);
-        enb_port = htons(enb_sockaddr.sin_port);
+        gnb_addr = htonl(gnb_sockaddr.sin_addr.s_addr);
+        gnb_port = htons(gnb_sockaddr.sin_port);
 
         if(g__amf_config.debug_switch)
         {
-            get_ipv4_addr_string(enb_addr, string);
+            get_ipv4_addr_string(gnb_addr, string);
             printf("-----------> Rcvd request (%u bytes) from enodeB (%s:%u) \n", 
-                    n, string, enb_port);
+                    n, string, gnb_port);
         }
 
         if(-1 == validate_rcvd_nmp_msg_on_n1_interface(g__n1_rcvd_msg_buffer, n))
@@ -213,7 +213,7 @@ listen_for_n1_messages()
 
 
         if(-1 == process_rcvd_n1_msg(&(nmp_n1_rcvd_msg_data),
-                                     enb_addr, 
+                                     gnb_addr, 
                                      g__amf_config.debug_switch))
         {
             printf("Unable to process rcvd N1 message \n\n");
@@ -231,11 +231,13 @@ listen_for_n1_messages()
 int 
 main(int argc, char **argv)
 {
-    uint16_t enb_index = 0;
+    uint16_t gnb_index = 0;
     int arg_num = 0, arg_index = 0;
     char string[128];
     struct in_addr  v4_addr;
-    enb_data_t *enb_data_ptr = NULL;
+    struct in_addr  v4_addr_1;
+    struct in_addr  v4_addr_2;
+    gnb_data_t *gnb_data_ptr = NULL;
 
     memset(&g__amf_config, 0x0, sizeof(amf_config_t));
 
@@ -332,6 +334,48 @@ main(int argc, char **argv)
             arg_index += 2;
             continue;
         }
+        else if(0 == strcmp(argv[arg_index], "-gnbreg"))
+        {
+            if(NULL == argv[arg_index + 1] || NULL == argv[arg_index + 2])
+            {
+                printf("-gnbreg <gnodeB_N1_interface_ip> <gnodeB_N3_interface_ip> \n");
+                printf("gnodeB registration: Please provide two argumnets for -gnbreg option.. \n");
+                return -1;
+            }
+            else
+            {
+                if(0 == inet_aton(argv[arg_index + 1], &v4_addr_1))
+                {
+                    printf("N1 interface IP address for -gnbreg option is not valid [%s] \n", argv[arg_index + 1]);
+                    printf("-gnbreg <gnodeB_N1_interface_ip> <gnodeB_N3_interface_ip> \n");
+                    printf("gnodeB registration: Please provide two argumnets for -gnbreg option.. \n");
+                    return -1;
+                }
+                if(0 == inet_aton(argv[arg_index + 2], &v4_addr_2))
+                {
+                    printf("N3 interface IP address for -gnbreg option is not valid [%s] \n", argv[arg_index + 2]);
+                    printf("-gnbreg <gnodeB_N1_interface_ip> <gnodeB_N3_interface_ip> \n");
+                    printf("gnodeB registration: Please provide two argumnets for -gnbreg option.. \n");
+                    return -1;
+                }
+                gnb_index = g__amf_config.gnb_count;
+                gnb_data_ptr = &(g__amf_config.gnb_data[gnb_index]);
+                gnb_data_ptr->gnb_id = GNB_ID_BASE + gnb_index;
+                gnb_data_ptr->gnb_n1_addr.ip_version = IP_VER_IS_V4;
+                gnb_data_ptr->gnb_n1_addr.u.v4_addr = htonl(v4_addr_1.s_addr);
+                gnb_data_ptr->gnb_n3_addr.ip_version = IP_VER_IS_V4;
+                gnb_data_ptr->gnb_n3_addr.u.v4_addr = htonl(v4_addr_2.s_addr);
+                memset(&(gnb_data_ptr->gnb_n1_sockaddr), 0, sizeof(struct sockaddr_in));
+                gnb_data_ptr->gnb_n1_sockaddr.sin_family      = AF_INET;
+                gnb_data_ptr->gnb_n1_sockaddr.sin_addr.s_addr = htonl(gnb_data_ptr->gnb_n1_addr.u.v4_addr);
+                gnb_data_ptr->gnb_n1_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
+                g__amf_config.gnb_count += 1;
+                printf("gnodeB [N1 = %s, N3 = %s] is registered..\n", argv[arg_index + 1], argv[arg_index + 2]);
+            }
+            arg_num   -= 3;
+            arg_index += 3;
+            continue;
+        }
         else if(0 == strcmp(argv[arg_index], "-d"))
         {
             if(NULL != argv[arg_index + 1])
@@ -405,6 +449,20 @@ main(int argc, char **argv)
         return -1;
     }
 
+    // Check if at least one gnodeB is registered by user into AMF
+    if(0 == g__amf_config.gnb_count)
+    {
+        printf("You have to register a gnodeB also...\n");
+        printf("You can use -gnbreg option for this purpose... It takes two IPv4 addresses \n");
+        printf("-gnbreg <gnodeB_N1_interface_ip> <gnodeB_N3_interface_ip> \n");
+        printf("%s \n", help_string);
+        return -1;
+    }
+    else
+    {
+        printf("Total %u gnodeB's are registered with AMF \n", g__amf_config.gnb_count);
+    }
+
     printf("\n");
 
     g__amf_config.my_id  = AMF_ID_BASE;
@@ -422,36 +480,6 @@ main(int argc, char **argv)
         return -1;
     }
 
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Register some enodeb with AMF
-    //////////////////////////////////////////////////////////////////////////////////////
-    enb_index = 0;
-    enb_data_ptr = &(g__amf_config.enb_data[enb_index]);
-    enb_data_ptr->enb_id = ENB_ID_BASE + enb_index;
-    enb_data_ptr->enb_n1_addr.ip_version = IP_VER_IS_V4;
-    enb_data_ptr->enb_n1_addr.u.v4_addr = 0x0a0a0a01; // 10.10.10.1 
-    enb_data_ptr->enb_n3_addr.ip_version = IP_VER_IS_V4;
-    enb_data_ptr->enb_n3_addr.u.v4_addr = 0x03030302; // 3.3.3.2
-    memset(&(enb_data_ptr->enb_n1_sockaddr), 0, sizeof(struct sockaddr_in));
-    enb_data_ptr->enb_n1_sockaddr.sin_family      = AF_INET;
-    enb_data_ptr->enb_n1_sockaddr.sin_addr.s_addr = htonl(enb_data_ptr->enb_n1_addr.u.v4_addr);
-    enb_data_ptr->enb_n1_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
-
-    enb_index = 1;
-    enb_data_ptr = &(g__amf_config.enb_data[enb_index]);
-    enb_data_ptr->enb_id = ENB_ID_BASE + enb_index;
-    enb_data_ptr->enb_n1_addr.ip_version = IP_VER_IS_V4;
-    enb_data_ptr->enb_n1_addr.u.v4_addr = 0x0a0a0a0a; // 10.10.10.10
-    enb_data_ptr->enb_n3_addr.ip_version = IP_VER_IS_V4;
-    enb_data_ptr->enb_n3_addr.u.v4_addr = 0x0303030a; // 3.3.3.10
-    memset(&(enb_data_ptr->enb_n1_sockaddr), 0, sizeof(struct sockaddr_in));
-    enb_data_ptr->enb_n1_sockaddr.sin_family      = AF_INET;
-    enb_data_ptr->enb_n1_sockaddr.sin_addr.s_addr = htonl(enb_data_ptr->enb_n1_addr.u.v4_addr);
-    enb_data_ptr->enb_n1_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);	
-
-    g__amf_config.enb_count = 2;
-    //////////////////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Register single UPF with AMF

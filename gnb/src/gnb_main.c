@@ -287,7 +287,7 @@ main(int argc, char **argv)
     // First enode id starts from ENB_ID_BASE
     // If a multi-thread gnodeB simulator exists, each 
     // gnodeB thread will have an incremental id
-    g__gnb_config.my_id  = ENB_ID_BASE;
+    g__gnb_config.my_id  = GNB_ID_BASE;
 
     printf("We have to send User Attach Request for %u users \n\n", g__user_count);
 

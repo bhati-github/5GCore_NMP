@@ -51,7 +51,7 @@
 int
 send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
                                data_64bit_t imsi,
-                               uint32_t     new_enb_v4_addr,
+                               uint32_t     new_gnb_v4_addr,
                                uint32_t     upf_v4_addr,
                                uint8_t      debug_flag)
 {
@@ -75,7 +75,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     // Get pdr and far for this user session
     /////////////////////////////////////////
     if(-1 == get_pdr_and_far_for_session_modify(ue_ipv4_addr,
-                                                new_enb_v4_addr,
+                                                new_gnb_v4_addr,
                                                 upf_v4_addr,
                                                 &session_index))
     {

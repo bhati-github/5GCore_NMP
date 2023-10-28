@@ -52,7 +52,7 @@
 int
 send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
                                data_64bit_t  imsi,
-                               uint32_t      enb_v4_addr,
+                               uint32_t      gnb_v4_addr,
                                uint32_t      upf_v4_addr,
                                uint32_t     *ul_teid,
                                uint32_t     *dl_teid,
@@ -78,7 +78,7 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     // Get pdr and far for this user session
     /////////////////////////////////////////
     if(-1 == get_pdr_and_far_for_session_create(ue_ipv4_addr,
-                                                enb_v4_addr,
+                                                gnb_v4_addr,
                                                 upf_v4_addr,
                                                 &session_index,
                                                 ul_teid,

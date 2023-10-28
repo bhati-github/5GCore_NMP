@@ -2,7 +2,7 @@
 #define AMF_H
 
 #define MSG_BUFFER_LEN     2048
-#define MAX_ENB_COUNT      1024
+#define MAX_GNB_COUNT      1024
 
 #define MAX_UPF_SESSIONS   65535
 #define MAX_PDR 8
@@ -25,11 +25,11 @@
 #define N3_DNLINK_TEID_BASE   200000
 
 typedef struct {
-    uint16_t            enb_id;
-    ip_addr_t           enb_n1_addr;
-    ip_addr_t           enb_n3_addr;
-    struct sockaddr_in  enb_n1_sockaddr;
-} enb_data_t;
+    uint16_t            gnb_id;
+    ip_addr_t           gnb_n1_addr;
+    ip_addr_t           gnb_n3_addr;
+    struct sockaddr_in  gnb_n1_sockaddr;
+} gnb_data_t;
 
 struct f_teid {
     uint32_t     teid;
@@ -124,8 +124,8 @@ struct amf_config {
 
     int        pkt_delay;	
 
-    uint16_t    enb_count;
-    enb_data_t  enb_data[MAX_ENB_COUNT];
+    uint16_t    gnb_count;
+    gnb_data_t  gnb_data[MAX_GNB_COUNT];
 
     uint16_t            upf_id;
     ip_addr_t           upf_n2_addr;

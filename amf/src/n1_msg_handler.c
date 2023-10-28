@@ -84,15 +84,15 @@ validate_rcvd_msg_on_n1_interface(uint8_t *msg_ptr,
 
 
 int
-get_enb_index_from_v4_addr(uint32_t  enb_n1_addr,
-                           uint16_t *enb_index)
+get_gnb_index_from_v4_addr(uint32_t  gnb_n1_addr,
+                           uint16_t *gnb_index)
 {
     int i = 0;
-    for(i = 0; i < g__amf_config.enb_count; i++)
+    for(i = 0; i < g__amf_config.gnb_count; i++)
     {
-        if(enb_n1_addr == g__amf_config.enb_data[i].enb_n1_addr.u.v4_addr)
+        if(gnb_n1_addr == g__amf_config.gnb_data[i].gnb_n1_addr.u.v4_addr)
         {
-            *enb_index = i;
+            *gnb_index = i;
             return 0;
         }
     }
@@ -103,33 +103,33 @@ get_enb_index_from_v4_addr(uint32_t  enb_n1_addr,
 
 int
 process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
-                    uint32_t        enb_n1_addr,
+                    uint32_t        gnb_n1_addr,
                     uint8_t         debug_flag)
 {
     char string[128];
-    uint16_t enb_index = 0;
+    uint16_t gnb_index = 0;
     uint32_t ue_ipv4_addr = 0;
-    uint32_t enb_v4_addr = 0;
+    uint32_t gnb_v4_addr = 0;
     uint32_t upf_v4_addr = 0;
     uint32_t ul_teid = 0;
     uint32_t dl_teid = 0;
 
     if(MSG_TYPE__UE_ATTACH_REQUEST == nmp_n1_rcvd_msg_data_ptr->msg_type)
     {
-        if(-1 == get_enb_index_from_v4_addr(enb_n1_addr, &enb_index))
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
         {
-            get_ipv4_addr_string(enb_n1_addr, string);
+            get_ipv4_addr_string(gnb_n1_addr, string);
             printf("Unable to find a registered enodeb with ipv4 address %s \n", string);
             return -1;
         }
-        nmp_n1_rcvd_msg_data_ptr->enb_index = enb_index;
+        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
-        if(debug_flag) printf("%s: enb_index = %u \n", __func__, enb_index);
+        if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
         // Allocate user ip
         ue_ipv4_addr = g__ue_ipv4_addr_base++;
 
-        enb_v4_addr = g__amf_config.enb_data[enb_index].enb_n3_addr.u.v4_addr;
+        gnb_v4_addr = g__amf_config.gnb_data[gnb_index].gnb_n3_addr.u.v4_addr;
         upf_v4_addr = g__amf_config.upf_n3_addr.u.v4_addr;
 
         printf("%s: Send session create message to UPF \n", __func__);
@@ -139,7 +139,7 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         ///////////////////////////////////////		
         if(-1 == send_session_create_msg_to_upf(ue_ipv4_addr,
                                                 nmp_n1_rcvd_msg_data_ptr->imsi, 
-                                                enb_v4_addr, 
+                                                gnb_v4_addr, 
                                                 upf_v4_addr,
                                                 &(ul_teid),
                                                 &(dl_teid),
@@ -150,7 +150,7 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
         return send_ue_attach_response_ok(nmp_n1_rcvd_msg_data_ptr,
                                           ue_ipv4_addr,
-                                          enb_v4_addr,
+                                          gnb_v4_addr,
                                           upf_v4_addr,
                                           ul_teid,
                                           dl_teid,

@@ -21,7 +21,7 @@ struct nmp_msg_data {
     uint16_t  msg_item_len;
     uint32_t  msg_identifier;
     uint16_t  msg_item_count;
-    uint16_t  enb_index;
+    uint16_t  gnb_index;
     uint8_t   msg_response;
 
     /////////////////////

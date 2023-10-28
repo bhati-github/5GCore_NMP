@@ -55,7 +55,7 @@ send_ue_attach_response_not_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     int n = 0;
     int ret = 0;
     int offset = 0;
-    int enb_index = 0;
+    int gnb_index = 0;
     uint16_t item_count = 0;
     uint16_t dst_node_id = 0;
     nmp_msg_data_t nmp_n1_send_msg_data;
@@ -111,12 +111,12 @@ send_ue_attach_response_not_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     ////////////////////////////////////////////////
     // write this msg on n1 socket (towards enodeb)
     ////////////////////////////////////////////////
-    enb_index = nmp_n1_rcvd_msg_data_ptr->enb_index;
+    gnb_index = nmp_n1_rcvd_msg_data_ptr->gnb_index;
     n = sendto(g__amf_config.amf_n1_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.enb_data[enb_index].enb_n1_sockaddr),
+               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {
@@ -136,14 +136,14 @@ send_ue_attach_response_not_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 int
 send_ue_attach_response_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
                            uint32_t        ue_ipv4_addr,
-                           uint32_t        enb_v4_addr,
+                           uint32_t        gnb_v4_addr,
                            uint32_t        upf_v4_addr,
                            uint32_t        ul_teid,
                            uint32_t        dl_teid,
                            uint8_t         debug_flag)
 {
     int n = 0;
-    int enb_index = 0;
+    int gnb_index = 0;
     int ret = 0;
     int offset = 0;
     uint16_t item_count = 0;
@@ -196,7 +196,7 @@ send_ue_attach_response_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     item_count += 1;
 
     // Item: GTPU_SELF_IPV4_ENDPOINT
-    ret = nmp_add_item__gtpu_self_ipv4_endpoint(ptr + offset, enb_v4_addr, dl_teid);
+    ret = nmp_add_item__gtpu_self_ipv4_endpoint(ptr + offset, gnb_v4_addr, dl_teid);
     if(-1 == ret)
     {
         return -1;
@@ -230,12 +230,12 @@ send_ue_attach_response_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     ////////////////////////////////////////////////
     // write this msg on n1 socket (towards enodeb)
     ////////////////////////////////////////////////
-    enb_index = nmp_n1_rcvd_msg_data_ptr->enb_index;
+    gnb_index = nmp_n1_rcvd_msg_data_ptr->gnb_index;
     n = sendto(g__amf_config.amf_n1_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.enb_data[enb_index].enb_n1_sockaddr),
+               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {

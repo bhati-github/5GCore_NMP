@@ -57,7 +57,7 @@ get_session_index_from_ue_ipv4_addr(uint32_t  ue_ipv4_addr,
 
 int
 get_pdr_and_far_for_session_create(uint32_t  ue_ipv4_addr,
-                                   uint32_t  enb_v4_addr,
+                                   uint32_t  gnb_v4_addr,
                                    uint32_t  upf_v4_addr,
                                    uint32_t *session_idx,
                                    uint32_t *ul_teid,
@@ -97,7 +97,7 @@ get_pdr_and_far_for_session_create(uint32_t  ue_ipv4_addr,
     session_ptr->n3_far.action_flags = 0x02; // gtp-encap and forward
     session_ptr->n3_far.forward_param.f_teid.teid = N3_DNLINK_TEID_BASE + session_index;
     session_ptr->n3_far.forward_param.f_teid.ip_addr.ip_version = IP_VER_IS_V4;
-    session_ptr->n3_far.forward_param.f_teid.ip_addr.u.v4_addr = enb_v4_addr;
+    session_ptr->n3_far.forward_param.f_teid.ip_addr.u.v4_addr = gnb_v4_addr;
 
     *session_idx = session_index;
     *ul_teid = session_ptr->n3_pdr.pdi.f_teid.teid;
@@ -109,7 +109,7 @@ get_pdr_and_far_for_session_create(uint32_t  ue_ipv4_addr,
 
 int
 get_pdr_and_far_for_session_modify(uint32_t  ue_ipv4_addr,
-                                   uint32_t  new_enb_v4_addr,
+                                   uint32_t  new_gnb_v4_addr,
                                    uint32_t  upf_v4_addr,
                                    uint32_t *session_idx)
 {
@@ -147,7 +147,7 @@ get_pdr_and_far_for_session_modify(uint32_t  ue_ipv4_addr,
     session_ptr->n3_far.action_flags = 0x02; // gtp-encap and forward
     session_ptr->n3_far.forward_param.f_teid.teid = N3_DNLINK_TEID_BASE + session_index;
     session_ptr->n3_far.forward_param.f_teid.ip_addr.ip_version = IP_VER_IS_V4;
-    session_ptr->n3_far.forward_param.f_teid.ip_addr.u.v4_addr = new_enb_v4_addr;
+    session_ptr->n3_far.forward_param.f_teid.ip_addr.u.v4_addr = new_gnb_v4_addr;
 
     *session_idx = session_index;
 

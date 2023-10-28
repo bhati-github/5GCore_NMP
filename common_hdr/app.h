@@ -124,7 +124,7 @@ typedef struct {
 
 ////////////////////////////////////////
 ////////////////////////////////////////
-#define ENB_ID_BASE        100        
+#define GNB_ID_BASE        100        
 #define AMF_ID_BASE        8000
 #define UPF_ID_BASE        10000
 #define UDP_PORT_IS_NMP    1208
