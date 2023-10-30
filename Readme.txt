@@ -250,9 +250,9 @@ enum item_id_t {
 7. Demonstration in a sample network
 -------------------------------------------------------------------------------
 
-    Please do not compare the names of interfaces with the 5G core network 
-    actual interfaces. I used these interfaces as per my convenience. 
-    I personally call the combination of N1, N2 and N3 in this diagram as 'Call Triangle'. 
+    Important: Please do not compare the names of interfaces with the 5G core network 
+    actual interfaces. I used these interfaces as per my convenience. I personally call the 
+    combination of N1, N2 and N3 in this diagram as 'Call Triangle'. 
 
  
                       AMF 
@@ -420,14 +420,39 @@ enum item_id_t {
 
 
 --------------------------------------------------------------------------------------   
-10. Steps to run the network simulation in single virtual machine (Preferred approach)
+10. Steps to run network simulation in single virtual machine (Preferred approach)
 --------------------------------------------------------------------------------------   
     You need to have 6 additional interfaces attached to the VM.
 
+    Some background information about Linux kvm networks:
+    You may be wondering what is --domain option and -- source option
+    When you create a linux kvm, you can also check what is the domain name and network name associated with the kvm.
+
+    Usually domain name is same as your kvm name. In this case, 'testvm' is the domain name as well as kvm name.
+    Command to check interface list inside domain 'testvm' is as follows: 
+    $ virsh domiflist testvm
+
+    Command to check kvm networks in your host machine is as follows:
+    $ visrh net-list --all
+     Name         State    Autostart   Persistent
+     -----------------------------------------------
+     testvm       active   yes         yes
+     vm1          active   yes         yes
+     vm2          active   yes         yes
+
+    Each of these networks have a different IP subnet range..
+    testvm kvm-network will allocate IP addresses from IP subnet 192.168.10.0/24
+    vm1 will allocate IP addresses from IP subnet 192.168.11.0/24
+
+    Command to check IP subnet details for a particular network is as follows:
+    $ visrh net-dhcp-leases testvm
+
+
+    With above background information, let's create some additional interfaces inside testvm.
     When you first create a linux kvm 'testvm', it only has one default interface.
     For example:    en3: 192.168.10.2/24  mac: 52:54:00:4a:2c:b2
 
-    If you want to add 6 additional interface to this linux kvm, perform these steps.
+    If you want to add 6 additional interface to this linux kvm, perform these steps from the host machine.
 
 virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b3 --config --live
 virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b4 --config --live
@@ -435,6 +460,7 @@ virsh attach-interface --domain testvm --type network --source testvm --model vi
 virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b6 --config --live
 virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b7 --config --live
 virsh attach-interface --domain testvm --type network --source testvm --model virtio --mac  52:54:00:4a:2c:b8 --config --live
+
 
     ============================================================================================================
     Now, If you check output of "ip a" command inside your linux kvm. It will show you 6 additional interfaces..
@@ -509,22 +535,44 @@ virsh attach-interface --domain testvm --type network --source testvm --model vi
        cd 5GCore_NMP/amf/
        make clean;make
        sudo ./amf -amfn1ip 192.168.10.22 -amfn2ip 192.168.10.23 -upfn2ip 192.168.10.24 -upfn3ip 192.168.10.25 -gnbreg 192.168.10.21 192.168.10.26
-	
+
+       In above command, options are as follows:
+       -amfn1ip 192.168.10.22 (AMF N1 interface IP address is 192.168.10.22)
+       -upfn2ip 192.168.10.24 (UPF N2 interface IP address is 192.168.10.24)
+       -upfn3ip 192.168.10.25 (UPF N3 interface IP address is 192.168.10.25)
+       -gnbreg 192.168.10.21 192.168.10.26  (Register a gnodeB into AMF with its N1 interface and N3 interface details)
+                                             You can simulate AMF instance with multiple gnodeB's also.
+
+       For example, if you wish to simulate AMF with 3 gnodeB's. Then provide -gnbreg options as follows:
+       -gnbreg 192.168.10.21 192.168.10.26 -gnbreg 192.168.10.31 192.168.10.36 -gnbreg 192.168.10.41 192.168.10.46  
+
+
     2. Run UPF in right terminal as follows:
        cd 5GCore_NMP/upf/
        make clean;make
        sudo ./upf -upfn2ip 192.168.10.24 -amfn2ip 192.168.10.23
+
+       In above command, options are as follows:
+       -upfn2ip 192.168.10.24 (UPF N2 interface IP address is 192.168.10.24)
+       -amfn2ip 192.168.10.23 (AMF N2 interface IP address is 192.168.10.23)
+       
 
     3. At the end, run gnodeB in left side terminal.
        ( -c option tells how many user attach requests to be simulated )
        sudo ./gnb -gnbn1ip 192.168.10.21 -gnbn3ip 192.168.10.26 -amfn1ip 192.168.10.22 -c 10
        or
        sudo ./gnb -gnbn1ip 192.168.10.21 -gnbn3ip 192.168.10.26 -amfn1ip 192.168.10.22 -c 10 -debug
+
+       In above command, options are as follows:
+       -gnbn1ip 192.168.10.21 (gnodeB N1 interface IP address is 192.168.10.21)
+       -gnbn3ip 192.168.10.26 (gnodeB N3 interface IP address is 192.168.10.26)
+       -amfn1ip 192.168.10.22 (AMF N1 interface IP address is 192.168.10.22)
+       -c 10  (Simmulate upto 10 UE attach requests)
+       -debug (Show complete NMP message parsing) 
 	
-    You can capture the call setup packets via tcpdump on any machine. 
-    (NMP message UDP port is 1208)
-	
+    You can capture the call setup packets via tcpdump (NMP message UDP port is 1208)
     sudo tcpdump -i <interface_name> udp port 1208 -vvxx 
+
 
 -------------------------------------------------------------------------------   
 11. Performance data 
