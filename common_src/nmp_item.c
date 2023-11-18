@@ -83,6 +83,24 @@ nmp_add_item__far__dst_interface(uint8_t *ptr,
     return (2 + 1);
 }
 
+int
+nmp_add_item__uplink_qos_profile(uint8_t *ptr,
+                                 uint8_t  uplink_qos_profile)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__UPLINK_QOS_PROFILE);
+    *(ptr + 2) = uplink_qos_profile;
+    return (2 + 1);
+}
+
+int
+nmp_add_item__dnlink_qos_profile(uint8_t *ptr,
+                                 uint8_t  dnlink_qos_profile)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__DNLINK_QOS_PROFILE);
+    *(ptr + 2) = dnlink_qos_profile;
+    return (2 + 1);
+}
+
 
 ///////////////////////////////////////////
 // 2 byte Items
@@ -138,6 +156,15 @@ nmp_add_item__far__rule_id(uint8_t *ptr,
 {
     *((uint16_t *)(ptr)) = htons(ITEM_ID__FAR_RULE_ID);
     *((uint16_t *)(ptr + 2)) = htons(rule_id);
+    return (2 + 2);
+}
+
+int
+nmp_add_item__rrc_establish_cause(uint8_t *ptr,
+                                  uint16_t rrc_establish_cause)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__RRC_ESTABLISH_CAUSE);
+    *((uint16_t *)(ptr + 2)) = htons(rrc_establish_cause);
     return (2 + 2);
 }
 
@@ -213,7 +240,7 @@ nmp_add_item__pdr__pdi_match_gtpu_teid(uint8_t *ptr,
 
 
 ///////////////////////////////////////////
-// 8 byte Items
+// More than 4 and upto 8 byte Items
 ///////////////////////////////////////////
 int
 nmp_add_item__imsi(uint8_t      *ptr,
@@ -257,10 +284,23 @@ nmp_add_item__far__outer_hdr_create(uint8_t *ptr,
     return (2 + 8);
 }
 
+int
+nmp_add_item__user_location_info_tai(uint8_t *ptr,
+                                     uint16_t mcc,
+                                     uint16_t mnc,
+                                     uint32_t tac)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__USER_LOCATION_INFO_TAC);
+    *((uint16_t *)(ptr + 2)) = htons(mcc);
+    *((uint16_t *)(ptr + 4)) = htons(mnc);
+    *((uint32_t *)(ptr + 6)) = htonl(tac);
+    return (2 + 8);
+}
+
 
 
 ///////////////////////////////////////////
-// 16 byte Items
+// More than 8 and upto 16 byte Items
 ///////////////////////////////////////////
 int
 nmp_add_item__ue_identifier_secret(uint8_t *ptr,
@@ -280,4 +320,34 @@ nmp_add_item__ue_ipv6_addr(uint8_t *ptr,
     return (2 + 16);
 }
 
+int
+nmp_add_item__user_location_info_nr_cgi(uint8_t *ptr,
+                                        uint16_t mcc,
+                                        uint16_t mnc,
+                                        data_64bit_t nr_cell_identity)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__USER_LOCATION_INFO_NR_CGI);
+    *((uint16_t *)(ptr + 2)) = htons(mcc);
+    *((uint16_t *)(ptr + 4)) = htons(mnc);
+    *((uint32_t *)(ptr + 6)) = 0x0;
+    memcpy(ptr + 10, nr_cell_identity.u8, 8);
+    return (2 + 16);
+}
+
+
+
+//////////////////////////////////////////////////
+// Data more than 16 bytes (variable lenth items)
+//////////////////////////////////////////////////
+int
+nmp_add_item__nas_pdu(uint8_t *ptr,
+                      uint8_t *nas_pdu_ptr,
+                      uint16_t nas_pdu_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__NAS_PDU);
+    *((uint16_t *)(ptr + 2)) = htons(nas_pdu_len);
+    memcpy(ptr + 2 + 2, nas_pdu_ptr, nas_pdu_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + nas_pdu_len); 
+}
 

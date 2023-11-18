@@ -70,6 +70,8 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     uint16_t upf_port = 0;
     uint32_t request_identifier = 0;	
     struct sockaddr_in upf_sockaddr;
+    pdr_t *pdr_ptr = NULL;
+    far_t *far_ptr = NULL;
 
     nmp_msg_data_t nmp_n2_send_msg_data;
     nmp_msg_data_t nmp_n2_rcvd_msg_data;
@@ -128,7 +130,14 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
 
 
     // Create N3 PDR
-    ret = nmp_add_item_group__n3_pdr(ptr + offset, session_index); 
+    pdr_ptr = &(g__amf_config.upf_session_data[session_index].n3_pdr);
+    ret = nmp_add_item_group__n3_pdr(ptr + offset, 
+                                     pdr_ptr->rule_id, 
+                                     pdr_ptr->precedence,
+                                     pdr_ptr->pdi.f_teid.ip_addr.u.v4_addr,
+                                     pdr_ptr->pdi.f_teid.teid,
+                                     pdr_ptr->action,
+                                     pdr_ptr->far_id); 
     if(-1 == ret)
     {
         printf("%s: Unable to create N3 PDR Item group. \n", __func__);
@@ -139,7 +148,13 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
 
 
     // Create N6 PDR
-    ret = nmp_add_item_group__n6_pdr(ptr + offset, session_index);
+    pdr_ptr = &(g__amf_config.upf_session_data[session_index].n6_pdr);
+    ret = nmp_add_item_group__n6_pdr(ptr + offset, 
+                                     pdr_ptr->rule_id,
+                                     pdr_ptr->precedence,
+                                     pdr_ptr->pdi.ue_ip_addr.u.v4_addr,
+                                     pdr_ptr->action,
+                                     pdr_ptr->far_id);
     if(-1 == ret)
     {
         printf("%s: Unable to create N6 PDR Item group. \n", __func__);
@@ -149,7 +164,13 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     item_count += 1;
 
     // Create N3 FAR
-    ret = nmp_add_item_group__n3_far(ptr + offset, session_index);
+    far_ptr = &(g__amf_config.upf_session_data[session_index].n3_far);
+    ret = nmp_add_item_group__n3_far(ptr + offset,
+                                     far_ptr->far_id,
+                                     far_ptr->action_flags,
+                                     far_ptr->forward_param.dst_interface,
+                                     far_ptr->forward_param.f_teid.ip_addr.u.v4_addr,
+                                     far_ptr->forward_param.f_teid.teid);
     if(-1 == ret)
     {
         printf("%s: Unable to create N3 FAR Item group. \n", __func__);
@@ -159,7 +180,11 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     item_count += 1;
 
     // Create N6 FAR
-    ret = nmp_add_item_group__n6_far(ptr + offset, session_index);
+    far_ptr = &(g__amf_config.upf_session_data[session_index].n6_far);
+    ret = nmp_add_item_group__n6_far(ptr + offset,
+                                     far_ptr->far_id,
+                                     far_ptr->action_flags,
+                                     far_ptr->forward_param.dst_interface);
     if(-1 == ret)
     {
         printf("%s: Unable to create N6 FAR Item group. \n", __func__);
@@ -237,7 +262,7 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     {
         g__amf_config.upf_session_data[session_index].ue_ipv4_addr = ue_ipv4_addr;
         memcpy(g__amf_config.upf_session_data[session_index].imsi.u8, imsi.u8, 8);
-        printf("%s: Rcvd response from UPF is [Ok] \n", __func__);
+        if(debug_flag) printf("%s: Rcvd response from UPF is [Ok] \n", __func__);
         return 0;
     }
     else

@@ -45,22 +45,21 @@
 #include "common_util.h"
 
 #include "amf.h"
-#include "ue_attach.h"
+#include "n1_msg_handler.h"
 
 
 int
-send_ue_attach_response_not_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
-                               uint8_t         debug_flag)
+send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
+                          uint8_t         debug_flag)
 {
     int n = 0;
     int ret = 0;
     int offset = 0;
     int gnb_index = 0;
-    uint16_t item_count = 0;
-    uint16_t dst_node_id = 0;
-    nmp_msg_data_t nmp_n1_send_msg_data;
-
     uint8_t *ptr = g__n1_send_msg_buffer;
+    uint16_t dst_node_id = 0;
+    uint16_t item_count = 0;
+    nmp_msg_data_t nmp_n1_send_msg_data;
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
@@ -70,31 +69,13 @@ send_ue_attach_response_not_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
     nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
-    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__UE_ATTACH_RESPONSE);
+    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__ALL_OK);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
     nmp_hdr_ptr->msg_identifier = htonl(nmp_n1_rcvd_msg_data_ptr->msg_identifier);
 
     offset = sizeof(nmp_hdr_t);
-
-    // Item: Response
-    ret = nmp_add_item__msg_response(ptr + offset, MSG_RESPONSE_IS_NOT_OK);
-    if(-1 == ret)
-    {
-        return -1;
-    }
-    offset += ret;
-    item_count += 1;
-
-    // Item: IMSI
-    ret = nmp_add_item__imsi(ptr + offset, nmp_n1_rcvd_msg_data_ptr->imsi);
-    if(-1 == ret)
-    {
-        return -1;
-    }
-    offset += ret;
-    item_count += 1;
 
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
@@ -109,7 +90,7 @@ send_ue_attach_response_not_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     }
 
     ////////////////////////////////////////////////
-    // write this msg on n1 socket (towards enodeb)
+    // write this msg on n1 socket (towards gnodeb)
     ////////////////////////////////////////////////
     gnb_index = nmp_n1_rcvd_msg_data_ptr->gnb_index;
     n = sendto(g__amf_config.amf_n1_socket_id,
@@ -120,37 +101,26 @@ send_ue_attach_response_not_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
                sizeof(struct sockaddr_in));
     if(n != offset)
     {
-        printf("%s: sendto() failed for UE Attach response message. \n", __func__);
+        printf("%s: sendto() failed \n", __func__);
         return -1;
     }
 
-    printf("%s: UE Attach Response Msg Sent..\n", __func__);
+    printf("%s: Msg sent successfully to gnodeb \n", __func__);
     return 0;
 }
 
 
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-
-
 int
-send_ue_attach_response_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
-                           uint32_t        ue_ipv4_addr,
-                           uint32_t        gnb_v4_addr,
-                           uint32_t        upf_v4_addr,
-                           uint32_t        ul_teid,
-                           uint32_t        dl_teid,
-                           uint8_t         debug_flag)
+send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
+                                     uint8_t         debug_flag)
 {
     int n = 0;
-    int gnb_index = 0;
-    int ret = 0;
     int offset = 0;
-    uint16_t item_count = 0;
-    uint16_t dst_node_id = 0;
-    nmp_msg_data_t nmp_n1_send_msg_data;
-
+    int gnb_index = 0;
     uint8_t *ptr = g__n1_send_msg_buffer;
+    uint16_t dst_node_id = 0;
+    uint16_t item_count = 0;
+    nmp_msg_data_t nmp_n1_send_msg_data;
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
@@ -160,7 +130,7 @@ send_ue_attach_response_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
     nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
-    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__UE_ATTACH_RESPONSE);
+    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
@@ -168,67 +138,20 @@ send_ue_attach_response_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
     offset = sizeof(nmp_hdr_t);
 
-    // Item: Response
-    ret = nmp_add_item__msg_response(ptr + offset, MSG_RESPONSE_IS_OK);
-    if(-1 == ret)
-    {
-        return -1;
-    }
-    offset += ret;
-    item_count += 1;
-
-    // Item: UE_IPV4_ADDR
-    ret = nmp_add_item__ue_ipv4_addr(ptr + offset, ue_ipv4_addr);
-    if(-1 == ret)
-    {
-        return -1;
-    }
-    offset += ret;
-    item_count += 1;
-
-    // Item: IMSI
-    ret = nmp_add_item__imsi(ptr + offset, nmp_n1_rcvd_msg_data_ptr->imsi);
-    if(-1 == ret)
-    {
-        return -1;
-    }
-    offset += ret;
-    item_count += 1;
-
-    // Item: GTPU_SELF_IPV4_ENDPOINT
-    ret = nmp_add_item__gtpu_self_ipv4_endpoint(ptr + offset, gnb_v4_addr, dl_teid);
-    if(-1 == ret)
-    {
-        return -1;
-    }
-    offset += ret;
-    item_count += 1;
-
-    // Item: GTPU_PEER_IPV4_ENDPOINT
-    ret = nmp_add_item__gtpu_peer_ipv4_endpoint(ptr + offset, upf_v4_addr, ul_teid);
-    if(-1 == ret)
-    {
-        return -1;
-    }
-    offset += ret;
-    item_count += 1;
-
-
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
-
 
     if(-1 == parse_nmp_msg(ptr,
                            offset,
                            &(nmp_n1_send_msg_data),
                            debug_flag))
     {
-        printf("%s: Msg parse error \n", __func__);
+        printf("%s: Msg parse error. \n", __func__);
         return -1;
     }
 
     ////////////////////////////////////////////////
-    // write this msg on n1 socket (towards enodeb)
+    // write this msg on n1 socket (towards gnodeb)
     ////////////////////////////////////////////////
     gnb_index = nmp_n1_rcvd_msg_data_ptr->gnb_index;
     n = sendto(g__amf_config.amf_n1_socket_id,
@@ -239,11 +162,13 @@ send_ue_attach_response_ok(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
                sizeof(struct sockaddr_in));
     if(n != offset)
     {
-        printf("%s: sendto() failed for UE Attach response message. \n", __func__);
+        printf("%s: sendto() failed \n", __func__);
         return -1;
     }
 
-    printf("%s: UE Attach Response Msg Sent.. \n", __func__);
+    printf("%s: Msg sent successfully to gnodeb \n", __func__);
     return 0;
+
 }
+
 

@@ -72,15 +72,6 @@ validate_rcvd_msg_on_n1_interface(uint8_t *msg_ptr,
         return -1;
     }
 
-    if(0 != request_identifier)
-    {
-        if(request_identifier != htonl(nmp_hdr_ptr->msg_identifier))
-        {
-            printf("Response identifier is not matching with Request identifier \n");
-            return -1;
-        }
-    }
-
     return 0;
 }
 

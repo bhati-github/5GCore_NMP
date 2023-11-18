@@ -192,7 +192,7 @@ listen_for_n1_messages()
         if(g__amf_config.debug_switch)
         {
             get_ipv4_addr_string(gnb_addr, string);
-            printf("-----------> Rcvd request (%u bytes) from enodeB (%s:%u) \n", 
+            printf("-----------> Rcvd request (%u bytes) from gnodeB (%s:%u) \n", 
                     n, string, gnb_port);
         }
 
@@ -217,10 +217,6 @@ listen_for_n1_messages()
                                      g__amf_config.debug_switch))
         {
             printf("Unable to process rcvd N1 message \n\n");
-        }
-        else
-        {
-            printf("Successfully processed rcvd N1 message \n\n");
         }
     }
 

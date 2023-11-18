@@ -40,12 +40,12 @@
 
 #include "app.h"
 #include "nmp.h"
+#include "nmp_item.h"
 #include "nmp_msg_parser.h"
 #include "common_util.h"
 
 #include "amf.h"
 #include "n1_msg_handler.h"
-#include "ue_attach.h"
 #include "upf_session.h"
 
 int
@@ -106,63 +106,386 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
                     uint32_t        gnb_n1_addr,
                     uint8_t         debug_flag)
 {
+    int n = 0;
+    int ret = 0;
+    int offset = 0;
+    uint16_t item_count = 0;
+    uint16_t dst_node_id = 0;
+    nmp_hdr_t *nmp_hdr_ptr = NULL;
+
     char string[128];
+    uint8_t nas_pdu[128];
+    uint16_t nas_pdu_len = 0;
+    uint8_t *ptr = g__n1_send_msg_buffer;
     uint16_t gnb_index = 0;
+    uint16_t amf_ue_ngap_id = 1;
+    uint16_t ran_ue_ngap_id = 1;
     uint32_t ue_ipv4_addr = 0;
     uint32_t gnb_v4_addr = 0;
     uint32_t upf_v4_addr = 0;
     uint32_t ul_teid = 0;
     uint32_t dl_teid = 0;
+    uint32_t msg_id = 0;
+    nmp_msg_data_t nmp_n1_send_msg_data;
 
-    if(MSG_TYPE__UE_ATTACH_REQUEST == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
     {
+        if(debug_flag) printf("%s: Rcvd MsgType = INITIAL_UE_MSG_REGISTRATION_REQ \n", __func__);
+ 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
         {
             get_ipv4_addr_string(gnb_n1_addr, string);
-            printf("Unable to find a registered enodeb with ipv4 address %s \n", string);
+            printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
+            printf("Rejecting this message from Unknown gnodeb \n");
             return -1;
         }
         nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
-        // Allocate user ip
-        ue_ipv4_addr = g__ue_ipv4_addr_base++;
+        //////////////////////////////////////////////////////
+        // Send Authentication Request message (Downlink NAS 
+        // transport message) back to gnodeb 
+        //////////////////////////////////////////////////////
+        offset = 0;
+        item_count = 0;
+        nmp_hdr_ptr = (nmp_hdr_t *)ptr;
 
+        nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
+        nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
+        nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
+        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
+
+        nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_AUTH_REQ);
+        nmp_hdr_ptr->msg_item_len   = 0;
+        nmp_hdr_ptr->msg_item_count = 0;
+
+        msg_id = g__amf_config.my_id << 16;
+        msg_id |= (uint16_t )rand();
+        nmp_hdr_ptr->msg_identifier = htonl(msg_id);
+
+        offset = sizeof(nmp_hdr_t);
+
+        // Add AMF-UE-NGAP-ID
+        ret = nmp_add_item__amf_ue_ngap_id(ptr + offset, amf_ue_ngap_id);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add RAN-UE-NGAP-ID
+        ret = nmp_add_item__ran_ue_ngap_id(ptr + offset, ran_ue_ngap_id);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add NAS-PDU (This PDU contains Authentication Request) (AMF --> gNB)
+        // TBD: Fill nas pdu
+        nas_pdu_len = 36;  // dummy 36 bytes
+        ret = nmp_add_item__nas_pdu(ptr + offset, nas_pdu, nas_pdu_len);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+
+        // All items are added. Update NMP message header.
+        nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
+        nmp_hdr_ptr->msg_item_count = htons(item_count);
+
+        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+                               offset,
+                               &(nmp_n1_send_msg_data),
+                               debug_flag))
+        {
+            printf("%s: Send message parsing error.. \n", __func__);
+            return -1;
+        }
+
+        ////////////////////////////////////////////////
+        // write this msg on n1 socket (towards gnodeb)
+        ////////////////////////////////////////////////
+        n = sendto(g__amf_config.amf_n1_socket_id,
+                   (char *)ptr,
+                   offset,
+                   MSG_WAITALL,
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   sizeof(struct sockaddr_in));
+        if(n != offset)
+        {
+            printf("%s: sendto() failed \n", __func__);
+            return -1;
+        }
+
+        return 0;
+    }
+    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_AUTH_RESP == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    {
+        if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_AUTH_RESP \n", __func__);
+
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        {
+            get_ipv4_addr_string(gnb_n1_addr, string);
+            printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
+            printf("Rejecting this message from Unknown gnodeb \n");
+            return -1;
+        }
+        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+
+        if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
+
+        //////////////////////////////////////////////////////
+        // Send Registration Accept message (Downlink NAS
+        // transport message) back to gnodeb
+        //////////////////////////////////////////////////////
+        offset = 0;
+        item_count = 0;
+        nmp_hdr_ptr = (nmp_hdr_t *)g__n1_send_msg_buffer;
+
+        nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
+        nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
+        nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
+        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
+
+        nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT);
+        nmp_hdr_ptr->msg_item_len   = 0;
+        nmp_hdr_ptr->msg_item_count = 0;
+
+        msg_id = g__amf_config.my_id << 16;
+        msg_id |= (uint16_t )rand();
+        nmp_hdr_ptr->msg_identifier = htonl(msg_id);
+
+        offset = sizeof(nmp_hdr_t);
+
+        // Add AMF-UE-NGAP-ID
+        ret = nmp_add_item__amf_ue_ngap_id(ptr + offset, amf_ue_ngap_id);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add RAN-UE-NGAP-ID
+        ret = nmp_add_item__ran_ue_ngap_id(ptr + offset, ran_ue_ngap_id);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add NAS-PDU (This PDU contains Registration Accept) (AMF --> gNB)
+        // TBD: Fill nas pdu
+        nas_pdu_len = 36;  // dummy 36 bytes
+        ret = nmp_add_item__nas_pdu(ptr + offset, nas_pdu, nas_pdu_len);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // All items are added. Update NMP message header.
+        nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
+        nmp_hdr_ptr->msg_item_count = htons(item_count);
+
+        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+                               offset,
+                               &(nmp_n1_send_msg_data),
+                               debug_flag))
+        {
+            printf("%s: Send message parsing error.. \n", __func__);
+            return -1;
+        }
+
+        ////////////////////////////////////////////////
+        // write this msg on n1 socket (towards gnodeb)
+        ////////////////////////////////////////////////
+        n = sendto(g__amf_config.amf_n1_socket_id,
+                   (char *)ptr,
+                   offset,
+                   MSG_WAITALL,
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   sizeof(struct sockaddr_in));
+        if(n != offset)
+        {
+            printf("%s: sendto() failed \n", __func__);
+            return -1;
+        }
+
+        return 0;
+    }
+    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    {
+        if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE \n", __func__);
+
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        {
+            get_ipv4_addr_string(gnb_n1_addr, string);
+            printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
+            printf("Rejecting this message from Unknown gnodeb \n");
+            return -1;
+        }
+        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+
+        if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
+
+        // No need to send back any message to gnodeb. UE Registration is complete at this stage.
+        return 0;
+    }
+    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    {
+        if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ \n", __func__);
+
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        {
+            get_ipv4_addr_string(gnb_n1_addr, string);
+            printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
+            printf("Rejecting this message from Unknown gnodeb \n");
+            return -1;
+        }
+        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+
+        if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
+
+       
+        /////////////////////////////////////////////// 
+        // Step-1: Send Session Create message to UPF 
+        //         and get GTP-U tunnel information
+        /////////////////////////////////////////////// 
+        ue_ipv4_addr = g__ue_ipv4_addr_base++;
         gnb_v4_addr = g__amf_config.gnb_data[gnb_index].gnb_n3_addr.u.v4_addr;
         upf_v4_addr = g__amf_config.upf_n3_addr.u.v4_addr;
-
-        printf("%s: Send session create message to UPF \n", __func__);
-
-        ///////////////////////////////////////		
-        // Send msg to UPF to create a session
-        ///////////////////////////////////////		
-        if(-1 == send_session_create_msg_to_upf(ue_ipv4_addr,
-                                                nmp_n1_rcvd_msg_data_ptr->imsi, 
-                                                gnb_v4_addr, 
+        if(-1 == send_session_create_msg_to_upf(ue_ipv4_addr, 
+                                                nmp_n1_rcvd_msg_data_ptr->imsi,   // TBD: update parameters of this function
+                                                gnb_v4_addr,
                                                 upf_v4_addr,
                                                 &(ul_teid),
                                                 &(dl_teid),
                                                 debug_flag))
         {
-            return send_ue_attach_response_not_ok(nmp_n1_rcvd_msg_data_ptr, debug_flag);
+            // Send failure message back to gnodeb
+            return send_pdu_setup_failure_msg_to_gnodeb(nmp_n1_rcvd_msg_data_ptr, debug_flag);
+        }
+        
+        /////////////////////////////////////////////////// 
+        // Step-2: Send PDU Session Establishment Accept 
+        //         message (Downlink NAS Transport message) 
+        //         back to gnodeb
+        /////////////////////////////////////////////////// 
+        offset = 0;
+        item_count = 0;
+        nmp_hdr_ptr = (nmp_hdr_t *)g__n1_send_msg_buffer;
+
+        nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
+        nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
+        nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
+        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
+
+        nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT);
+        nmp_hdr_ptr->msg_item_len   = 0;
+        nmp_hdr_ptr->msg_item_count = 0;
+
+        msg_id = g__amf_config.my_id << 16;
+        msg_id |= (uint16_t )rand();
+        nmp_hdr_ptr->msg_identifier = htonl(msg_id);
+
+        offset = sizeof(nmp_hdr_t);
+
+        // Add AMF-UE-NGAP-ID
+        ret = nmp_add_item__amf_ue_ngap_id(ptr + offset, amf_ue_ngap_id);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add RAN-UE-NGAP-ID
+        ret = nmp_add_item__ran_ue_ngap_id(ptr + offset, ran_ue_ngap_id);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add NAS-PDU (This PDU contains Registration Accept) (AMF --> gNB)
+        // TBD: Fill nas pdu
+        nas_pdu_len = 36;  // dummy 36 bytes
+        ret = nmp_add_item__nas_pdu(ptr + offset, nas_pdu, nas_pdu_len);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // All items are added. Update NMP message header.
+        nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
+        nmp_hdr_ptr->msg_item_count = htons(item_count);
+
+        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+                               offset,
+                               &(nmp_n1_send_msg_data),
+                               debug_flag))
+        {
+            printf("%s: Send message parsing error.. \n", __func__);
+            return -1;
         }
 
-        return send_ue_attach_response_ok(nmp_n1_rcvd_msg_data_ptr,
-                                          ue_ipv4_addr,
-                                          gnb_v4_addr,
-                                          upf_v4_addr,
-                                          ul_teid,
-                                          dl_teid,
-                                          debug_flag);
+        ////////////////////////////////////////////////
+        // write this msg on n1 socket (towards gnodeb)
+        ////////////////////////////////////////////////
+        n = sendto(g__amf_config.amf_n1_socket_id,
+                   (char *)ptr,
+                   offset,
+                   MSG_WAITALL,
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   sizeof(struct sockaddr_in));
+        if(n != offset)
+        {
+            printf("%s: sendto() failed \n", __func__);
+            return -1;
+        }
+
+        return 0;
+    }
+    else if(MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    {
+        if(debug_flag) printf("%s: Rcvd MsgType = PDU_SESSION_RESOURCE_SETUP_RESP \n", __func__);
+
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        {
+            get_ipv4_addr_string(gnb_n1_addr, string);
+            printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
+            printf("Rejecting this message from Unknown gnodeb \n");
+            return -1;
+        }
+        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+
+        if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
+
+        // Send All Ok message back to gnodeb for completion of procedure.
+        return send_all_ok_msg_to_gnodeb(nmp_n1_rcvd_msg_data_ptr,
+                                         debug_flag);
     }
     else
     {
-        printf("Unknown message... \n");
+        printf("Unknown message type on N1 interface.. \n");
         return -1;
     }
-
     return 0;	
 }
-
 

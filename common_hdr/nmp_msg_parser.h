@@ -33,6 +33,8 @@ struct nmp_msg_data {
     uint32_t  tmsi;
     data_64bit_t  imsi;
     uint8_t   ue_identifier_secret[16];
+    uint8_t   user_loc_info_nr_cell_identity[8];
+    uint8_t   nas_pdu[128];
 
     uint8_t   ul_qos_profile;
     uint8_t   dl_qos_profile;
@@ -40,6 +42,12 @@ struct nmp_msg_data {
     uint8_t   far_action_flags;
     uint8_t   far_dst_interface;
 
+    uint16_t  ran_ue_ngap_id;
+    uint16_t  amf_ue_ngap_id;
+    uint16_t  rrc_establish_cause;
+    uint16_t  user_loc_info_mcc;
+    uint16_t  user_loc_info_mnc;
+    uint32_t  user_loc_info_tac;
     uint16_t  pdr_rule_id;
     uint16_t  pdr_precedence;
     uint32_t  pdr_pdi_match_ipv4_addr;

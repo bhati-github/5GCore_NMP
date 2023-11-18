@@ -7,6 +7,7 @@ upf:
                 src/session_create.c            \
                 src/session_modify.c            \
                 ../common_src/nmp_item.c        \
+                ../common_src/nmp_item_group.c  \
                 ../common_src/nmp_msg_parser.c  \
                 ../common_src/common_util.c             -o   upf
 

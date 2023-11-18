@@ -126,20 +126,40 @@ dump_msg_type(uint16_t msg_type)
             printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "KEEPALIVE_RESPONSE"); printf("\n");
             break;
 
-        case MSG_TYPE__UE_ATTACH_REQUEST:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UE_ATTACH_REQUEST"); printf("\n");
+        case MSG_TYPE__ALL_OK:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "ALL_OK"); printf("\n");
             break;
 
-        case MSG_TYPE__UE_ATTACH_RESPONSE:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "UE_ATTACH_RESPONSE"); printf("\n");
+        case MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "INITIAL_UE_MSG_REGISTRATION_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__UE_DETACH_REQUEST:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UE_DETACH_REQUEST"); printf("\n");
+        case MSG_TYPE__DNLINK_NAS_TRANSPORT_AUTH_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "DNLINK_NAS_TRANSPORT_AUTH_REQ"); printf("\n");
+            break;
+        
+        case MSG_TYPE__UPLINK_NAS_TRANSPORT_AUTH_RESP:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UPLINK_NAS_TRANSPORT_AUTH_RESP"); printf("\n");
             break;
 
-        case MSG_TYPE__UE_DETACH_RESPONSE:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "UE_DETACH_RESPONSE"); printf("\n");
+        case MSG_TYPE__DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT"); printf("\n");
+            break;
+
+        case MSG_TYPE__UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE"); printf("\n");
+            break;
+
+        case MSG_TYPE__UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ"); printf("\n");
+            break;
+
+        case MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT"); printf("\n");
+            break;
+
+        case MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "PDU_SESSION_RESOURCE_SETUP_RESP"); printf("\n");
             break;
 
         case MSG_TYPE__SESSION_CREATE_REQUEST:
@@ -180,142 +200,171 @@ dump_item_id(char *space, uint16_t item_id)
     {
         ////////////////////////////////////////////////////////////////////
         case ITEM_ID__MSG_RESPONSE:
-            printf("%s%-16s : %s \n", space, "Item ID", "MSG_RESPONSE");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "MSG_RESPONSE", ITEM_ID__MSG_RESPONSE);
             break;
 
         case ITEM_ID__UPLINK_QOS_PROFILE:
-            printf("%s%-16s : %s \n", space, "Item ID", "UPLINK_QOS_PROFILE");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "UPLINK_QOS_PROFILE", ITEM_ID__UPLINK_QOS_PROFILE);
             break;
 
         case ITEM_ID__DNLINK_QOS_PROFILE:
-            printf("%s%-16s : %s \n", space, "Item ID", "DNLINK_QOS_PROFILE");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "DNLINK_QOS_PROFILE", ITEM_ID__DNLINK_QOS_PROFILE);
             break;
 
         case ITEM_ID__PDR_ACTION:
-            printf("%s%-16s : %s \n", space, "Item ID", "PDR_ACTION");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "PDR_ACTION", ITEM_ID__PDR_ACTION);
             break;
 
         case ITEM_ID__FAR_ACTION_FLAGS:
-            printf("%s%-16s : %s \n", space, "Item ID", "FAR_ACTION_FLAGS");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "FAR_ACTION_FLAGS", ITEM_ID__FAR_ACTION_FLAGS);
             break;
 
         case ITEM_ID__FAR_DST_INTERFACE:
-            printf("%s%-16s : %s \n", space, "Item ID", "FAR_DST_INTERFACE");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "FAR_DST_INTERFACE", ITEM_ID__FAR_DST_INTERFACE);
             break;
 
         ////////////////////////////////////////////////////////////////////
 
+        case ITEM_ID__RAN_UE_NGAP_ID:
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "RAN_UE_NGAP_ID", ITEM_ID__RAN_UE_NGAP_ID);
+            break;
+        
+        case ITEM_ID__AMF_UE_NGAP_ID:
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "AMF_UE_NGAP_ID", ITEM_ID__AMF_UE_NGAP_ID);
+            break;
+
         case ITEM_ID__PDR_RULE_ID:
-            printf("%s%-16s : %s \n", space, "Item ID", "PDR_RULE_ID");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "PDR_RULE_ID", ITEM_ID__PDR_RULE_ID);
             break;
 
         case ITEM_ID__PDR_PRECEDENCE:
-            printf("%s%-16s : %s \n", space, "Item ID", "PDR_PRECEDENCE");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "PDR_PRECEDENCE", ITEM_ID__PDR_PRECEDENCE);
             break;
 
         case ITEM_ID__PDR_FAR_ID:
-            printf("%s%-16s : %s \n", space, "Item ID", "PDR_FAR_ID");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "PDR_FAR_ID", ITEM_ID__PDR_FAR_ID);
             break;
 
         case ITEM_ID__FAR_RULE_ID:
-            printf("%s%-16s : %s \n", space, "Item ID", "FAR_RULE_ID");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "FAR_RULE_ID", ITEM_ID__FAR_RULE_ID);
+            break;
+
+        case ITEM_ID__RRC_ESTABLISH_CAUSE:
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "RRC_ESTABLISH_CAUSE", ITEM_ID__RRC_ESTABLISH_CAUSE);
             break;
 
 
         ////////////////////////////////////////////////////////////////////
 
         case ITEM_ID__MCC_MNC:
-            printf("%s%-16s : %s \n", space, "Item ID", "MCC_MNC");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "MCC_MNC", ITEM_ID__MCC_MNC);
             break;
 
         case ITEM_ID__TAC:
-            printf("%s%-16s : %s \n", space, "Item ID", "TAC (Tracking Area Code)");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "TAC (Tracking Area Code)", ITEM_ID__TAC);
             break;
 
         case ITEM_ID__CELL_ID:
-            printf("%s%-16s : %s \n", space, "Item ID", "Cell ID");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "Cell ID", ITEM_ID__CELL_ID);
             break;
 
         case ITEM_ID__TMSI:
-            printf("%s%-16s : %s \n", space, "Item ID", "Mobile-TMSI");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "Mobile-TMSI", ITEM_ID__TMSI);
             break;
 
         case ITEM_ID__UE_IPV4_ADDR:
-            printf("%s%-16s : %s \n", space, "Item ID", "UE_IPV4_ADDR");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "UE_IPV4_ADDR", ITEM_ID__UE_IPV4_ADDR);
             break;
 
         case ITEM_ID__PDR_PDI_MATCH_IPV4_ADDR:
-            printf("%s%-16s : %s \n", space, "Item ID", "PDR_PDI_MATCH_IPV4_ADDR");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "PDR_PDI_MATCH_IPV4_ADDR", ITEM_ID__PDR_PDI_MATCH_IPV4_ADDR);
             break;
 
         case ITEM_ID__PDR_PDI_MATCH_GTPU_TEID:
-            printf("%s%-16s : %s \n", space, "Item ID", "PDR_PDI_MATCH_GTPU_TEID");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "PDR_PDI_MATCH_GTPU_TEID", ITEM_ID__PDR_PDI_MATCH_GTPU_TEID);
             break;
 
         ////////////////////////////////////////////////////////////////////
 
         case ITEM_ID__IMSI:
-            printf("%s%-16s : %s \n", space, "Item ID", "IMSI");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "IMSI", ITEM_ID__IMSI);
             break;
 
         case ITEM_ID__GTPU_SELF_IPV4_ENDPOINT:
-            printf("%s%-16s : %s \n", space, "Item ID", "GTPU_SELF_IPV4_ENDPOINT");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "GTPU_SELF_IPV4_ENDPOINT", ITEM_ID__GTPU_SELF_IPV4_ENDPOINT);
             break;
 
         case ITEM_ID__GTPU_PEER_IPV4_ENDPOINT:
-            printf("%s%-16s : %s \n", space, "Item ID", "GTPU_PEER_IPV4_ENDPOINT");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "GTPU_PEER_IPV4_ENDPOINT", ITEM_ID__GTPU_PEER_IPV4_ENDPOINT);
             break;
 
         case ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE:
-            printf("%s%-16s : %s \n", space, "Item ID", "FAR_OUTER_IPV4_HDR_CREATE");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "FAR_OUTER_IPV4_HDR_CREATE", ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE);
             break;
+
+        case ITEM_ID__USER_LOCATION_INFO_TAC:
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "USER_LOCATION_INFO_TAC", ITEM_ID__USER_LOCATION_INFO_TAC);
+            break;
+
 
         ////////////////////////////////////////////////////////////////////
 
         case ITEM_ID__UE_IDENTIFIER_SECRET:
-            printf("%s%-16s : %s \n", space, "Item ID", "UE_IDENTIFIER_SECRET");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "UE_IDENTIFIER_SECRET", ITEM_ID__UE_IDENTIFIER_SECRET);
             break;
 
         case ITEM_ID__UE_IPV6_ADDR:
-            printf("%s%-16s : %s \n", space, "Item ID", "UE_IPV6_ADDR");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "UE_IPV6_ADDR", ITEM_ID__UE_IPV6_ADDR);
+            break;
+
+        case ITEM_ID__USER_LOCATION_INFO_NR_CGI:
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "USER_LOCATION_INFO_NR_CGI", ITEM_ID__USER_LOCATION_INFO_NR_CGI);
             break;
 
         ////////////////////////////////////////////////////////////////////
 
         case ITEM_ID__GTPU_SELF_IPV6_ENDPOINT:
-            printf("%s%-16s : %s \n", space, "Item ID", "GTPU_SELF_IPV6_ENDPOINT");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "GTPU_SELF_IPV6_ENDPOINT", ITEM_ID__GTPU_SELF_IPV6_ENDPOINT);
             break;
 
         case ITEM_ID__GTPU_PEER_IPV6_ENDPOINT:
-            printf("%s%-16s : %s \n", space, "Item ID", "GTPU_PEER_IPV6_ENDPOINT");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "GTPU_PEER_IPV6_ENDPOINT", ITEM_ID__GTPU_PEER_IPV6_ENDPOINT);
             break;
 
         case ITEM_ID__FAR_OUTER_IPV6_HDR_CREATE:
-            printf("%s%-16s : %s \n", space, "Item ID", "FAR_OUTER_IPV6_HDR_CREATE");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "FAR_OUTER_IPV6_HDR_CREATE", ITEM_ID__FAR_OUTER_IPV6_HDR_CREATE);
+            break;
+
+        case ITEM_ID__NAS_PDU:
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "ITEM_ID__NAS_PDU", ITEM_ID__NAS_PDU);
             break;
 
         ////////////////////////////////////////////////////////////////////
 
         case ITEM_GROUP_ID__N3_PDR:
-            printf("%s%-16s : %s \n", space, "Item Group ID", "N3_PDR");
+            printf("%s%-16s : %s (%u)\n", space, "Item Group ID", "N3_PDR", ITEM_GROUP_ID__N3_PDR);
             break;
 
         case ITEM_GROUP_ID__N6_PDR:
-            printf("%s%-16s : %s \n", space, "Item Group ID", "N6_PDR");
+            printf("%s%-16s : %s (%u)\n", space, "Item Group ID", "N6_PDR", ITEM_GROUP_ID__N6_PDR);
             break;
 
         case ITEM_GROUP_ID__N3_FAR:
-            printf("%s%-16s : %s \n", space, "Item Group ID", "N3_FAR");
+            printf("%s%-16s : %s (%u)\n", space, "Item Group ID", "N3_FAR", ITEM_GROUP_ID__N3_FAR);
             break;
 
         case ITEM_GROUP_ID__N6_FAR:
-            printf("%s%-16s : %s \n", space, "Item Group ID", "N6_FAR");
+            printf("%s%-16s : %s (%u)\n", space, "Item Group ID", "N6_FAR", ITEM_GROUP_ID__N6_FAR);
+            break;
+
+        case ITEM_GROUP_ID__USER_LOCATION_INFO:
+            printf("%s%-16s : %s (%u)\n", space, "Item Group ID", "USER_LOCATION_INFO", ITEM_GROUP_ID__USER_LOCATION_INFO);
             break;
 
         ////////////////////////////////////////////////////////////////////
 
         default:
-            printf("%s%-16s : %s \n", space, "Item ID", "Unknown");
+            printf("%s%-16s : %s (%u)\n", space, "Item ID", "Unknown", item_id);
             break;
     }
 }
@@ -333,15 +382,18 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__PDR_ACTION:
         case ITEM_ID__FAR_ACTION_FLAGS:
         case ITEM_ID__FAR_DST_INTERFACE:
-            *item_type = ITEM_TYPE_IS_TYPE_1;
+            *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (1 byte)
             return 0;
 
         // 2 byte items
+        case ITEM_ID__RAN_UE_NGAP_ID:
+        case ITEM_ID__AMF_UE_NGAP_ID:
         case ITEM_ID__PDR_RULE_ID:
         case ITEM_ID__PDR_PRECEDENCE:
         case ITEM_ID__PDR_FAR_ID:
         case ITEM_ID__FAR_RULE_ID:
-            *item_type = ITEM_TYPE_IS_TYPE_1;
+        case ITEM_ID__RRC_ESTABLISH_CAUSE:
+            *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (2 bytes)
             return 0;
 
         // 4 byte items
@@ -352,7 +404,7 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__UE_IPV4_ADDR:
         case ITEM_ID__PDR_PDI_MATCH_IPV4_ADDR:
         case ITEM_ID__PDR_PDI_MATCH_GTPU_TEID:
-            *item_type = ITEM_TYPE_IS_TYPE_1;
+            *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (4 bytes)
             return 0;
 
         // 8 byte items
@@ -360,20 +412,23 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__GTPU_SELF_IPV4_ENDPOINT:
         case ITEM_ID__GTPU_PEER_IPV4_ENDPOINT:
         case ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE:
-            *item_type = ITEM_TYPE_IS_TYPE_1;
+        case ITEM_ID__USER_LOCATION_INFO_TAC:
+            *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (8 bytes)
             return 0;
 
         // 16 byte items
         case ITEM_ID__UE_IDENTIFIER_SECRET:
         case ITEM_ID__UE_IPV6_ADDR:
-            *item_type = ITEM_TYPE_IS_TYPE_1;
+        case ITEM_ID__USER_LOCATION_INFO_NR_CGI:
+            *item_type = ITEM_TYPE_IS_TYPE_1;  // value is fixed size (16 bytes)
             return 0;
 
         // more than 16 bytes (variable length)
         case ITEM_ID__GTPU_SELF_IPV6_ENDPOINT:
         case ITEM_ID__GTPU_PEER_IPV6_ENDPOINT:
         case ITEM_ID__FAR_OUTER_IPV6_HDR_CREATE:
-            *item_type = ITEM_TYPE_IS_TYPE_2;
+        case ITEM_ID__NAS_PDU:
+            *item_type = ITEM_TYPE_IS_TYPE_2; // value is now a bytestream of variable length 
             return 0;
 
         // item groups
@@ -381,7 +436,8 @@ get_item_type(uint16_t item_id,
         case ITEM_GROUP_ID__N6_PDR:
         case ITEM_GROUP_ID__N3_FAR:
         case ITEM_GROUP_ID__N6_FAR:
-            *item_type = ITEM_TYPE_IS_TYPE_3;
+        case ITEM_GROUP_ID__USER_LOCATION_INFO:
+            *item_type = ITEM_TYPE_IS_TYPE_3; // group of items (fixed-length and variable-length)
             return 0;
 
         default:
@@ -407,13 +463,17 @@ get_type1_item_value(char           *space,
     int i = 0;
     char string[128];
 
+    // --------------------------------
+    // | Fixed length item values     |
+    // --------------------------------
     switch (item_id)
     {
         /////////////////////////////////////////////////////////////////////
-
+        // Extract 1 byte items.
+        /////////////////////////////////////////////////////////////////////
         case ITEM_ID__MSG_RESPONSE:
+            if(debug_flag) printf("%-16s : 1 byte \n", "Item Length");
             nmp_msg_parsed_data_ptr->msg_response = *(ptr);
-
             if(debug_flag)
             {
                 printf("%s%-16s : 1 byte (0x%02x) \n", space, "Item Value", *(ptr));
@@ -434,6 +494,7 @@ get_type1_item_value(char           *space,
             return 1;
 
         case ITEM_ID__UPLINK_QOS_PROFILE:
+            if(debug_flag) printf("%-16s : 1 byte \n", "Item Length");
             nmp_msg_parsed_data_ptr->ul_qos_profile = *(ptr);
 
             if(debug_flag)
@@ -445,6 +506,7 @@ get_type1_item_value(char           *space,
             return 1;
 
         case ITEM_ID__DNLINK_QOS_PROFILE:
+            if(debug_flag) printf("%-16s : 1 byte \n", "Item Length");
             nmp_msg_parsed_data_ptr->dl_qos_profile = *(ptr);
 
             if(debug_flag)
@@ -456,6 +518,7 @@ get_type1_item_value(char           *space,
             return 1;
 
         case ITEM_ID__PDR_ACTION:
+            if(debug_flag) printf("%-16s : 1 byte \n", "Item Length");
             nmp_msg_parsed_data_ptr->pdr_action = *(ptr);
 
             if(debug_flag)
@@ -467,6 +530,7 @@ get_type1_item_value(char           *space,
             return 1;
 
         case ITEM_ID__FAR_ACTION_FLAGS:
+            if(debug_flag) printf("%-16s : 1 byte \n", "Item Length");
             nmp_msg_parsed_data_ptr->far_action_flags = *(ptr);
 
             if(debug_flag)
@@ -479,6 +543,7 @@ get_type1_item_value(char           *space,
             return 1;
 
         case ITEM_ID__FAR_DST_INTERFACE:
+            if(debug_flag) printf("%-16s : 1 byte \n", "Item Length");
             nmp_msg_parsed_data_ptr->far_dst_interface = *(ptr);
 
             if(debug_flag)
@@ -490,9 +555,37 @@ get_type1_item_value(char           *space,
             }
             return 1;
 
+        
+
         /////////////////////////////////////////////////////////////////////
+        // Extract 2 byte items.
+        /////////////////////////////////////////////////////////////////////
+        case ITEM_ID__RAN_UE_NGAP_ID:
+            if(debug_flag) printf("%-16s : 2 bytes \n", "Item Length");
+            nmp_msg_parsed_data_ptr->ran_ue_ngap_id = htons(*((uint16_t *)ptr));
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
+
+                printf("%s%-32s :-> %u \n", space, "RAN-UE-NGAP-ID", nmp_msg_parsed_data_ptr->ran_ue_ngap_id);
+            }
+            return 2;
+
+        case ITEM_ID__AMF_UE_NGAP_ID:
+            if(debug_flag) printf("%-16s : 2 bytes \n", "Item Length");
+            nmp_msg_parsed_data_ptr->amf_ue_ngap_id = htons(*((uint16_t *)ptr));
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
+
+                printf("%s%-32s :-> %u \n", space, "AMF-UE-NGAP-ID", nmp_msg_parsed_data_ptr->amf_ue_ngap_id);
+            }
+            return 2;
 
         case ITEM_ID__PDR_RULE_ID:
+            if(debug_flag) printf("%-16s : 2 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->pdr_rule_id = htons(*((uint16_t *)ptr));
 
             if(debug_flag)
@@ -504,6 +597,7 @@ get_type1_item_value(char           *space,
             return 2;
 
         case ITEM_ID__PDR_PRECEDENCE:
+            if(debug_flag) printf("%-16s : 2 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->pdr_precedence = htons(*((uint16_t *)ptr));
 
             if(debug_flag)
@@ -515,6 +609,7 @@ get_type1_item_value(char           *space,
             return 2;
 
         case ITEM_ID__PDR_FAR_ID:
+            if(debug_flag) printf("%-16s : 2 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->pdr_far_id = htons(*((uint16_t *)ptr));
 
             if(debug_flag)
@@ -526,6 +621,7 @@ get_type1_item_value(char           *space,
             return 2;
 
         case ITEM_ID__FAR_RULE_ID:
+            if(debug_flag) printf("%-16s : 2 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->far_rule_id = htons(*((uint16_t *)ptr));
 
             if(debug_flag)
@@ -536,9 +632,25 @@ get_type1_item_value(char           *space,
             }
             return 2;
 
-        /////////////////////////////////////////////////////////////////////
+        case ITEM_ID__RRC_ESTABLISH_CAUSE:
+            if(debug_flag) printf("%-16s : 2 bytes \n", "Item Length");
+            nmp_msg_parsed_data_ptr->rrc_establish_cause = htons(*((uint16_t *)ptr));
 
+            if(debug_flag)
+            {
+                printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
+
+                printf("%s%-32s :-> %u \n", space, "RRC Establishment Cause", nmp_msg_parsed_data_ptr->rrc_establish_cause);
+            }
+            return 2;
+
+
+
+        /////////////////////////////////////////////////////////////////////
+        // Extract 4 byte items.
+        /////////////////////////////////////////////////////////////////////
         case ITEM_ID__MCC_MNC:
+            if(debug_flag) printf("%-16s : 4 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->mcc = htons(*((uint16_t *)ptr));
             nmp_msg_parsed_data_ptr->mnc = htons(*((uint16_t *)(ptr + 2)));
 
@@ -556,6 +668,7 @@ get_type1_item_value(char           *space,
             return 4;
 
         case ITEM_ID__TAC:
+            if(debug_flag) printf("%-16s : 4 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->tac = htonl(*((uint32_t *)ptr));
 
             if(debug_flag)
@@ -569,6 +682,7 @@ get_type1_item_value(char           *space,
             return 4; 
 
         case ITEM_ID__CELL_ID:
+            if(debug_flag) printf("%-16s : 4 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->cell_id = htonl(*((uint32_t *)ptr));
 
             if(debug_flag)
@@ -582,6 +696,7 @@ get_type1_item_value(char           *space,
             return 4;
 
         case ITEM_ID__TMSI:
+            if(debug_flag) printf("%-16s : 4 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->tmsi = htonl(*((uint32_t *)ptr));
 
             if(debug_flag)
@@ -596,6 +711,7 @@ get_type1_item_value(char           *space,
             return 4;
 
         case ITEM_ID__UE_IPV4_ADDR:
+            if(debug_flag) printf("%-16s : 4 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->ue_ip_addr.ip_version = IP_VER_IS_V4;
             nmp_msg_parsed_data_ptr->ue_ip_addr.u.v4_addr  = htonl(*((uint32_t *)ptr));
 
@@ -610,6 +726,7 @@ get_type1_item_value(char           *space,
             return 4;
 
         case ITEM_ID__PDR_PDI_MATCH_IPV4_ADDR:
+            if(debug_flag) printf("%-16s : 4 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->pdr_pdi_match_ipv4_addr = htonl(*((uint32_t *)ptr));
 
             if(debug_flag)
@@ -623,6 +740,7 @@ get_type1_item_value(char           *space,
             return 4;
 
         case ITEM_ID__PDR_PDI_MATCH_GTPU_TEID:
+            if(debug_flag) printf("%-16s : 4 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->pdr_pdi_match_gtpu_teid = htonl(*((uint32_t *)ptr));
 
             if(debug_flag)
@@ -636,9 +754,13 @@ get_type1_item_value(char           *space,
             }
             return 4;
 
-        /////////////////////////////////////////////////////////////////////
 
+
+        /////////////////////////////////////////////////////////////////////
+        // Extract 8 byte items.
+        /////////////////////////////////////////////////////////////////////
         case ITEM_ID__IMSI:
+            if(debug_flag) printf("%-16s : 8 bytes \n", "Item Length");
             memcpy(nmp_msg_parsed_data_ptr->imsi.u8, ptr, 8);
 
             if(debug_flag)
@@ -659,6 +781,7 @@ get_type1_item_value(char           *space,
             return 8;
 
         case ITEM_ID__GTPU_SELF_IPV4_ENDPOINT:
+            if(debug_flag) printf("%-16s : 8 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->self_v4_endpoint.v4_addr = htonl(*((uint32_t *)ptr));
             nmp_msg_parsed_data_ptr->self_v4_endpoint.teid    = htonl(*((uint32_t *)(ptr + 4)));
 
@@ -680,8 +803,8 @@ get_type1_item_value(char           *space,
             }
             return 8;
 
-
         case ITEM_ID__GTPU_PEER_IPV4_ENDPOINT:
+            if(debug_flag) printf("%-16s : 8 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->peer_v4_endpoint.v4_addr = htonl(*((uint32_t *)ptr));
             nmp_msg_parsed_data_ptr->peer_v4_endpoint.teid    = htonl(*((uint32_t *)(ptr + 4)));
 
@@ -704,6 +827,7 @@ get_type1_item_value(char           *space,
             return 8;
 
         case ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE:
+            if(debug_flag) printf("%-16s : 8 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->far_outer_v4_hdr_create_addr = htonl(*((uint32_t *)ptr));
             nmp_msg_parsed_data_ptr->far_outer_v4_hdr_create_teid = htonl(*((uint32_t *)(ptr + 4)));
 
@@ -725,9 +849,40 @@ get_type1_item_value(char           *space,
             }
             return 8;
 
-        /////////////////////////////////////////////////////////////////////
+        case ITEM_ID__USER_LOCATION_INFO_TAC:
+            if(debug_flag) printf("%-16s : 8 bytes \n", "Item Length");
+            nmp_msg_parsed_data_ptr->user_loc_info_mcc = htons(*((uint16_t *)ptr));
+            nmp_msg_parsed_data_ptr->user_loc_info_mnc = htons(*((uint16_t *)(ptr + 2)));
+            nmp_msg_parsed_data_ptr->user_loc_info_tac = htonl(*((uint32_t *)(ptr + 4)));
 
+            if(debug_flag)
+            {
+                printf("%s%-16s : 8 bytes (", space, "Item Value");
+                for(i = 0; i < 8; i++)
+                {
+                    printf("%02x", *(ptr + i));
+                }
+                printf(")\n");
+
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MCC)", 
+                        nmp_msg_parsed_data_ptr->user_loc_info_mcc,
+                        nmp_msg_parsed_data_ptr->user_loc_info_mcc);
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MNC)", 
+                        nmp_msg_parsed_data_ptr->user_loc_info_mnc,
+                        nmp_msg_parsed_data_ptr->user_loc_info_mnc);
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (TAC)",
+                        nmp_msg_parsed_data_ptr->user_loc_info_tac,
+                        nmp_msg_parsed_data_ptr->user_loc_info_tac);
+
+            }
+            return 8;
+
+
+        /////////////////////////////////////////////////////////////////////
+        // Extract 16 byte items.
+        /////////////////////////////////////////////////////////////////////
         case ITEM_ID__UE_IDENTIFIER_SECRET:
+            if(debug_flag) printf("%-16s : 16 bytes \n", "Item Length");
             memcpy(nmp_msg_parsed_data_ptr->ue_identifier_secret, ptr, 16);
 
             if(debug_flag)
@@ -748,9 +903,8 @@ get_type1_item_value(char           *space,
             }
             return 16;
 
-
-
         case ITEM_ID__UE_IPV6_ADDR:
+            if(debug_flag) printf("%-16s : 16 bytes \n", "Item Length");
             nmp_msg_parsed_data_ptr->ue_ip_addr.ip_version = IP_VER_IS_V6;
             memcpy(nmp_msg_parsed_data_ptr->ue_ip_addr.u.v6_addr.u8, ptr, 16);
 
@@ -768,7 +922,35 @@ get_type1_item_value(char           *space,
             }
             return 16;
 
-        /////////////////////////////////////////////////////////////////////
+        case ITEM_ID__USER_LOCATION_INFO_NR_CGI:
+            if(debug_flag) printf("%-16s : 16 bytes \n", "Item Length");
+            nmp_msg_parsed_data_ptr->user_loc_info_mcc = htons(*((uint16_t *)ptr));
+            nmp_msg_parsed_data_ptr->user_loc_info_mnc = htons(*((uint16_t *)(ptr + 2)));
+            memcpy(nmp_msg_parsed_data_ptr->user_loc_info_nr_cell_identity, ptr + 8, 8);
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : 16 bytes (", space, "Item Value");
+                for(i = 0; i < 16; i++)
+                {
+                    printf("%02x", *(ptr + i));
+                }
+                printf(")\n");
+
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MCC)",
+                        nmp_msg_parsed_data_ptr->user_loc_info_mcc,
+                        nmp_msg_parsed_data_ptr->user_loc_info_mcc);
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MNC)",
+                        nmp_msg_parsed_data_ptr->user_loc_info_mnc,
+                        nmp_msg_parsed_data_ptr->user_loc_info_mnc);
+                printf("%s%-32s :->  ", space, "User Location Info (NR Cell Identity)");
+                for(i = 0; i < 8; i++)
+                {
+                    printf("%02x", *(ptr + 8 + i));
+                }
+            }
+            return 16;
+
 
         default:
             return -1;
@@ -778,6 +960,9 @@ get_type1_item_value(char           *space,
 }
 
 
+/////////////////////////////////////////////////////
+// Type-2 items carry variable length item values
+/////////////////////////////////////////////////////
 static int
 get_type2_item_value(char           *space,
                      uint16_t        item_id,
@@ -788,7 +973,12 @@ get_type2_item_value(char           *space,
     int i = 0;
     char string[128];
     uint16_t item_len = htons(*((uint16_t *)ptr));
-
+    
+    // ----------------------------------------
+    // | Item length | Actual item value bytes |
+    // | (2 bytes)   |       n bytes           |
+    // ----------------------------------------
+    if(debug_flag) printf("%-16s : %u bytes \n", "Item Length", item_len);
     switch (item_id)
     {
         case ITEM_ID__GTPU_SELF_IPV6_ENDPOINT:
@@ -807,7 +997,7 @@ get_type2_item_value(char           *space,
                 printf("%s%-16s : %u bytes (", space, "Item Value", item_len);
                 for(i = 0; i < item_len; i++)
                 {
-                    printf("%02x", *(ptr + i));
+                    printf("%02x", *(ptr + 2 + i));
                 }
                 printf(")\n");
 
@@ -837,7 +1027,7 @@ get_type2_item_value(char           *space,
                 printf("%s%-16s : %u bytes (", space, "Item Value", item_len);
                 for(i = 0; i < item_len; i++)
                 {
-                    printf("%02x", *(ptr + i));
+                    printf("%02x", *(ptr + 2 + i));
                 }
                 printf(")\n");
 
@@ -866,7 +1056,7 @@ get_type2_item_value(char           *space,
                 printf("%s%-16s : %u bytes (", space, "Item Value", item_len);
                 for(i = 0; i < item_len; i++)
                 {
-                    printf("%02x", *(ptr + i));
+                    printf("%02x", *(ptr + 2 + i));
                 }
                 printf(")\n");
 
@@ -878,6 +1068,28 @@ get_type2_item_value(char           *space,
 
             }
             return (2 + item_len);
+
+        case ITEM_ID__NAS_PDU:
+            memcpy(nmp_msg_parsed_data_ptr->nas_pdu, ptr + 2, item_len);
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : %u bytes (", space, "Item Value", item_len);
+                for(i = 0; i < item_len; i++)
+                {
+                    printf("%02x", *(ptr + 2 + i));
+                }
+                printf(")\n");
+
+                printf("%s%-32s :-> ", space, "NAS PDU");
+                for(i = 0; i < item_len; i++)
+                {
+                    printf("%02x", *(ptr + 2 + i));
+                }
+                printf("\n");
+            }
+            return (2 + item_len);
+
 
         default:
             return -1;
@@ -999,6 +1211,7 @@ get_item_group_value(uint16_t        item_id,
         case ITEM_GROUP_ID__N6_PDR:
         case ITEM_GROUP_ID__N3_FAR:
         case ITEM_GROUP_ID__N6_FAR:
+        case ITEM_GROUP_ID__USER_LOCATION_INFO:
             ret = get_item_group_values(ptr + offset, 
                     item_count, 
                     item_len, 
@@ -1064,7 +1277,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                 nmp_msg_parsed_data_ptr->msg_identifier);  
         printf("--------------------------------------------------------------------\n");
         printf("%-16s : %u  \n", "Item Count", nmp_msg_parsed_data_ptr->msg_item_count);
-        printf("%-16s : %u bytes \n", "Item length", nmp_msg_parsed_data_ptr->msg_item_len);
+        printf("%-16s : %u bytes (20 bytes of NMP header is not included) \n", "Item length", nmp_msg_parsed_data_ptr->msg_item_len);
         printf("--------------------------------------------------------------------\n");
     }
 
@@ -1080,6 +1293,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
 
         if(-1 == get_item_type(item_id, &item_type))
         {
+            if(debug_flag) printf("Failure in getting Item Type for Item ID (%u) \n", item_id);
             return -1;
         }
 
@@ -1100,6 +1314,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                     debug_flag);
             if(-1 == ret)
             {
+                if(debug_flag) printf("Failure in getting Type-1 item value \n");
                 return -1;
             }
             else
@@ -1118,6 +1333,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                     debug_flag);
             if(-1 == ret)
             {
+                if(debug_flag) printf("Failure in getting Type-2 item value \n");
                 return -1;
             }
             else
@@ -1135,6 +1351,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                     debug_flag);
             if(-1 == ret)
             {
+                if(debug_flag) printf("Failure in getting Item group value \n");
                 return -1;
             }
             else
@@ -1142,6 +1359,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                 offset += (2 + ret);
             }
         }
+        if(debug_flag) GREEN_PRINT("---> Parsing offset is now %u \n", offset);
 
         parsed_item_count += 1;
 
@@ -1162,6 +1380,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
 
     if(debug_flag) 
     {
+        GREEN_PRINT("Message Parsing Complete..."); printf("\n");
         printf("--------------------------------------------------------------------\n\n\n");
     }
 

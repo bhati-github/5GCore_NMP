@@ -45,7 +45,7 @@
 
 #include "gnb.h"
 #include "n1_msg_handler.h"
-#include "ue_attach.h"
+#include "ue_reg_and_pdu_setup.h"
 
 gnb_config_t   g__gnb_config;
 
@@ -289,17 +289,17 @@ main(int argc, char **argv)
     // gnodeB thread will have an incremental id
     g__gnb_config.my_id  = GNB_ID_BASE;
 
-    printf("We have to send User Attach Request for %u users \n\n", g__user_count);
+    printf("Perform procedure [ UE Registration and PDU Setup ] for %u users \n\n", g__user_count);
 
     for(user_id = 0; user_id < g__user_count; user_id++)
     {
-        if(-1 == send_ue_attach_request_msg_to_amf(user_id, g__gnb_config.debug_switch))
+        if(-1 == perform_ue_reg_and_pdu_setup_procedure(user_id, g__gnb_config.debug_switch))
         {
-            printf("Failed to send UE attach message for user id %u \n\n", user_id);
+            printf("Failed to perform procedure [ UE Registration and PDU Setup ] for user id %u \n\n", user_id);
         }
         else
         {
-            printf("UE attach successful for user id %u \n\n", user_id);
+            printf("Procedure [ UE Registration and PDU Setup ] successful for user id %u \n\n", user_id);
         }
     }
 

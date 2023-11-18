@@ -31,23 +31,4 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
                                uint32_t     upf_v4_addr,
                                uint8_t      debug_flag);
 
-
-
-int
-nmp_add_item_group__n3_pdr(uint8_t *ptr,
-                           uint32_t session_index);
-
-int
-nmp_add_item_group__n6_pdr(uint8_t *ptr,
-                           uint32_t session_index);
-
-int
-nmp_add_item_group__n3_far(uint8_t *ptr,
-                           uint32_t session_index);
-
-int
-nmp_add_item_group__n6_far(uint8_t *ptr,
-                           uint32_t session_index);
-
-
 #endif
