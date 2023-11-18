@@ -178,6 +178,11 @@ UDP port for NMP protocol is 1208 (just a random selection).
 
 <br />
 <br />
+
+ Following pcap packet sequnece between gnodeB and AMF is simulated inside this project.
+ ![nas-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/13d4faf3-9b60-428c-bdb4-3ddf33cbde95)
+<br />
+<br />
  
   ### SequenceDiagram
   
