@@ -253,20 +253,22 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />  
 
-## 8. Steps to run network simulation in single virtual machine (Preferred approach)
+## 8. Network Diagram for simulation inside a single virtual machine (Preferred approach)
 
     You need to have at least 4 interfaces inside your VM.
 
     If you are using virtualbox for creation and management of virtual machines, it is very easy to add 
-    multiple network interfaces to your VM. Once these network interfaces are created, you can bring 
-    them up and assign IP address.
+    multiple network interfaces to your VM using virtualbox vm settings. Once these network interfaces 
+    are created, you can bring them up and assign IP address. By default, you have at least one interface 
+    created inside your vm (for example ens1). You have to add three more interfaces (ens2, ens3 and ens4).
+
+    Suppose, default network interface ens1 have IP address 192.168.10.21/24 in your vm. 
+    If you are adding three more interfaces to your vm, then bring them UP and assign IP address as follows:
     
-    sudo ip link set ens1 up 
     sudo ip link set ens2 up 
     sudo ip link set ens3 up
     sudo ip link set ens4 up 
     
-    sudo ip addr add 192.168.10.21/24 dev ens1 
     sudo ip addr add 192.168.10.22/24 dev ens2 
     sudo ip addr add 192.168.10.23/24 dev ens3  
     sudo ip addr add 192.168.10.24/24 dev ens4 
