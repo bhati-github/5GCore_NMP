@@ -17,7 +17,9 @@
 -  It is known that HTTP REST based APIs are used currently in 5G core network for inter-node communications. HTTP REST (Representational State Transfer) concept is
    to send complete state even if you wish to modify a single 2 byte element in target node. So, for just trying to communicate a 2 byte change in state, you are
    transferring entire state (in KB) towards target node. Imagine if your state grows to 10 MB in size for some reason, are you going to send your complete state
-   of 10 MB (spanning across multiple fragmented packets) towards target node? This is a terrible waste of Internet bandwidth. 
+   of 10 MB (spanning across multiple fragmented packets) towards target node? This is a terrible waste of Internet bandwidth.
+
+- Use of SCTP protocol can be bypassed with this protocol between gnodeB and AMF.
 
 <br />
 <br />
