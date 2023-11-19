@@ -164,7 +164,8 @@ UDP port for NMP protocol is 1208 (just a random selection).
    actual interfaces. I used these interfaces as per my convenience. I personally call the
    combination of N1, N2 and N3 in this diagram as 'Call Triangle'.
   
-![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ee6f7d25-429d-44c8-a77e-c36cd88be0c5)
+![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ed4f7a2c-3e48-4649-8a52-88fc0a4381f7)
+
 
 
    The code inside this demonstration project illustrates the use of NMP protocol 
