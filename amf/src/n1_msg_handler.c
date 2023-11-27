@@ -117,6 +117,8 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     uint8_t nas_pdu[128];
     uint16_t nas_pdu_len = 0;
     uint8_t *ptr = g__n1_send_msg_buffer;
+    uint8_t relative_amf_capacity = 1;
+    uint8_t amf_name[256];
     uint16_t gnb_index = 0;
     uint16_t amf_ue_ngap_id = 1;
     uint16_t ran_ue_ngap_id = 1;
@@ -126,9 +128,131 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     uint32_t ul_teid = 0;
     uint32_t dl_teid = 0;
     uint32_t msg_id = 0;
+    guami_item_t guami_items[4];
+    uint16_t guami_item_count = 0;
+    plmn_item_t plmn_items[4];
+    uint16_t plmn_item_count = 0;
     nmp_msg_data_t nmp_n1_send_msg_data;
 
-    if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    {
+        if(debug_flag) printf("%s: Rcvd MsgType = NG_SETUP_REQ \n", __func__);
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        {
+            get_ipv4_addr_string(gnb_n1_addr, string);
+            printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
+            printf("Rejecting this message from Unknown gnodeb \n");
+            return -1;
+        }
+        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+
+        if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
+
+        //////////////////////////////////////////////////////
+        // Send Authentication Request message (Downlink NAS
+        // transport message) back to gnodeb
+        //////////////////////////////////////////////////////
+        offset = 0;
+        item_count = 0;
+        nmp_hdr_ptr = (nmp_hdr_t *)ptr;
+
+        nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
+        nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
+        nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
+        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
+
+        nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__NG_SETUP_RESP);
+        nmp_hdr_ptr->msg_item_len   = 0;
+        nmp_hdr_ptr->msg_item_count = 0;
+
+        msg_id = g__amf_config.my_id << 16;
+        msg_id |= (uint16_t )rand();
+        nmp_hdr_ptr->msg_identifier = htonl(msg_id);
+
+        offset = sizeof(nmp_hdr_t);
+
+        // Add AMF-Name
+        strcpy((char *)amf_name, "amf.5gcore.mcc404.mnc10.3gppnetwork.org");
+        ret = nmp_add_item__amf_name(ptr + offset, amf_name, strlen((const char *)amf_name));
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add Served GUAMI List
+        guami_items[0].mcc = htons(404); 
+        guami_items[0].mnc = htons(10);
+        guami_items[0].amf_region_id = htons(100); 
+        guami_items[0].amf_set_id    = htons(100);
+        guami_items[0].amf_pointer   = htons(23);
+        guami_item_count = 1;
+        ret = nmp_add_item_group__guami_list(ptr + offset, guami_items, guami_item_count);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // Add RelativeAMFCapacity
+        ret = nmp_add_item__relative_amf_capacity(ptr + offset, relative_amf_capacity);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+
+        // PLMN Support List
+        plmn_item_count = 1;
+        plmn_items[0].mcc = 404; 
+        plmn_items[0].mnc = 10;
+        plmn_items[0].slice_support_item_count = 1;
+        plmn_items[0].slice_support_item[0].nssai_sst = 1; 
+        plmn_items[0].slice_support_item[0].nssai_sd  = 1;
+        ret = nmp_add_item_group__plmn_support_list(ptr + offset, plmn_items, plmn_item_count);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+        
+
+        // All items are added. Update NMP message header.
+        nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
+        nmp_hdr_ptr->msg_item_count = htons(item_count);
+
+        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+                               offset,
+                               &(nmp_n1_send_msg_data),
+                               debug_flag))
+        {
+            printf("%s: Send message parsing error.. \n", __func__);
+            return -1;
+        }
+
+        ////////////////////////////////////////////////
+        // write this msg on n1 socket (towards gnodeb)
+        ////////////////////////////////////////////////
+        n = sendto(g__amf_config.amf_n1_socket_id,
+                   (char *)ptr,
+                   offset,
+                   MSG_WAITALL,
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   sizeof(struct sockaddr_in));
+        if(n != offset)
+        {
+            printf("%s: sendto() failed \n", __func__);
+            return -1;
+        }
+
+        return 0;
+    }
+    else if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
     {
         if(debug_flag) printf("%s: Rcvd MsgType = INITIAL_UE_MSG_REGISTRATION_REQ \n", __func__);
  

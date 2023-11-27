@@ -45,6 +45,7 @@
 
 #include "gnb.h"
 #include "n1_msg_handler.h"
+#include "ng_setup.h"
 #include "ue_reg_and_pdu_setup.h"
 
 gnb_config_t   g__gnb_config;
@@ -87,7 +88,7 @@ create_gnb_n1_listener_socket()
         return -1;
     }
 
-    perror("Bind_Operation: ");
+    printf("N1 listener socket created.. \n");
     return 0;
 }
 
@@ -289,7 +290,16 @@ main(int argc, char **argv)
     // gnodeB thread will have an incremental id
     g__gnb_config.my_id  = GNB_ID_BASE;
 
-    printf("Perform procedure [ UE Registration and PDU Setup ] for %u users \n\n", g__user_count);
+    // Send NGSetupRequest to AMF
+    if(-1 == perform_ng_setup_procedure(g__gnb_config.debug_switch))
+    {
+        printf("Unable to perform NGSetup Procedure with AMF \n");
+        return -1;
+    }
+
+    // NGSetup is completed with AMF .. 
+    // Continue with next procedure
+    if(g__gnb_config.debug_switch) printf("Perform [ UE Registration and PDU Setup Procedure ] for %u users \n\n", g__user_count);
 
     for(user_id = 0; user_id < g__user_count; user_id++)
     {
@@ -302,7 +312,7 @@ main(int argc, char **argv)
             printf("Procedure [ UE Registration and PDU Setup ] successful for user id %u \n\n", user_id);
         }
     }
-
+    
     printf("Done ....... \n");
 
     return 0;

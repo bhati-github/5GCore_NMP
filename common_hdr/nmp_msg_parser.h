@@ -24,8 +24,6 @@ struct nmp_msg_data {
     uint16_t  gnb_index;
     uint8_t   msg_response;
 
-    /////////////////////
-    /////////////////////
     uint16_t  mcc;
     uint16_t  mnc;
     uint32_t  tac;
@@ -35,7 +33,12 @@ struct nmp_msg_data {
     uint8_t   ue_identifier_secret[16];
     uint8_t   user_loc_info_nr_cell_identity[8];
     uint8_t   nas_pdu[128];
+    uint8_t   ran_node_name[256];
+    uint8_t   amf_name[256];
 
+    uint8_t   default_paging_drx;
+    uint8_t   relative_amf_capacity;
+    uint8_t   nssai_sst;
     uint8_t   ul_qos_profile;
     uint8_t   dl_qos_profile;
     uint8_t   pdr_action;
@@ -44,10 +47,17 @@ struct nmp_msg_data {
 
     uint16_t  ran_ue_ngap_id;
     uint16_t  amf_ue_ngap_id;
+    uint16_t  guami_mcc;
+    uint16_t  guami_mnc;
+    uint16_t  guami_amf_region_id;
+    uint16_t  guami_amf_set_id;
+    uint16_t  guami_amf_pointer;
     uint16_t  rrc_establish_cause;
     uint16_t  user_loc_info_mcc;
     uint16_t  user_loc_info_mnc;
     uint32_t  user_loc_info_tac;
+    uint32_t  nssai_sd;
+    uint32_t  gnodeb_id;
     uint16_t  pdr_rule_id;
     uint16_t  pdr_precedence;
     uint32_t  pdr_pdi_match_ipv4_addr;
@@ -66,7 +76,6 @@ struct nmp_msg_data {
 
     v6_teid_endpoint_t  self_v6_endpoint;
     v6_teid_endpoint_t  peer_v6_endpoint;
-    /////////////////////
 
 } __attribute__((packed));
 typedef struct nmp_msg_data  nmp_msg_data_t;

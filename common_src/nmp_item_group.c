@@ -40,8 +40,241 @@
 #include <arpa/inet.h>
 
 #include "app.h"
+#include "common_util.h"
 #include "nmp.h"
 #include "nmp_item.h"
+
+int
+nmp_add_item_group__global_ran_node_id(uint8_t *ptr,
+                                       uint16_t mcc,
+                                       uint16_t mnc,
+                                       uint32_t gnodeb_id)
+{
+    int ret = 0;
+    uint16_t item_count = 0;
+    uint16_t offset = 0;
+
+    *((uint16_t *)(ptr)) = htons(ITEM_GROUP_ID__GLOBAL_RAN_NODE_ID);
+
+    // 2 bytes of group_item_id + 2 bytes of item_count + 2 bytes of item_len
+    offset = 6;
+
+    ret = nmp_add_item__mcc_mnc(ptr+ offset, mcc, mnc);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+    ret = nmp_add_item__gnodeb_id(ptr + offset, gnodeb_id);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+    *((uint16_t *)(ptr + 2)) = htons(item_count);
+    *((uint16_t *)(ptr + 4)) = htons(offset - 6);
+
+    return offset;
+}
+
+int
+nmp_add_item_group__guami_list(uint8_t      *ptr,
+                               guami_item_t *guami_item_ptr,
+                               uint16_t      guami_item_count)
+{
+    int i = 0;
+    int ret = 0;
+    uint16_t item_count = 0;
+    uint16_t offset = 0;
+
+    *((uint16_t *)(ptr)) = htons(ITEM_GROUP_ID__GUAMI_LIST);
+
+    // 2 bytes of group_item_id + 2 bytes of item_count + 2 bytes of item_len
+    offset = 6;
+
+    // Guami list is a group of individual guami items
+    for(i = 0; i < guami_item_count; i++)
+    {
+        ret = nmp_add_item__guami(ptr+ offset, 
+                                  (uint8_t *)(guami_item_ptr + i), 
+                                  sizeof(guami_item_t));
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+    }
+
+    *((uint16_t *)(ptr + 2)) = htons(item_count);
+    *((uint16_t *)(ptr + 4)) = htons(offset - 6);
+
+    return offset;
+}
+
+
+int
+nmp_add_item_group__supported_ta_list_item(uint8_t   *ptr,
+                                           ta_item_t *ta_item_ptr)
+{
+    int i = 0;
+    int ret = 0;
+    uint16_t item_count = 0;
+    uint16_t offset = 0;
+
+    *((uint16_t *)(ptr)) = htons(ITEM_GROUP_ID__SUPPORTED_TA_LIST_ITEM);
+
+    // 2 bytes of group_item_id + 2 bytes of item_count + 2 bytes of item_len
+    offset = 6;
+
+    ret = nmp_add_item__mcc_mnc(ptr+ offset, ta_item_ptr->mcc, ta_item_ptr->mnc);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+    // Slice support list is a group of individual slice support items
+    for(i = 0; i < ta_item_ptr->tai_slice_support_item_count; i++)
+    {
+        ret = nmp_add_item__slice_support_item(ptr+ offset,
+                                               ta_item_ptr->tai_slice_support_item[i].nssai_sst,
+                                               ta_item_ptr->tai_slice_support_item[i].nssai_sd);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+    }
+
+    *((uint16_t *)(ptr + 2)) = htons(item_count);
+    *((uint16_t *)(ptr + 4)) = htons(offset - 6);
+
+    return offset;
+}
+
+
+int
+nmp_add_item_group__supported_ta_list(uint8_t   *ptr,
+                                      ta_item_t *ta_item_ptr,
+                                      uint16_t   ta_item_count)
+{
+    int i = 0;
+    int ret = 0;
+    uint16_t item_count = 0;
+    uint16_t offset = 0;
+
+    *((uint16_t *)(ptr)) = htons(ITEM_GROUP_ID__SUPPORTED_TA_LIST);
+
+    // 2 bytes of group_item_id + 2 bytes of item_count + 2 bytes of item_len
+    offset = 6;
+
+    // Supported TA list is a group of individual supported TA items
+    // Each supported TA item is itself a group of items..
+    for(i = 0; i < ta_item_count; i++)
+    {
+        ret = nmp_add_item_group__supported_ta_list_item(ptr + offset,
+                                                         ta_item_ptr + i);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        
+        offset += ret;
+        item_count += 1;
+    }
+
+    *((uint16_t *)(ptr + 2)) = htons(item_count);
+    *((uint16_t *)(ptr + 4)) = htons(offset - 6);
+
+    return offset;
+}
+
+
+
+
+int
+nmp_add_item_group__plmn_support_list_item(uint8_t     *ptr,
+                                           plmn_item_t *plmn_item_ptr)
+{
+    int i = 0;
+    int ret = 0;
+    uint16_t item_count = 0;
+    uint16_t offset = 0;
+
+    *((uint16_t *)(ptr)) = htons(ITEM_GROUP_ID__PLMN_SUPPORT_LIST_ITEM);
+
+    // 2 bytes of group_item_id + 2 bytes of item_count + 2 bytes of item_len
+    offset = 6;
+
+    ret = nmp_add_item__mcc_mnc(ptr+ offset, plmn_item_ptr->mcc, plmn_item_ptr->mnc);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+    // Slice support list is a group of individual slice support items
+    for(i = 0; i < plmn_item_ptr->slice_support_item_count; i++)
+    {
+        ret = nmp_add_item__slice_support_item(ptr+ offset, 
+                                               plmn_item_ptr->slice_support_item[i].nssai_sst,
+                                               plmn_item_ptr->slice_support_item[i].nssai_sd);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+    }
+
+    *((uint16_t *)(ptr + 2)) = htons(item_count);
+    *((uint16_t *)(ptr + 4)) = htons(offset - 6);
+
+    return offset;
+}
+
+int
+nmp_add_item_group__plmn_support_list(uint8_t     *ptr,
+                                      plmn_item_t *plmn_item_ptr,
+                                      uint16_t     plmn_item_count)
+{
+    int i = 0;
+    int ret = 0;
+    uint16_t item_count = 0;
+    uint16_t offset = 0;
+
+    *((uint16_t *)(ptr)) = htons(ITEM_GROUP_ID__PLMN_SUPPORT_LIST);
+
+    // 2 bytes of group_item_id + 2 bytes of item_count + 2 bytes of item_len
+    offset = 6;
+
+    // PLMN list is a group of individual plmn support items 
+    // Each plmn support item is itself a group of items..
+    for(i = 0; i < plmn_item_count; i++)
+    {
+        ret = nmp_add_item_group__plmn_support_list_item(ptr+ offset, 
+                                                         plmn_item_ptr + i); 
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+    }
+
+    *((uint16_t *)(ptr + 2)) = htons(item_count);
+    *((uint16_t *)(ptr + 4)) = htons(offset - 6);
+
+    return offset;
+}
 
 
 int

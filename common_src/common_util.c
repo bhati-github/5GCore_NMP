@@ -53,11 +53,41 @@
 #include <pthread.h>
 
 #include "app.h"
+#include "color_print.h"
 #include "common_util.h"
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+
+void
+dump_bytes(char    *space,
+           char    *str,
+           uint8_t *ptr,
+           int      len)
+{
+    int i = 0, p = 0;
+    YELLOW_PRINT("%s%s : [ %u bytes ] \n", space, str, len);
+    printf("%s", space);
+    for(p = 0; p < strlen(str); p++)
+    {
+        printf(" ");
+    } printf("   ");
+
+    for(i = 0; i < len; i++)
+    {
+        YELLOW_PRINT("%02x", *(ptr + i));
+        if(i > 0 && (0 == (i % 32)))
+        {
+            printf("\n%s", space);
+            for(p = 0; p < strlen(str); p++)
+            {
+                printf(" ");
+            } printf("   ");
+        }
+    }
+    printf("\n");
+}
 
 void
 get_ipv4_addr_string(uint32_t ipv4_addr, char *dst)

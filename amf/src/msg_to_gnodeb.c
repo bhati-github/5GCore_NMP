@@ -53,7 +53,6 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
                           uint8_t         debug_flag)
 {
     int n = 0;
-    int ret = 0;
     int offset = 0;
     int gnb_index = 0;
     uint8_t *ptr = g__n1_send_msg_buffer;

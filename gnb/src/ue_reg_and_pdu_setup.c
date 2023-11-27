@@ -43,6 +43,7 @@
 #include "nmp_item.h"
 #include "nmp_msg_parser.h"
 #include "common_util.h"
+#include "color_print.h"
 
 #include "gnb.h"
 #include "n1_msg_handler.h"
@@ -766,12 +767,11 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
 
     if(MSG_TYPE__ALL_OK == nmp_n1_rcvd_msg_data.msg_type)
     {
-        printf("Initial UE Registration and PDU Session Establishment [OK] \n");
         return 0;
     }
     else
     {
-        printf("Initial UE Registration and PDU Session Establishment [Not Ok] \n");
+        RED_PRINT("Initial UE Registration and PDU Session Establishment [Not Ok] \n");
         return -1;
     }
 }

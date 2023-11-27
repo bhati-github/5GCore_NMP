@@ -15,6 +15,8 @@ enum item_id_t {
     ITEM_ID__PDR_ACTION,
     ITEM_ID__FAR_ACTION_FLAGS,
     ITEM_ID__FAR_DST_INTERFACE,
+    ITEM_ID__DEFAULT_PAGING_DRX,
+    ITEM_ID__RELATIVE_AMF_CAPACITY,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying 2 byte value
@@ -31,6 +33,7 @@ enum item_id_t {
     // Item id's carrying more than 2 and upto 4 byte value
     ////////////////////////////////////////////////////////
     ITEM_ID__MCC_MNC,
+    ITEM_ID__GNODEB_ID,
     ITEM_ID__TAC,
     ITEM_ID__CELL_ID,
     ITEM_ID__TMSI,
@@ -42,6 +45,7 @@ enum item_id_t {
     // Item id's carrying more than 4 and upto 8 byte value
     ////////////////////////////////////////////////////////
     ITEM_ID__IMSI,
+    ITEM_ID__NSSAI,
     ITEM_ID__GTPU_SELF_IPV4_ENDPOINT,
     ITEM_ID__GTPU_PEER_IPV4_ENDPOINT,
     ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE,
@@ -65,9 +69,16 @@ enum item_id_t {
     ITEM_ID__GTPU_PEER_IPV6_ENDPOINT,
     ITEM_ID__FAR_OUTER_IPV6_HDR_CREATE,
     ITEM_ID__NAS_PDU,
+    ITEM_ID__RAN_NODE_NAME,
+    ITEM_ID__AMF_NAME,
+    ITEM_ID__GUAMI,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying group of individual items
+    // Item group can contain any possible combination 
+    // of type-1 and type-2 items.
+    // Think about concept of recursion. 
+    //
     // 2 bytes(group_item_id) +
     // 2 bytes(item_count)    +
     // 2 bytes(item_len)      +
@@ -78,8 +89,43 @@ enum item_id_t {
     ITEM_GROUP_ID__N3_FAR,
     ITEM_GROUP_ID__N6_FAR,
     ITEM_GROUP_ID__USER_LOCATION_INFO,
-
+    ITEM_GROUP_ID__GLOBAL_RAN_NODE_ID,
+    ITEM_GROUP_ID__GUAMI_LIST,
+    ITEM_GROUP_ID__SUPPORTED_TA_LIST,
+    ITEM_GROUP_ID__SUPPORTED_TA_LIST_ITEM,
+    ITEM_GROUP_ID__PLMN_SUPPORT_LIST,
+    ITEM_GROUP_ID__PLMN_SUPPORT_LIST_ITEM,
 };
+
+
+typedef struct {
+    uint16_t mcc;
+    uint16_t mnc;
+    uint16_t amf_region_id;
+    uint16_t amf_set_id;
+    uint16_t amf_pointer;
+} guami_item_t;
+
+typedef struct {
+    uint8_t  nssai_sst;
+    uint32_t nssai_sd;
+} slice_support_item_t;
+
+typedef struct {
+    uint16_t mcc;
+    uint16_t mnc;
+    uint16_t              slice_support_item_count;
+    slice_support_item_t  slice_support_item[4];
+} plmn_item_t;
+
+typedef struct {
+    uint16_t mcc;
+    uint16_t mnc;
+    uint16_t              tai_slice_support_item_count;
+    slice_support_item_t  tai_slice_support_item[4];
+} ta_item_t;
+
+
 
 
 
@@ -109,6 +155,14 @@ nmp_add_item__uplink_qos_profile(uint8_t *ptr,
 int
 nmp_add_item__dnlink_qos_profile(uint8_t *ptr,
                                  uint8_t  dnlink_qos_profile);
+
+int
+nmp_add_item__default_paging_drx(uint8_t *ptr,
+                                 uint8_t  default_paging_drx);
+
+int
+nmp_add_item__relative_amf_capacity(uint8_t *ptr,
+                                    uint8_t  relative_amf_capacity);
 
 
 ////////////////////////////////////////////////////////
@@ -149,6 +203,10 @@ int
 nmp_add_item__mcc_mnc(uint8_t  *ptr,
                       uint16_t  mcc,
                       uint16_t  mnc);
+
+int
+nmp_add_item__gnodeb_id(uint8_t  *ptr,
+                        uint32_t  gnodeb_id);
 
 int
 nmp_add_item__tac(uint8_t  *ptr,
@@ -202,6 +260,11 @@ nmp_add_item__user_location_info_tai(uint8_t *ptr,
                                      uint16_t mnc,
                                      uint32_t tac);
 
+int
+nmp_add_item__slice_support_item(uint8_t *ptr,
+                                 uint8_t  sst,
+                                 uint32_t sd);
+
 ////////////////////////////////////////////////////////////
 // Add items which carry more than 8 and upto 16 byte value
 ////////////////////////////////////////////////////////////
@@ -227,10 +290,45 @@ nmp_add_item__nas_pdu(uint8_t *ptr,
                       uint8_t *nas_pdu_ptr,
                       uint16_t nas_pdu_len);
 
+int
+nmp_add_item__ran_node_name(uint8_t *ptr,
+                            uint8_t *ran_node_name,
+                            uint16_t ran_node_name_len);
+
+int
+nmp_add_item__amf_name(uint8_t *ptr,
+                       uint8_t *amf_name,
+                       uint16_t amf_name_len);
+
+int
+nmp_add_item__guami(uint8_t  *ptr,
+                    uint8_t  *guami_item_ptr,
+                    uint16_t  guami_item_len);
 
 ////////////////////////////
 // Item Groups
 ////////////////////////////
+int
+nmp_add_item_group__global_ran_node_id(uint8_t *ptr,
+                                       uint16_t mcc,
+                                       uint16_t mnc,
+                                       uint32_t gnodeb_id);
+
+int
+nmp_add_item_group__guami_list(uint8_t      *ptr,
+                               guami_item_t *guami_item_ptr,
+                               uint16_t      guami_item_count);
+
+int
+nmp_add_item_group__supported_ta_list(uint8_t   *ptr,
+                                      ta_item_t *ta_item_ptr,
+                                      uint16_t   ta_item_count);
+
+int
+nmp_add_item_group__plmn_support_list(uint8_t     *ptr,
+                                      plmn_item_t *plmn_item_ptr,
+                                      uint16_t     plmn_item_count);
+
 int
 nmp_add_item_group__user_location_info(uint8_t *ptr,
                                        uint16_t mcc,

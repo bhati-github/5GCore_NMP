@@ -84,7 +84,7 @@ create_upf_n2_nmp_listener_socket()
         return -1;
     }
 
-    perror("Bind_Operation: ");
+    printf("N2 Listener socket created.. \n");
     return 0;
 }
 

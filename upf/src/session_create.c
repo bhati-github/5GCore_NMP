@@ -60,14 +60,15 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n2_rcvd_msg_data_ptr,
     uint16_t dst_node_id = 0;
     nmp_msg_data_t nmp_n2_send_msg_data;
 
-    printf("Session Created for IMSI:IP = ");
+    printf("Session Created for IMSI(");
     for(i = 0; i < 8; i++)
     {
         printf("%02x", nmp_n2_rcvd_msg_data_ptr->imsi.u8[i]);
-    }
+    } printf("), ");
 
+    printf("UE Ipv4 Address : "); 
     get_ipv4_addr_string(nmp_n2_rcvd_msg_data_ptr->ue_ip_addr.u.v4_addr, string);
-    printf(" : %s \n", string);
+    printf("%s \n", string);
 
 
     // Send response back to AMF

@@ -101,6 +101,24 @@ nmp_add_item__dnlink_qos_profile(uint8_t *ptr,
     return (2 + 1);
 }
 
+int
+nmp_add_item__default_paging_drx(uint8_t *ptr,
+                                 uint8_t  default_paging_drx)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__DEFAULT_PAGING_DRX);
+    *(ptr + 2) = default_paging_drx;
+    return (2 + 1);
+}
+
+int
+nmp_add_item__relative_amf_capacity(uint8_t *ptr,
+                                    uint8_t  relative_amf_capacity)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__RELATIVE_AMF_CAPACITY);
+    *(ptr + 2) = relative_amf_capacity;
+    return (2 + 1);
+}
+
 
 ///////////////////////////////////////////
 // 2 byte Items
@@ -177,9 +195,18 @@ nmp_add_item__mcc_mnc(uint8_t  *ptr,
                       uint16_t  mcc,
                       uint16_t  mnc)
 {
-    *((uint16_t *)(ptr))     = htons(ITEM_ID__MCC_MNC);
+    *((uint16_t *)(ptr))     = htons(ITEM_ID__MCC_MNC); // Also known as PLMN Identity
     *((uint16_t *)(ptr + 2)) = htons(mcc);
     *((uint16_t *)(ptr + 4)) = htons(mnc);
+    return (2 + 4);
+}
+
+int
+nmp_add_item__gnodeb_id(uint8_t  *ptr,
+                        uint32_t  gnodeb_id)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__GNODEB_ID);
+    *((uint32_t *)(ptr + 2)) = htonl(gnodeb_id);
     return (2 + 4);
 }
 
@@ -297,6 +324,20 @@ nmp_add_item__user_location_info_tai(uint8_t *ptr,
     return (2 + 8);
 }
 
+int
+nmp_add_item__slice_support_item(uint8_t *ptr,
+                                 uint8_t  sst,
+                                 uint32_t sd)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__NSSAI);
+    *(ptr + 2) = sst;
+    *((uint32_t *)(ptr + 3)) = htonl(sd);
+    // Fill rest of the 3 bytes as zeroes...
+    *(ptr + 7) = 0x0;
+    *(ptr + 8) = 0x0;
+    *(ptr + 9) = 0x0;
+    return (2 + 8);
+}
 
 
 ///////////////////////////////////////////
@@ -351,3 +392,40 @@ nmp_add_item__nas_pdu(uint8_t *ptr,
     return (2 + 2 + nas_pdu_len); 
 }
 
+int
+nmp_add_item__ran_node_name(uint8_t *ptr,
+                            uint8_t *ran_node_name,
+                            uint16_t ran_node_name_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__RAN_NODE_NAME);
+    *((uint16_t *)(ptr + 2)) = htons(ran_node_name_len);
+    memcpy(ptr + 2 + 2, ran_node_name, ran_node_name_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + ran_node_name_len);
+}
+
+int
+nmp_add_item__amf_name(uint8_t *ptr,
+                       uint8_t *amf_name,
+                       uint16_t amf_name_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__AMF_NAME);
+    *((uint16_t *)(ptr + 2)) = htons(amf_name_len);
+    memcpy(ptr + 2 + 2, amf_name, amf_name_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + amf_name_len);
+}
+
+int
+nmp_add_item__guami(uint8_t  *ptr,
+                    uint8_t  *guami_item_ptr,
+                    uint16_t  guami_item_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__GUAMI);
+    *((uint16_t *)(ptr + 2)) = htons(guami_item_len);
+    memcpy(ptr + 2 + 2, guami_item_ptr, guami_item_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + guami_item_len);
+}
+
+ 

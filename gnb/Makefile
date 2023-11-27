@@ -3,6 +3,7 @@ all: gnb
 gnb:
 	gcc -g -Wall -I. -I./hdr/ -I./../common_hdr/    \
                 src/gnb_main.c                  \
+                src/ng_setup.c                  \
                 src/ue_reg_and_pdu_setup.c      \
                 src/bearer_setup.c              \
                 src/n1_msg_handler.c            \

@@ -2,6 +2,12 @@
 #define COMMON_UTIL_H
 
 void
+dump_bytes(char    *space,
+           char    *str,
+           uint8_t *ptr,
+           int      len);
+
+void
 get_ipv4_addr_string(uint32_t ipv4_addr, char *dst);
 
 void
