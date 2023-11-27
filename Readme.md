@@ -11,15 +11,15 @@
   
   
 ## 2. Motivation behind idea and implementation of this protocol
--    During development of S1AP protocol parser and 5GNAS protocol parser, the complexity in the parser leads me to think about a new protocol which can be parsed very easily and can be used across all call setup related interfaces.
-    So, this leads to idea of Network Message Protocol (NMP) and eventually this demonstration project.
+-  During development of S1AP protocol parser and 5GNAS protocol parser, the complexity in the parser leads me to think about a new protocol which can be parsed very easily and can be used across all call setup related interfaces.
+   So, this leads to idea of Network Message Protocol (NMP) and eventually this demonstration project.
 
 -  It is known that HTTP REST based APIs are used currently in 5G core network for inter-node communications. HTTP REST (Representational State Transfer) concept is
    to send complete state even if you wish to modify a single 2 byte element in target node. So, for just trying to communicate a 2 byte change in state, you are
    transferring entire state (in KB) towards target node. Imagine if your state grows to 10 MB in size for some reason, are you going to send your complete state
-   of 10 MB (spanning across multiple fragmented packets) towards target node? This is a terrible waste of Internet bandwidth.
+   of 10 MB (spanning across multiple fragmented packets) towards target node? This protocol serves as an alternative for such issues..
 
-- Use of SCTP protocol can be bypassed with this protocol between gnodeB and AMF.
+-  Use of SCTP protocol can be bypassed with this protocol between gnodeB and AMF.
 
 <br />
 <br />
@@ -186,15 +186,50 @@ UDP port for NMP protocol is 1208 (just a random selection).
  ![nas-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/13d4faf3-9b60-428c-bdb4-3ddf33cbde95)
 <br />
 <br />
+
+  ### Sequence Diagram [ NG Setup Request ]
+  ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
+
+<br />
+  
+  ### Parsed Message from gnodeB to AMF (NG Setup Request)
+
+  ![ng-setup-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b13e95be-abef-45ec-93bd-5c2fe214d3ab)
+  ![ng-setup-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ebd2dcd3-2aa7-4a78-be63-ee66fc091fe4)
+
+<br />
+
+  ### Parsed Message from AMF to gnodeB (NG Setup Response)
+
+  ![ng-setup-response-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/63badf4a-e355-4b1a-8d13-a483f85c20fa)
+  ![ng-setup-response-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/29eb922e-8e0f-46be-aea3-32e07d6dd68a)
+
+<br />
+  
  
-  ### SequenceDiagram
+  ### SequenceDiagram [ Initial UE Registration Message and PDU Setup Request ] 
   
   ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/197635e8-3506-483e-9a66-75c8bb8c7e4f)
-
-
+  
 <br />
 <br />
 
+  ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/78cdfa3d-a212-447b-91da-f082723cb2cb)
+  ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/6ab7a694-adcc-4ab8-bf1f-fb5c9ecda885)
+  ![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2121c876-1fec-4076-9d94-f4cb82d13c0d)
+  ![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/1b25c0cd-ca3c-498b-9c58-7c9eb13b8893)
+  ![5](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e1b64aec-fe62-4f2d-81d8-8875abb94e86)
+  ![6](https://github.com/bhati-github/5GCore_NMP/assets/49303596/35441ab8-8fea-4c23-b88c-6a48241f7e25)
+  ![7](https://github.com/bhati-github/5GCore_NMP/assets/49303596/7b31a711-15f2-4729-a3ed-dd81234289f9)
+  ![8](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a7d49db6-5aa5-45e2-a819-bb90ed9a00d7)
+  ![9](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a0bd40ee-c79d-4ca9-9c97-028af6c1aab8)
+  ![10](https://github.com/bhati-github/5GCore_NMP/assets/49303596/35fcec24-2c83-45e5-9c4a-072f9ad8e112)
+  ![11](https://github.com/bhati-github/5GCore_NMP/assets/49303596/513335f2-77de-4729-a6f7-9179abfa09eb)
+  ![12](https://github.com/bhati-github/5GCore_NMP/assets/49303596/4eee0c8f-7492-45a8-b1f1-8bae2906ccc6)
+  ![13](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d96fa75a-36ba-43c8-8a9e-ff6537e991a6)
+
+<br />
+<br />
   
 ## 7. Network Diagram for 3 different lab machines (gnodeB, amf, upf)
 
