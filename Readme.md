@@ -182,13 +182,11 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
- Following pcap packet sequnece between gnodeB and AMF is simulated inside this project.
- ![nas-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/13d4faf3-9b60-428c-bdb4-3ddf33cbde95)
-<br />
-<br />
 
-  ### Sequence Diagram [ NG Setup Request ]
+  ### 6.1 Sequence Diagram [ NG Setup with AMF ]
   ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
+
+  ![ng-setup-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/586614ca-1358-4477-9701-ca66fe9ac9df)
 
 <br />
   
@@ -207,10 +205,12 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
   
  
-  ### SequenceDiagram [ Initial UE Registration Message and PDU Setup Request ] 
+  ### 6.2 SequenceDiagram [ Initial UE Registration Message and PDU Setup Request ] 
   
   ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/197635e8-3506-483e-9a66-75c8bb8c7e4f)
-  
+
+  ![ue-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/dae0a14b-21e0-4c74-9e02-febb9a92da51)
+
 <br />
 <br />
 
