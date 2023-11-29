@@ -4,7 +4,8 @@
 ## 1. Aim of this Project
 -   This project demonstrate the use of newly created NMP (Network Message Protocol) 
     which can be used for information exchange between telecommunication network nodes.
--   You will see simulation of NGAP procedures, PFCP packet flows carried inside NMP packets.
+-   Simulate NGAP procedure flows over NMP protocol instead of SCTP protocol
+-   Simulate N4 interface packet flows over NMP protocol instead of PFCP protocol
 -   It is a generic information exchange protocol which can be used across IP networks.
 
 <br />
@@ -20,7 +21,8 @@
    transferring entire state (in KB) towards target node. Imagine if your state grows to 10 MB in size for some reason, are you going to send your complete state
    of 10 MB (spanning across multiple fragmented packets) towards target node? This protocol serves as an alternative for such issues..
 
--  Use of SCTP protocol can be bypassed with this protocol between gnodeB and AMF.
+-  Use of SCTP protocol can be bypassed with this protocol for NGAP procedures between gnodeB and AMF.
+-  Use of PFCP protocol can be bypassed with this protocol between SMF and UPF.
 
 <br />
 <br />
