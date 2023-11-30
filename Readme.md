@@ -191,6 +191,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
   ![ng-setup-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/586614ca-1358-4477-9701-ca66fe9ac9df)
 
 <br />
+<br />
   
   ### Parsed Message from gnodeB to AMF (NG Setup Request)
 
@@ -198,12 +199,15 @@ UDP port for NMP protocol is 1208 (just a random selection).
   ![ng-setup-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ebd2dcd3-2aa7-4a78-be63-ee66fc091fe4)
 
 <br />
+<br />
 
   ### Parsed Message from AMF to gnodeB (NG Setup Response)
 
   ![ng-setup-response-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/63badf4a-e355-4b1a-8d13-a483f85c20fa)
   ![ng-setup-response-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/29eb922e-8e0f-46be-aea3-32e07d6dd68a)
 
+<br />
+<br />
 <br />
   
  
@@ -232,10 +236,22 @@ UDP port for NMP protocol is 1208 (just a random selection).
 
 <br />
 <br />
-  
+<br />
+<br />
+
+### 6.3 Simulation of PFCP packet flows in NMP packets [ Session Create Request / Response (SMF <--> UPF) ] 
+
+![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a96f6064-d2ec-42d7-aaed-cdc7c2e3a694)
+![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/f9978191-cbcf-41a9-bbe9-7dfe08fb2f64)
+![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d30408fa-e15a-4e01-9d85-ad1533d18875)
+![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/cc4163bf-69cb-4109-8849-c095894c6cab)
+![5](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b4d7f962-a04b-48a8-8759-dd6b2a5f30d3)
+![6](https://github.com/bhati-github/5GCore_NMP/assets/49303596/4765a4e4-a7c4-4fd9-8a0e-79a0bf7609c0)
 
 <br />
-<br />  
+<br />
+<br />
+<br />
 
 ## 7. Network Diagram for simulation inside a single virtual machine (Preferred approach)
 
@@ -297,9 +313,10 @@ UDP port for NMP protocol is 1208 (just a random selection).
     sudo tcpdump -i <interface_name> udp port 1208 -vvxx 
 
 <br />
-<br />  
+<br />
+<br />
 
-## 9. Performance data 
+## 8. Performance data 
    Time taken to successfully attach 65536 users (with PDN connectivity) into 
    core network is around 45 seconds with few prints.
    
