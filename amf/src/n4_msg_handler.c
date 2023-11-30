@@ -44,10 +44,10 @@
 #include "common_util.h"
 
 #include "amf.h"
-#include "n2_msg_handler.h"
+#include "n4_msg_handler.h"
 
 int
-validate_rcvd_msg_on_n2_interface(uint8_t *msg_ptr,
+validate_rcvd_msg_on_n4_interface(uint8_t *msg_ptr,
                                   int      msg_len,
                                   uint32_t request_identifier)
 {

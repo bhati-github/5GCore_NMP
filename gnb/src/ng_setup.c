@@ -46,7 +46,7 @@
 #include "color_print.h"
 
 #include "gnb.h"
-#include "n1_msg_handler.h"
+#include "n1_n2_msg_handler.h"
 #include "ng_setup.h"
 
 
@@ -58,7 +58,7 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     int len = 0;
     int offset = 0;
     char string[128];
-    uint8_t *ptr =  g__n1_send_msg_buffer;
+    uint8_t *ptr =  g__n1_n2_send_msg_buffer;
     uint8_t default_paging_drx = 3; // 0 for 32, 1 for 64, 2 for 128, 3 for 256 ..
     uint8_t id_string[256];
     uint8_t ran_node_name[256];
@@ -73,8 +73,8 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     uint16_t mnc = 10;
     struct sockaddr_in amf_sockaddr;
     uint32_t request_identifier = 0;
-    nmp_msg_data_t nmp_n1_send_msg_data;
-    nmp_msg_data_t nmp_n1_rcvd_msg_data;
+    nmp_msg_data_t nmp_n1_n2_send_msg_data;
+    nmp_msg_data_t nmp_n1_n2_rcvd_msg_data;
     
     ///////////////////////////////////////////////////////////////////////////
     // Step 1: Send NGSetupRequest message to AMF
@@ -153,9 +153,9 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-    if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Send message parsing error.. \n", __func__);
@@ -163,11 +163,11 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_socket_id,
-               (char *)g__n1_send_msg_buffer,
+    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+               (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_sockaddr),
+               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -178,7 +178,7 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     if(debug_flag) 
     {
         MAGENTA_PRINT("NG Setup Request sent to AMF ! \n");
-        YELLOW_PRINT("Waiting from response from AMF............... \n");
+        YELLOW_PRINT("Waiting for response from AMF............... \n");
         printf("\n");
     }
 
@@ -189,8 +189,8 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_socket_id,
-                 (char *)g__n1_rcvd_msg_buffer,
+    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+                 (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
                  (struct sockaddr *)&(amf_sockaddr),
@@ -206,17 +206,17 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
                 n, string, amf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_n1_interface(g__n1_rcvd_msg_buffer,
-                                               n,
-                                               request_identifier))
+    if(-1 == validate_rcvd_msg_on_n1_n2_interface(g__n1_n2_rcvd_msg_buffer,
+                                                  n,
+                                                  request_identifier))
     {
         printf("%s: Rcvd message validation error.. \n", __func__);
         return -1;
     }
 
-    if(-1 == parse_nmp_msg(g__n1_rcvd_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_rcvd_msg_buffer,
                            n,
-                           &(nmp_n1_rcvd_msg_data),
+                           &(nmp_n1_n2_rcvd_msg_data),
                            debug_flag))
     {
         printf("%s: Rcvd message parsing error.. \n", __func__);

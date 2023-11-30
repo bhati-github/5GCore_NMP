@@ -6,7 +6,7 @@ gnb:
                 src/ng_setup.c                  \
                 src/ue_reg_and_pdu_setup.c      \
                 src/bearer_setup.c              \
-                src/n1_msg_handler.c            \
+                src/n1_n2_msg_handler.c         \
                 ../common_src/nmp_item.c        \
                 ../common_src/nmp_item_group.c  \
                 ../common_src/nmp_msg_parser.c  \

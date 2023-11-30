@@ -45,7 +45,7 @@
 #include "common_util.h"
 
 #include "amf.h"
-#include "n2_msg_handler.h"
+#include "n4_msg_handler.h"
 #include "upf_session.h"
 
 
@@ -73,8 +73,8 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     pdr_t *pdr_ptr = NULL;
     far_t *far_ptr = NULL;
 
-    nmp_msg_data_t nmp_n2_send_msg_data;
-    nmp_msg_data_t nmp_n2_rcvd_msg_data;
+    nmp_msg_data_t nmp_n4_send_msg_data;
+    nmp_msg_data_t nmp_n4_rcvd_msg_data;
 
     /////////////////////////////////////////
     // Get pdr and far for this user session
@@ -90,7 +90,7 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
         return -1;
     }
 
-    uint8_t *ptr = g__n2_send_msg_buffer;
+    uint8_t *ptr = g__n4_send_msg_buffer;
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
     nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__UPF);
@@ -196,9 +196,9 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-    if(-1 == parse_nmp_msg(g__n2_send_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n4_send_msg_buffer,
                            offset,
-                           &(nmp_n2_send_msg_data),
+                           &(nmp_n4_send_msg_data),
                            debug_flag))
     {
         printf("%s: msg parsing error. \n", __func__);
@@ -206,11 +206,11 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     }
 
     // Send this message to UPF
-    n = sendto(g__amf_config.amf_n2_socket_id,
-               (char *)g__n2_send_msg_buffer,
+    n = sendto(g__amf_config.amf_n4_socket_id,
+               (char *)g__n4_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.upf_n2_sockaddr),
+               (struct sockaddr *)&(g__amf_config.upf_n4_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -224,8 +224,8 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     ///////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&upf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__amf_config.amf_n2_socket_id,
-                 (char *)g__n2_rcvd_msg_buffer,
+    n = recvfrom(g__amf_config.amf_n4_socket_id,
+                 (char *)g__n4_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
                  (struct sockaddr *)&(upf_sockaddr),
@@ -241,7 +241,7 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
                 n, string, upf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_n2_interface(g__n2_rcvd_msg_buffer, 
+    if(-1 == validate_rcvd_msg_on_n4_interface(g__n4_rcvd_msg_buffer, 
                                                n, 
                                                request_identifier))
     {
@@ -249,16 +249,16 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
         return -1;
     }
 
-    if(-1 == parse_nmp_msg(g__n2_rcvd_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n4_rcvd_msg_buffer,
                            n,
-                           &(nmp_n2_rcvd_msg_data),
+                           &(nmp_n4_rcvd_msg_data),
                            debug_flag))
     {
         printf("%s: Message parsing error.. \n", __func__);
         return -1;
     }
 
-    if(MSG_RESPONSE_IS_OK == nmp_n2_rcvd_msg_data.msg_response)
+    if(MSG_RESPONSE_IS_OK == nmp_n4_rcvd_msg_data.msg_response)
     {
         g__amf_config.upf_session_data[session_index].ue_ipv4_addr = ue_ipv4_addr;
         memcpy(g__amf_config.upf_session_data[session_index].imsi.u8, imsi.u8, 8);

@@ -45,34 +45,34 @@
 #include "common_util.h"
 
 #include "amf.h"
-#include "n1_msg_handler.h"
+#include "n1_n2_msg_handler.h"
 
 
 int
-send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
+send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                           uint8_t         debug_flag)
 {
     int n = 0;
     int offset = 0;
     int gnb_index = 0;
-    uint8_t *ptr = g__n1_send_msg_buffer;
+    uint8_t *ptr = g__n1_n2_send_msg_buffer;
     uint16_t dst_node_id = 0;
     uint16_t item_count = 0;
-    nmp_msg_data_t nmp_n1_send_msg_data;
+    nmp_msg_data_t nmp_n1_n2_send_msg_data;
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
     nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
     nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
 
-    dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+    dst_node_id = (nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
     nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
     nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__ALL_OK);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
-    nmp_hdr_ptr->msg_identifier = htonl(nmp_n1_rcvd_msg_data_ptr->msg_identifier);
+    nmp_hdr_ptr->msg_identifier = htonl(nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier);
 
     offset = sizeof(nmp_hdr_t);
 
@@ -81,7 +81,7 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
     if(-1 == parse_nmp_msg(ptr,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Msg parse error. \n", __func__);
@@ -91,12 +91,12 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     ////////////////////////////////////////////////
     // write this msg on n1 socket (towards gnodeb)
     ////////////////////////////////////////////////
-    gnb_index = nmp_n1_rcvd_msg_data_ptr->gnb_index;
-    n = sendto(g__amf_config.amf_n1_socket_id,
+    gnb_index = nmp_n1_n2_rcvd_msg_data_ptr->gnb_index;
+    n = sendto(g__amf_config.amf_n1_n2_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {
@@ -110,30 +110,30 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
 
 int
-send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
+send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                                      uint8_t         debug_flag)
 {
     int n = 0;
     int offset = 0;
     int gnb_index = 0;
-    uint8_t *ptr = g__n1_send_msg_buffer;
+    uint8_t *ptr = g__n1_n2_send_msg_buffer;
     uint16_t dst_node_id = 0;
     uint16_t item_count = 0;
-    nmp_msg_data_t nmp_n1_send_msg_data;
+    nmp_msg_data_t nmp_n1_n2_send_msg_data;
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
     nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
     nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
 
-    dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+    dst_node_id = (nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
     nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
     nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
-    nmp_hdr_ptr->msg_identifier = htonl(nmp_n1_rcvd_msg_data_ptr->msg_identifier);
+    nmp_hdr_ptr->msg_identifier = htonl(nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier);
 
     offset = sizeof(nmp_hdr_t);
 
@@ -142,7 +142,7 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
     if(-1 == parse_nmp_msg(ptr,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Msg parse error. \n", __func__);
@@ -152,12 +152,12 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     ////////////////////////////////////////////////
     // write this msg on n1 socket (towards gnodeb)
     ////////////////////////////////////////////////
-    gnb_index = nmp_n1_rcvd_msg_data_ptr->gnb_index;
-    n = sendto(g__amf_config.amf_n1_socket_id,
+    gnb_index = nmp_n1_n2_rcvd_msg_data_ptr->gnb_index;
+    n = sendto(g__amf_config.amf_n1_n2_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {

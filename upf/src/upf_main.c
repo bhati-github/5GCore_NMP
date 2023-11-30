@@ -44,47 +44,47 @@
 #include "common_util.h"
 
 #include "upf.h"
-#include "n2_msg_handler.h"
+#include "n4_msg_handler.h"
 
 upf_config_t   g__upf_config;
 
-uint8_t  g__n2_send_msg_buffer[MSG_BUFFER_LEN];
-uint8_t  g__n2_rcvd_msg_buffer[MSG_BUFFER_LEN];
+uint8_t  g__n4_send_msg_buffer[MSG_BUFFER_LEN];
+uint8_t  g__n4_rcvd_msg_buffer[MSG_BUFFER_LEN];
 
-uint8_t  g__upf_n2_ip_is_set = 0;
-uint8_t  g__amf_n2_ip_is_set = 0;
+uint8_t  g__upf_n4_ip_is_set = 0;
+uint8_t  g__amf_n4_ip_is_set = 0;
 
 char *help_string = " ...... ";
 
 int
-create_upf_n2_nmp_listener_socket()
+create_upf_n4_nmp_listener_socket()
 {
-    struct sockaddr_in  n2_listener_addr;
+    struct sockaddr_in  n4_listener_addr;
 
     // Creating socket file descriptor
-    g__upf_config.upf_n2_socket_id = socket(AF_INET, SOCK_DGRAM, 0);
-    if(g__upf_config.upf_n2_socket_id < 0)
+    g__upf_config.upf_n4_socket_id = socket(AF_INET, SOCK_DGRAM, 0);
+    if(g__upf_config.upf_n4_socket_id < 0)
     {
-        perror("UPF: N2 interface Listener Socket Creation failed");
+        perror("UPF: N4 interface Listener Socket Creation failed");
         return -1;
     }
 
-    memset(&n2_listener_addr, 0, sizeof(struct sockaddr_in));
-    n2_listener_addr.sin_family      = AF_INET;
-    n2_listener_addr.sin_addr.s_addr = htonl(g__upf_config.upf_n2_addr.u.v4_addr);
-    n2_listener_addr.sin_port        = htons(UDP_PORT_IS_NMP);
+    memset(&n4_listener_addr, 0, sizeof(struct sockaddr_in));
+    n4_listener_addr.sin_family      = AF_INET;
+    n4_listener_addr.sin_addr.s_addr = htonl(g__upf_config.upf_n4_addr.u.v4_addr);
+    n4_listener_addr.sin_port        = htons(UDP_PORT_IS_NMP);
 
-    if(bind(g__upf_config.upf_n2_socket_id,
-           (struct sockaddr *)&n2_listener_addr,
+    if(bind(g__upf_config.upf_n4_socket_id,
+           (struct sockaddr *)&n4_listener_addr,
             sizeof(struct sockaddr_in)) < 0)
     {
         printf("%s: Error in bind() operation \n", __func__);
         perror("Bind_Operation: ");
-        close(g__upf_config.upf_n2_socket_id);
+        close(g__upf_config.upf_n4_socket_id);
         return -1;
     }
 
-    printf("N2 Listener socket created.. \n");
+    printf("N4 Interface NMP socket created.. \n");
     return 0;
 }
 
@@ -103,47 +103,47 @@ main(int argc, char **argv)
 
     while(0 != arg_num)
     {
-        if(0 == strcmp(argv[arg_index], "-upfn2ip"))
+        if(0 == strcmp(argv[arg_index], "-upfn4ip"))
         {
             if(NULL != argv[arg_index + 1])
             {
                 if(0 == inet_aton(argv[arg_index + 1], &v4_addr))
                 {
-                    printf("-upfn2ip %s is not valid \n", argv[arg_index + 1]);
+                    printf("-upfn4ip %s is not valid \n", argv[arg_index + 1]);
                     return -1;
                 }
-                g__upf_config.upf_n2_addr.ip_version = IP_VER_IS_V4;
-                g__upf_config.upf_n2_addr.u.v4_addr  = htonl(v4_addr.s_addr);
-                g__upf_n2_ip_is_set = 1;
+                g__upf_config.upf_n4_addr.ip_version = IP_VER_IS_V4;
+                g__upf_config.upf_n4_addr.u.v4_addr  = htonl(v4_addr.s_addr);
+                g__upf_n4_ip_is_set = 1;
             }
             else
             {
-                printf("-upfn2ip %s is not valid \n", argv[arg_index + 1]);
+                printf("-upfn4ip %s is not valid \n", argv[arg_index + 1]);
                 return -1;
             }
-            arg_num    -= 2;
+            arg_num   -= 2;
             arg_index += 2;
             continue;
         }
-        else if(0 == strcmp(argv[arg_index], "-amfn2ip"))
+        else if(0 == strcmp(argv[arg_index], "-amfn4ip"))
         {
             if(NULL != argv[arg_index + 1])
             {
                 if(0 == inet_aton(argv[arg_index + 1], &v4_addr))
                 {
-                    printf("-amfn2ip %s is not valid \n", argv[arg_index + 1]);
+                    printf("-amfn4ip %s is not valid \n", argv[arg_index + 1]);
                     return -1;
                 }
-                g__upf_config.amf_n2_addr.ip_version = IP_VER_IS_V4;
-                g__upf_config.amf_n2_addr.u.v4_addr  = htonl(v4_addr.s_addr);
-                g__amf_n2_ip_is_set = 1;
+                g__upf_config.amf_n4_addr.ip_version = IP_VER_IS_V4;
+                g__upf_config.amf_n4_addr.u.v4_addr  = htonl(v4_addr.s_addr);
+                g__amf_n4_ip_is_set = 1;
             }
             else
             {
-                printf("-amfn2ip %s is not valid \n", argv[arg_index + 1]);
+                printf("-amfn4ip %s is not valid \n", argv[arg_index + 1]);
                 return -1;
             }
-            arg_num    -= 2;
+            arg_num   -= 2;
             arg_index += 2;
             continue;
         }
@@ -155,7 +155,7 @@ main(int argc, char **argv)
             }
             else
             {
-                printf("Provide a value for -d <value> \n");
+                printf("Provide pkt delay value as -d <value> \n");
                 return -1;
             }
 
@@ -181,50 +181,53 @@ main(int argc, char **argv)
 
     printf("\n");
 
-    // Check if ip address of upf N2 interface is set by user
-    if(g__upf_n2_ip_is_set)
+    // Check if ip address of upf N4 interface is set by user
+    if(g__upf_n4_ip_is_set)
     {
-        get_ipv4_addr_string(g__upf_config.upf_n2_addr.u.v4_addr, string);
-        printf("%-32s : %s \n", "UPF N2 Interface IPv4 Addr", string);
+        get_ipv4_addr_string(g__upf_config.upf_n4_addr.u.v4_addr, string);
+        printf("%-32s : %s \n", "UPF N4 Interface IPv4 Addr", string);
     }
     else
     {
-        printf("Provide UPF N2 interface ipv4 address \n");
+        printf("Provide UPF N4 interface ipv4 address \n");
         printf("%s \n", help_string);
         return -1;
     }
 
 
-    // Check if ip address of AMF N2 interface is set by user
-    if(g__amf_n2_ip_is_set)
+    // Check if ip address of AMF N4 interface is set by user
+    // Since SMF is integrated into AMF for demostration of 
+    // NMP protocol, this is the reason to have SMF-N4 interface
+    // present in AMF. In reality, there is no N4 interface in AMF.
+    if(g__amf_n4_ip_is_set)
     {
-        get_ipv4_addr_string(g__upf_config.amf_n2_addr.u.v4_addr, string);
-        printf("%-32s : %s \n", "AMF N2 Interface IPv4 Addr", string);
+        get_ipv4_addr_string(g__upf_config.amf_n4_addr.u.v4_addr, string);
+        printf("%-32s : %s \n", "AMF N4 Interface IPv4 Addr", string);
     }
     else
     {
-        printf("Provide AMF N2 interface ipv4 address \n");
+        printf("Provide AMF N4 interface ipv4 address \n");
         printf("%s \n", help_string);
         return -1;
     }
 
     printf("\n");
 
-    // Create N2 interface socket for incoming NMP messages...
-    if(-1 == create_upf_n2_nmp_listener_socket())
+    // Create N4 interface socket for incoming NMP messages...
+    if(-1 == create_upf_n4_nmp_listener_socket())
     {
         return -1;
     }
 
-    memset(&(g__upf_config.amf_n2_sockaddr), 0, sizeof(struct sockaddr_in));
-    g__upf_config.amf_n2_sockaddr.sin_family      = AF_INET;
-    g__upf_config.amf_n2_sockaddr.sin_addr.s_addr = htonl(g__upf_config.amf_n2_addr.u.v4_addr);
-    g__upf_config.amf_n2_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
+    memset(&(g__upf_config.amf_n4_sockaddr), 0, sizeof(struct sockaddr_in));
+    g__upf_config.amf_n4_sockaddr.sin_family      = AF_INET;
+    g__upf_config.amf_n4_sockaddr.sin_addr.s_addr = htonl(g__upf_config.amf_n4_addr.u.v4_addr);
+    g__upf_config.amf_n4_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
 
     g__upf_config.amf_id = AMF_ID_BASE;
     g__upf_config.my_id  = UPF_ID_BASE;
 
-    listen_for_n2_messages();	
+    listen_for_n4_messages();	
 
     printf("Done ....... \n");
 

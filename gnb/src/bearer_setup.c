@@ -44,7 +44,7 @@
 #include "common_util.h"
 
 #include "gnb.h"
-#include "n1_msg_handler.h"
+#include "n1_n2_msg_handler.h"
 #include "bearer_setup.h"
 
 int

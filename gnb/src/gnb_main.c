@@ -44,51 +44,51 @@
 #include "common_util.h"
 
 #include "gnb.h"
-#include "n1_msg_handler.h"
+#include "n1_n2_msg_handler.h"
 #include "ng_setup.h"
 #include "ue_reg_and_pdu_setup.h"
 
 gnb_config_t   g__gnb_config;
 
-uint8_t  g__n1_send_msg_buffer[MSG_BUFFER_LEN];
-uint8_t  g__n1_rcvd_msg_buffer[MSG_BUFFER_LEN];
+uint8_t  g__n1_n2_send_msg_buffer[MSG_BUFFER_LEN];
+uint8_t  g__n1_n2_rcvd_msg_buffer[MSG_BUFFER_LEN];
 
-uint8_t  g__gnb_n1_ip_is_set = 0;
+uint8_t  g__gnb_n1_n2_ip_is_set = 0;
 uint8_t  g__gnb_n3_ip_is_set = 0;
-uint8_t  g__amf_n1_ip_is_set = 0;
+uint8_t  g__amf_n1_n2_ip_is_set = 0;
 uint32_t g__user_count = 0;
 
 char *help_string = " ...... ";
 
 static int
-create_gnb_n1_listener_socket()
+create_gnb_n1_n2_listener_socket()
 {
-    struct sockaddr_in  n1_listener_addr;
+    struct sockaddr_in  n1_n2_listener_addr;
 
     // Creating socket file descriptor
-    g__gnb_config.gnb_n1_socket_id = socket(AF_INET, SOCK_DGRAM, 0);
-    if(g__gnb_config.gnb_n1_socket_id < 0)
+    g__gnb_config.gnb_n1_n2_socket_id = socket(AF_INET, SOCK_DGRAM, 0);
+    if(g__gnb_config.gnb_n1_n2_socket_id < 0)
     {
-        perror("gnodeB: N1 interface Listener Socket Creation failed");
+        perror("gnodeB: N1/N2 interface Listener Socket Creation failed");
         return -1;
     }
 
-    memset(&n1_listener_addr, 0, sizeof(struct sockaddr_in));
-    n1_listener_addr.sin_family      = AF_INET;
-    n1_listener_addr.sin_addr.s_addr = htonl(g__gnb_config.gnb_n1_addr.u.v4_addr);
-    n1_listener_addr.sin_port        = htons(UDP_PORT_IS_NMP);
+    memset(&n1_n2_listener_addr, 0, sizeof(struct sockaddr_in));
+    n1_n2_listener_addr.sin_family      = AF_INET;
+    n1_n2_listener_addr.sin_addr.s_addr = htonl(g__gnb_config.gnb_n1_n2_addr.u.v4_addr);
+    n1_n2_listener_addr.sin_port        = htons(UDP_PORT_IS_NMP);
 
-    if(bind(g__gnb_config.gnb_n1_socket_id,
-           (struct sockaddr *)&n1_listener_addr,
+    if(bind(g__gnb_config.gnb_n1_n2_socket_id,
+           (struct sockaddr *)&n1_n2_listener_addr,
            sizeof(struct sockaddr_in)) < 0)
     {
         printf("%s: Error in bind() operation \n", __func__);
         perror("Bind_Operation: ");
-        close(g__gnb_config.gnb_n1_socket_id);
+        close(g__gnb_config.gnb_n1_n2_socket_id);
         return -1;
     }
 
-    printf("N1 listener socket created.. \n");
+    printf("N1/N2 interface NMP socket created.. \n");
     return 0;
 }
 
@@ -108,22 +108,22 @@ main(int argc, char **argv)
 
     while(0 != arg_num)
     {
-        if(0 == strcmp(argv[arg_index], "-gnbn1ip"))
+        if(0 == strcmp(argv[arg_index], "-gnbn1n2ip"))
         {
             if(NULL != argv[arg_index + 1])
             {
                 if(0 == inet_aton(argv[arg_index + 1], &v4_addr))
                 {
-                    printf("-gnbn1ip %s is not valid \n", argv[arg_index + 1]);
+                    printf("-gnbn1n2ip %s is not valid \n", argv[arg_index + 1]);
                     return -1;
                 }
-                g__gnb_config.gnb_n1_addr.ip_version = IP_VER_IS_V4;
-                g__gnb_config.gnb_n1_addr.u.v4_addr  = htonl(v4_addr.s_addr);
-                g__gnb_n1_ip_is_set = 1;
+                g__gnb_config.gnb_n1_n2_addr.ip_version = IP_VER_IS_V4;
+                g__gnb_config.gnb_n1_n2_addr.u.v4_addr  = htonl(v4_addr.s_addr);
+                g__gnb_n1_n2_ip_is_set = 1;
             }
             else
             {
-                printf("-gnbn1ip %s is not valid \n", argv[arg_index + 1]);
+                printf("-gnbn1n2ip %s is not valid \n", argv[arg_index + 1]);
                 return -1;
             }
             arg_num   -= 2;
@@ -152,22 +152,22 @@ main(int argc, char **argv)
             arg_index += 2;
             continue;
         }
-        else if(0 == strcmp(argv[arg_index], "-amfn1ip"))
+        else if(0 == strcmp(argv[arg_index], "-amfn1n2ip"))
         {
             if(NULL != argv[arg_index + 1])
             {
                 if(0 == inet_aton(argv[arg_index + 1], &v4_addr))
                 {
-                    printf("-amfn1ip %s is not valid \n", argv[arg_index + 1]);
+                    printf("-amfn1n2ip %s is not valid \n", argv[arg_index + 1]);
                     return -1;
                 }
-                g__gnb_config.amf_n1_addr.ip_version = IP_VER_IS_V4;
-                g__gnb_config.amf_n1_addr.u.v4_addr  = htonl(v4_addr.s_addr);
-                g__amf_n1_ip_is_set = 1;
+                g__gnb_config.amf_n1_n2_addr.ip_version = IP_VER_IS_V4;
+                g__gnb_config.amf_n1_n2_addr.u.v4_addr  = htonl(v4_addr.s_addr);
+                g__amf_n1_n2_ip_is_set = 1;
             }
             else
             {
-                printf("-amfip %s is not valid \n", argv[arg_index + 1]);
+                printf("-amfn1n2ip %s is not valid \n", argv[arg_index + 1]);
                 return -1;
             }
             arg_num   -= 2;
@@ -229,15 +229,15 @@ main(int argc, char **argv)
 
     printf("\n");
 
-    // Check if ip address of gnodeb N1 interface is set by user
-    if(g__gnb_n1_ip_is_set)
+    // Check if ip address of gnodeb N1/N2 interface is set by user
+    if(g__gnb_n1_n2_ip_is_set)
     {
-        get_ipv4_addr_string(g__gnb_config.gnb_n1_addr.u.v4_addr, string);
-        printf("%-32s : %s \n", "gnodeB N1 Interface IPv4 Addr", string);
+        get_ipv4_addr_string(g__gnb_config.gnb_n1_n2_addr.u.v4_addr, string);
+        printf("%-32s : %s \n", "gnodeB N1/N2 Interface IPv4 Addr", string);
     }
     else
     {
-        printf("Provide gnodeB N1 interface ipv4 address \n");
+        printf("Provide gnodeB N1/N2 interface ipv4 address \n");
         printf("%s \n", help_string);
         return -1;
     }
@@ -257,35 +257,35 @@ main(int argc, char **argv)
     }
 
 
-    // Check if ip address of Master Node is set by user
-    if(g__amf_n1_ip_is_set)
+    // Check if ip address of AMF N1/N2 interface is set by user
+    if(g__amf_n1_n2_ip_is_set)
     {
-        get_ipv4_addr_string(g__gnb_config.amf_n1_addr.u.v4_addr, string);
-        printf("%-32s : %s \n", "AMF N1 Interface IPv4 Addr", string);
+        get_ipv4_addr_string(g__gnb_config.amf_n1_n2_addr.u.v4_addr, string);
+        printf("%-32s : %s \n", "AMF N1/N2 Interface IPv4 Addr", string);
     }
     else
     {
-        printf("Provide AMF N1 ipv4 address \n");
+        printf("Provide AMF N1/N2 ipv4 address \n");
         printf("%s \n", help_string);
         return -1;
     }
 
     printf("\n");
 
-    // Create N1 interface socket for incoming NMP messages...
-    if(-1 == create_gnb_n1_listener_socket())
+    // Create N1/N2 interface socket for incoming NMP messages...
+    if(-1 == create_gnb_n1_n2_listener_socket())
     {
         return -1;
     }
 
-    memset(&(g__gnb_config.amf_n1_sockaddr), 0, sizeof(struct sockaddr_in));
-    g__gnb_config.amf_n1_sockaddr.sin_family      = AF_INET;
-    g__gnb_config.amf_n1_sockaddr.sin_addr.s_addr = htonl(g__gnb_config.amf_n1_addr.u.v4_addr);
-    g__gnb_config.amf_n1_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
+    memset(&(g__gnb_config.amf_n1_n2_sockaddr), 0, sizeof(struct sockaddr_in));
+    g__gnb_config.amf_n1_n2_sockaddr.sin_family      = AF_INET;
+    g__gnb_config.amf_n1_n2_sockaddr.sin_addr.s_addr = htonl(g__gnb_config.amf_n1_n2_addr.u.v4_addr);
+    g__gnb_config.amf_n1_n2_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
 
     g__gnb_config.amf_id = AMF_ID_BASE;
 
-    // First enode id starts from ENB_ID_BASE
+    // First gnodeB-ID starts from GNB_ID_BASE
     // If a multi-thread gnodeB simulator exists, each 
     // gnodeB thread will have an incremental id
     g__gnb_config.my_id  = GNB_ID_BASE;
@@ -299,7 +299,10 @@ main(int argc, char **argv)
 
     // NGSetup is completed with AMF .. 
     // Continue with next procedure
-    if(g__gnb_config.debug_switch) printf("Perform [ UE Registration and PDU Setup Procedure ] for %u users \n\n", g__user_count);
+    if(g__gnb_config.debug_switch) 
+    {
+        printf("Perform [ UE Registration and PDU Setup Procedure ] for %u users \n\n", g__user_count);
+    }
 
     for(user_id = 0; user_id < g__user_count; user_id++)
     {

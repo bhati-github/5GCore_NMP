@@ -46,7 +46,7 @@
 #include "color_print.h"
 
 #include "gnb.h"
-#include "n1_msg_handler.h"
+#include "n1_n2_msg_handler.h"
 #include "ue_reg_and_pdu_setup.h"
 
 int
@@ -58,7 +58,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     int len = 0;
     int offset = 0;
     char string[128];
-    uint8_t *ptr =  g__n1_send_msg_buffer;
+    uint8_t *ptr =  g__n1_n2_send_msg_buffer;
     uint8_t nas_pdu[128];
     memset(nas_pdu, 0x0, 128);
     uint8_t uplink_qos_profile = 0;
@@ -79,8 +79,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     nr_cell_identity.u64 = 100;
     struct sockaddr_in amf_sockaddr;
     uint32_t request_identifier = 0;
-    nmp_msg_data_t nmp_n1_send_msg_data;
-    nmp_msg_data_t nmp_n1_rcvd_msg_data;
+    nmp_msg_data_t nmp_n1_n2_send_msg_data;
+    nmp_msg_data_t nmp_n1_n2_rcvd_msg_data;
     
     ///////////////////////////////////////////////////////////////////////////
     // Step 1: Send Initial UE Message to AMF
@@ -155,9 +155,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-    if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Send message parsing error.. \n", __func__);
@@ -165,11 +165,11 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_socket_id,
-               (char *)g__n1_send_msg_buffer,
+    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+               (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_sockaddr),
+               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -185,8 +185,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_socket_id,
-                 (char *)g__n1_rcvd_msg_buffer,
+    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+                 (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
                  (struct sockaddr *)&(amf_sockaddr),
@@ -202,26 +202,26 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
                 n, string, amf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_n1_interface(g__n1_rcvd_msg_buffer,
-                                               n,
-                                               request_identifier))
+    if(-1 == validate_rcvd_msg_on_n1_n2_interface(g__n1_n2_rcvd_msg_buffer,
+                                                  n,
+                                                  request_identifier))
     {
         printf("%s: Rcvd message validation error.. \n", __func__);
         return -1;
     }
 
-    if(-1 == parse_nmp_msg(g__n1_rcvd_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_rcvd_msg_buffer,
                            n,
-                           &(nmp_n1_rcvd_msg_data),
+                           &(nmp_n1_n2_rcvd_msg_data),
                            debug_flag))
     {
         printf("%s: Rcvd message parsing error.. \n", __func__);
         return -1;
     }
 
-    if(nmp_n1_rcvd_msg_data.msg_response)
+    if(nmp_n1_n2_rcvd_msg_data.msg_response)
     {
-        if(MSG_RESPONSE_IS_OK == nmp_n1_rcvd_msg_data.msg_response)
+        if(MSG_RESPONSE_IS_OK == nmp_n1_n2_rcvd_msg_data.msg_response)
         {
             printf("Initial UE Msg (Registration Request) response is [Ok] \n");
             return 0;
@@ -304,9 +304,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-    if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Send message parsing error.. \n", __func__);
@@ -314,11 +314,11 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_socket_id,
-               (char *)g__n1_send_msg_buffer,
+    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+               (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_sockaddr),
+               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -334,8 +334,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_socket_id,
-                 (char *)g__n1_rcvd_msg_buffer,
+    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+                 (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
                  (struct sockaddr *)&(amf_sockaddr),
@@ -351,26 +351,26 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
                 n, string, amf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_n1_interface(g__n1_rcvd_msg_buffer,
-                                               n,
-                                               request_identifier))
+    if(-1 == validate_rcvd_msg_on_n1_n2_interface(g__n1_n2_rcvd_msg_buffer,
+                                                  n,
+                                                  request_identifier))
     {
         printf("%s: Rcvd message validation error.. \n", __func__);
         return -1;
     }
 
-    if(-1 == parse_nmp_msg(g__n1_rcvd_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_rcvd_msg_buffer,
                            n,
-                           &(nmp_n1_rcvd_msg_data),
+                           &(nmp_n1_n2_rcvd_msg_data),
                            debug_flag))
     {
         printf("%s: Rcvd message parsing error.. \n", __func__);
         return -1;
     }
 
-    if(nmp_n1_rcvd_msg_data.msg_response)
+    if(nmp_n1_n2_rcvd_msg_data.msg_response)
     {
-        if(MSG_RESPONSE_IS_OK == nmp_n1_rcvd_msg_data.msg_response)
+        if(MSG_RESPONSE_IS_OK == nmp_n1_n2_rcvd_msg_data.msg_response)
         {
             printf("Initial UE Msg (Registration Request) response is [Ok] \n");
             return 0;
@@ -452,9 +452,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-    if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Send message parsing error.. \n", __func__);
@@ -462,11 +462,11 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_socket_id,
-               (char *)g__n1_send_msg_buffer,
+    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+               (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_sockaddr),
+               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -547,9 +547,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-    if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Send message parsing error.. \n", __func__);
@@ -557,11 +557,11 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_socket_id,
-               (char *)g__n1_send_msg_buffer,
+    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+               (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_sockaddr),
+               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -577,8 +577,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_socket_id,
-                 (char *)g__n1_rcvd_msg_buffer,
+    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+                 (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
                  (struct sockaddr *)&(amf_sockaddr),
@@ -594,26 +594,26 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
                 n, string, amf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_n1_interface(g__n1_rcvd_msg_buffer,
-                                               n,
-                                               request_identifier))
+    if(-1 == validate_rcvd_msg_on_n1_n2_interface(g__n1_n2_rcvd_msg_buffer,
+                                                  n,
+                                                  request_identifier))
     {
         printf("%s: Rcvd message validation error.. \n", __func__);
         return -1;
     }
 
-    if(-1 == parse_nmp_msg(g__n1_rcvd_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_rcvd_msg_buffer,
                            n,
-                           &(nmp_n1_rcvd_msg_data),
+                           &(nmp_n1_n2_rcvd_msg_data),
                            debug_flag))
     {
         printf("%s: Rcvd message parsing error.. \n", __func__);
         return -1;
     }
 
-    if(nmp_n1_rcvd_msg_data.msg_response)
+    if(nmp_n1_n2_rcvd_msg_data.msg_response)
     {
-        if(MSG_RESPONSE_IS_OK == nmp_n1_rcvd_msg_data.msg_response)
+        if(MSG_RESPONSE_IS_OK == nmp_n1_n2_rcvd_msg_data.msg_response)
         {
             printf("Initial UE Msg (Registration Request) response is [Ok] \n");
             return 0;
@@ -695,9 +695,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-    if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                            offset,
-                           &(nmp_n1_send_msg_data),
+                           &(nmp_n1_n2_send_msg_data),
                            debug_flag))
     {
         printf("%s: Send message parsing error.. \n", __func__);
@@ -705,11 +705,11 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_socket_id,
-               (char *)g__n1_send_msg_buffer,
+    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+               (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_sockaddr),
+               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -731,8 +731,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_socket_id,
-                 (char *)g__n1_rcvd_msg_buffer,
+    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+                 (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
                  (struct sockaddr *)&(amf_sockaddr),
@@ -748,24 +748,24 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
                 n, string, amf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_n1_interface(g__n1_rcvd_msg_buffer,
-                                               n,
-                                               request_identifier))
+    if(-1 == validate_rcvd_msg_on_n1_n2_interface(g__n1_n2_rcvd_msg_buffer,
+                                                  n,
+                                                  request_identifier))
     {
         printf("%s: Rcvd message validation error.. \n", __func__);
         return -1;
     }
 
-    if(-1 == parse_nmp_msg(g__n1_rcvd_msg_buffer,
+    if(-1 == parse_nmp_msg(g__n1_n2_rcvd_msg_buffer,
                            n,
-                           &(nmp_n1_rcvd_msg_data),
+                           &(nmp_n1_n2_rcvd_msg_data),
                            debug_flag))
     {
         printf("%s: Rcvd message parsing error.. \n", __func__);
         return -1;
     }
 
-    if(MSG_TYPE__ALL_OK == nmp_n1_rcvd_msg_data.msg_type)
+    if(MSG_TYPE__ALL_OK == nmp_n1_n2_rcvd_msg_data.msg_type)
     {
         return 0;
     }

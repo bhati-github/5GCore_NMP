@@ -45,13 +45,13 @@
 #include "common_util.h"
 
 #include "amf.h"
-#include "n1_msg_handler.h"
+#include "n1_n2_msg_handler.h"
 #include "upf_session.h"
 
 int
-validate_rcvd_msg_on_n1_interface(uint8_t *msg_ptr,
-                                  int      msg_len,
-                                  uint32_t request_identifier)
+validate_rcvd_msg_on_n1_n2_interface(uint8_t *msg_ptr,
+                                     int      msg_len,
+                                     uint32_t request_identifier)
 {
     if(msg_len < sizeof(nmp_hdr_t))
     {
@@ -84,13 +84,13 @@ validate_rcvd_msg_on_n1_interface(uint8_t *msg_ptr,
 
 
 int
-get_gnb_index_from_v4_addr(uint32_t  gnb_n1_addr,
+get_gnb_index_from_v4_addr(uint32_t  gnb_n1_n2_addr,
                            uint16_t *gnb_index)
 {
     int i = 0;
     for(i = 0; i < g__amf_config.gnb_count; i++)
     {
-        if(gnb_n1_addr == g__amf_config.gnb_data[i].gnb_n1_addr.u.v4_addr)
+        if(gnb_n1_n2_addr == g__amf_config.gnb_data[i].gnb_n1_n2_addr.u.v4_addr)
         {
             *gnb_index = i;
             return 0;
@@ -102,9 +102,9 @@ get_gnb_index_from_v4_addr(uint32_t  gnb_n1_addr,
 
 
 int
-process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
-                    uint32_t        gnb_n1_addr,
-                    uint8_t         debug_flag)
+process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
+                       uint32_t        gnb_n1_n2_addr,
+                       uint8_t         debug_flag)
 {
     int n = 0;
     int ret = 0;
@@ -116,7 +116,7 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     char string[128];
     uint8_t nas_pdu[128];
     uint16_t nas_pdu_len = 0;
-    uint8_t *ptr = g__n1_send_msg_buffer;
+    uint8_t *ptr = g__n1_n2_send_msg_buffer;
     uint8_t relative_amf_capacity = 1;
     uint8_t amf_name[256];
     uint16_t gnb_index = 0;
@@ -132,19 +132,19 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
     uint16_t guami_item_count = 0;
     plmn_item_t plmn_items[4];
     uint16_t plmn_item_count = 0;
-    nmp_msg_data_t nmp_n1_send_msg_data;
+    nmp_msg_data_t nmp_n1_n2_send_msg_data;
 
-    if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         if(debug_flag) printf("%s: Rcvd MsgType = NG_SETUP_REQ \n", __func__);
-        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
-            get_ipv4_addr_string(gnb_n1_addr, string);
+            get_ipv4_addr_string(gnb_n1_n2_addr, string);
             printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
             printf("Rejecting this message from Unknown gnodeb \n");
             return -1;
         }
-        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+        nmp_n1_n2_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
@@ -159,7 +159,7 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
         nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
         nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
-        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        dst_node_id = (nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
         nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
         nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__NG_SETUP_RESP);
@@ -226,9 +226,9 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
         nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+        if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                                offset,
-                               &(nmp_n1_send_msg_data),
+                               &(nmp_n1_n2_send_msg_data),
                                debug_flag))
         {
             printf("%s: Send message parsing error.. \n", __func__);
@@ -238,11 +238,11 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_socket_id,
+        n = sendto(g__amf_config.amf_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {
@@ -252,18 +252,18 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
         return 0;
     }
-    else if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    else if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         if(debug_flag) printf("%s: Rcvd MsgType = INITIAL_UE_MSG_REGISTRATION_REQ \n", __func__);
  
-        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
-            get_ipv4_addr_string(gnb_n1_addr, string);
+            get_ipv4_addr_string(gnb_n1_n2_addr, string);
             printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
             printf("Rejecting this message from Unknown gnodeb \n");
             return -1;
         }
-        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+        nmp_n1_n2_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
@@ -278,7 +278,7 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
         nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
         nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
-        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        dst_node_id = (nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
         nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
         nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_AUTH_REQ);
@@ -325,9 +325,9 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
         nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+        if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                                offset,
-                               &(nmp_n1_send_msg_data),
+                               &(nmp_n1_n2_send_msg_data),
                                debug_flag))
         {
             printf("%s: Send message parsing error.. \n", __func__);
@@ -337,11 +337,11 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_socket_id,
+        n = sendto(g__amf_config.amf_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {
@@ -351,18 +351,18 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
         return 0;
     }
-    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_AUTH_RESP == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_AUTH_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_AUTH_RESP \n", __func__);
 
-        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
-            get_ipv4_addr_string(gnb_n1_addr, string);
+            get_ipv4_addr_string(gnb_n1_n2_addr, string);
             printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
             printf("Rejecting this message from Unknown gnodeb \n");
             return -1;
         }
-        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+        nmp_n1_n2_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
@@ -372,12 +372,12 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         //////////////////////////////////////////////////////
         offset = 0;
         item_count = 0;
-        nmp_hdr_ptr = (nmp_hdr_t *)g__n1_send_msg_buffer;
+        nmp_hdr_ptr = (nmp_hdr_t *)g__n1_n2_send_msg_buffer;
 
         nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
         nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
         nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
-        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        dst_node_id = (nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
         nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
         nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT);
@@ -423,9 +423,9 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
         nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+        if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                                offset,
-                               &(nmp_n1_send_msg_data),
+                               &(nmp_n1_n2_send_msg_data),
                                debug_flag))
         {
             printf("%s: Send message parsing error.. \n", __func__);
@@ -435,11 +435,11 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_socket_id,
+        n = sendto(g__amf_config.amf_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {
@@ -449,36 +449,36 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
         return 0;
     }
-    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE \n", __func__);
 
-        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
-            get_ipv4_addr_string(gnb_n1_addr, string);
+            get_ipv4_addr_string(gnb_n1_n2_addr, string);
             printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
             printf("Rejecting this message from Unknown gnodeb \n");
             return -1;
         }
-        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+        nmp_n1_n2_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
         // No need to send back any message to gnodeb. UE Registration is complete at this stage.
         return 0;
     }
-    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ \n", __func__);
 
-        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
-            get_ipv4_addr_string(gnb_n1_addr, string);
+            get_ipv4_addr_string(gnb_n1_n2_addr, string);
             printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
             printf("Rejecting this message from Unknown gnodeb \n");
             return -1;
         }
-        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+        nmp_n1_n2_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
@@ -491,7 +491,7 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         gnb_v4_addr = g__amf_config.gnb_data[gnb_index].gnb_n3_addr.u.v4_addr;
         upf_v4_addr = g__amf_config.upf_n3_addr.u.v4_addr;
         if(-1 == send_session_create_msg_to_upf(ue_ipv4_addr, 
-                                                nmp_n1_rcvd_msg_data_ptr->imsi,   // TBD: update parameters of this function
+                                                nmp_n1_n2_rcvd_msg_data_ptr->imsi,   // TBD: update parameters of this function
                                                 gnb_v4_addr,
                                                 upf_v4_addr,
                                                 &(ul_teid),
@@ -499,7 +499,7 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
                                                 debug_flag))
         {
             // Send failure message back to gnodeb
-            return send_pdu_setup_failure_msg_to_gnodeb(nmp_n1_rcvd_msg_data_ptr, debug_flag);
+            return send_pdu_setup_failure_msg_to_gnodeb(nmp_n1_n2_rcvd_msg_data_ptr, debug_flag);
         }
         
         /////////////////////////////////////////////////// 
@@ -509,12 +509,12 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         /////////////////////////////////////////////////// 
         offset = 0;
         item_count = 0;
-        nmp_hdr_ptr = (nmp_hdr_t *)g__n1_send_msg_buffer;
+        nmp_hdr_ptr = (nmp_hdr_t *)g__n1_n2_send_msg_buffer;
 
         nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
         nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__GNB);
         nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
-        dst_node_id = (nmp_n1_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+        dst_node_id = (nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
         nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
         nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT);
@@ -560,9 +560,9 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
         nmp_hdr_ptr->msg_item_count = htons(item_count);
 
-        if(-1 == parse_nmp_msg(g__n1_send_msg_buffer,
+        if(-1 == parse_nmp_msg(g__n1_n2_send_msg_buffer,
                                offset,
-                               &(nmp_n1_send_msg_data),
+                               &(nmp_n1_n2_send_msg_data),
                                debug_flag))
         {
             printf("%s: Send message parsing error.. \n", __func__);
@@ -572,11 +572,11 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_socket_id,
+        n = sendto(g__amf_config.amf_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_sockaddr),
+                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {
@@ -586,28 +586,28 @@ process_rcvd_n1_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
 
         return 0;
     }
-    else if(MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP == nmp_n1_rcvd_msg_data_ptr->msg_type)
+    else if(MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         if(debug_flag) printf("%s: Rcvd MsgType = PDU_SESSION_RESOURCE_SETUP_RESP \n", __func__);
 
-        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_addr, &gnb_index))
+        if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
-            get_ipv4_addr_string(gnb_n1_addr, string);
+            get_ipv4_addr_string(gnb_n1_n2_addr, string);
             printf("Unable to find a registered gnodeb with ipv4 address %s \n", string);
             printf("Rejecting this message from Unknown gnodeb \n");
             return -1;
         }
-        nmp_n1_rcvd_msg_data_ptr->gnb_index = gnb_index;
+        nmp_n1_n2_rcvd_msg_data_ptr->gnb_index = gnb_index;
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
         // Send All Ok message back to gnodeb for completion of procedure.
-        return send_all_ok_msg_to_gnodeb(nmp_n1_rcvd_msg_data_ptr,
+        return send_all_ok_msg_to_gnodeb(nmp_n1_n2_rcvd_msg_data_ptr,
                                          debug_flag);
     }
     else
     {
-        printf("Unknown message type on N1 interface.. \n");
+        printf("Unknown message type on N1/N2 interface.. \n");
         return -1;
     }
     return 0;	

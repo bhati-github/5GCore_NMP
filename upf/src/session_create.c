@@ -48,7 +48,7 @@
 #include "session_create.h"
 
 int
-process_session_create_request_msg(nmp_msg_data_t *nmp_n2_rcvd_msg_data_ptr,
+process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
                                    uint8_t         debug_flag)
 {
     int i = 0;
@@ -58,35 +58,35 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n2_rcvd_msg_data_ptr,
     char string[128];
     uint16_t item_count = 0;
     uint16_t dst_node_id = 0;
-    nmp_msg_data_t nmp_n2_send_msg_data;
+    nmp_msg_data_t nmp_n4_send_msg_data;
 
     printf("Session Created for IMSI(");
     for(i = 0; i < 8; i++)
     {
-        printf("%02x", nmp_n2_rcvd_msg_data_ptr->imsi.u8[i]);
+        printf("%02x", nmp_n4_rcvd_msg_data_ptr->imsi.u8[i]);
     } printf("), ");
 
     printf("UE Ipv4 Address : "); 
-    get_ipv4_addr_string(nmp_n2_rcvd_msg_data_ptr->ue_ip_addr.u.v4_addr, string);
+    get_ipv4_addr_string(nmp_n4_rcvd_msg_data_ptr->ue_ip_addr.u.v4_addr, string);
     printf("%s \n", string);
 
 
     // Send response back to AMF
-    uint8_t *ptr = g__n2_send_msg_buffer; 
+    uint8_t *ptr = g__n4_send_msg_buffer; 
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__UPF);
     nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__AMF);
     nmp_hdr_ptr->src_node_id    = htons(g__upf_config.my_id);
 
-    dst_node_id = (nmp_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
+    dst_node_id = (nmp_n4_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
     nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
     nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SESSION_CREATE_RESPONSE);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
-    nmp_hdr_ptr->msg_identifier = htonl(nmp_n2_rcvd_msg_data_ptr->msg_identifier);
+    nmp_hdr_ptr->msg_identifier = htonl(nmp_n4_rcvd_msg_data_ptr->msg_identifier);
 
     offset = sizeof(nmp_hdr_t);
 
@@ -104,21 +104,21 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n2_rcvd_msg_data_ptr,
 
     if(-1 == parse_nmp_msg(ptr,
                            offset,
-                           &(nmp_n2_send_msg_data),
+                           &(nmp_n4_send_msg_data),
                            debug_flag))
     {
         printf("%s: Msg parse error. \n", __func__);
         return -1;
     }
 
-    ////////////////////////////////////////////////
-    // write this msg on n2 socket (towards AMF)
-    ////////////////////////////////////////////////
-    n = sendto(g__upf_config.upf_n2_socket_id,
+    ///////////////////////////////////////////////////////////
+    // write this msg on N4 interface NMP socket (towards AMF)
+    ///////////////////////////////////////////////////////////
+    n = sendto(g__upf_config.upf_n4_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__upf_config.amf_n2_sockaddr),
+               (struct sockaddr *)&(g__upf_config.amf_n4_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {
