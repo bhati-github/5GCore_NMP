@@ -21,7 +21,7 @@
 <br />
 <br />
 
-## 1. Aim of this Project
+# 1. Aim of this Project
 -   This project demonstrate the use of newly created NMP (Network Message Protocol) 
     which can be used for information exchange between telecommunication network nodes.
 -   Simulate NGAP procedure flows over NMP protocol instead of SCTP protocol
@@ -32,7 +32,7 @@
 <br />
   
   
-## 2. Motivation behind idea and implementation of this protocol
+# 2. Motivation behind idea and implementation of this protocol
 -  During development of S1AP protocol parser and 5GNAS protocol parser, the complexity in the parser leads me to think about a new protocol which can be parsed very easily and can be used across all call setup related interfaces.
    So, this leads to idea of Network Message Protocol (NMP) and eventually this demonstration project.
 
@@ -49,7 +49,7 @@
     
     
     
-## 3. Fundamental Idea behind NMP 
+# 3. Fundamental Idea behind NMP 
     
  - Any piece of information to be exchanged between two entities can be 
     classified as one of the following:
@@ -63,7 +63,7 @@
 <br />
 <br />
 
-## 4. Explaination of NMP (Network Message Protocol) header
+# 4. Explaination of NMP (Network Message Protocol) header
 
 Packet Structure will look like as follows:
 IP header + UDP header + NMP header + NMP items				
@@ -106,7 +106,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
     
 
-## 5. Explaination of items to be carried by NMP message
+# 5. Explaination of items to be carried by NMP message
 
 ![item-description](https://github.com/bhati-github/5GCore_NMP/assets/49303596/22b25119-1322-4a4e-8b8f-79bd990f13ae)
 
@@ -181,7 +181,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-## 6. Demonstration in a sample network
+# 6. Demonstration in a sample network
 
    ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/9291faeb-cd9a-4750-86a7-ea6617e783e0)
 
@@ -205,7 +205,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 
 
-  ### 6.1 Simulation of NG Setup with AMF in NMP packets
+## 6.1 Simulation of NG Setup with AMF in NMP packets
   ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
 
   ![ng-setup-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/586614ca-1358-4477-9701-ca66fe9ac9df)
@@ -213,7 +213,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
   
-  #### 6.1.1 Parsed Message from gnodeB to AMF (NG Setup Request)
+### 6.1.1 Parsed Message from gnodeB to AMF (NG Setup Request)
 
   ![ng-setup-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b13e95be-abef-45ec-93bd-5c2fe214d3ab)
   ![ng-setup-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ebd2dcd3-2aa7-4a78-be63-ee66fc091fe4)
@@ -221,7 +221,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-  #### 6.1.2 Parsed Message from AMF to gnodeB (NG Setup Response)
+### 6.1.2 Parsed Message from AMF to gnodeB (NG Setup Response)
 
   ![ng-setup-response-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/63badf4a-e355-4b1a-8d13-a483f85c20fa)
   ![ng-setup-response-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/29eb922e-8e0f-46be-aea3-32e07d6dd68a)
@@ -231,7 +231,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
   
  
-  ### 6.2 Simulation of Initial UE Registration Message and PDU Setup Request in NMP packets
+## 6.2 Simulation of Initial UE Registration Message and PDU Setup Request in NMP packets
   
   ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/197635e8-3506-483e-9a66-75c8bb8c7e4f)
 
@@ -259,7 +259,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-### 6.3 Simulation of PFCP packet flows in NMP packets 
+## 6.3 Simulation of PFCP packet flows in NMP packets 
 N4 interface between SMF and UPF carries PFCP protocol packets for user-plane parameter setup.
 
 Following simulation carries same information in NMP packets as depicted in screenshots.
@@ -268,7 +268,7 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 
 <br />
 
-##### 6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request) 
+#### 6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request) 
 
 ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a96f6064-d2ec-42d7-aaed-cdc7c2e3a694)
 ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/f9978191-cbcf-41a9-bbe9-7dfe08fb2f64)
@@ -278,7 +278,7 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 
 <br />
 
-##### 6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response) 
+#### 6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response) 
 
 ![6](https://github.com/bhati-github/5GCore_NMP/assets/49303596/4765a4e4-a7c4-4fd9-8a0e-79a0bf7609c0)
 
@@ -287,7 +287,7 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 <br />
 <br />
 
-## 7. Network Diagram for simulation inside a single virtual machine
+# 7. Network Diagram for simulation inside a single virtual machine
 
 <br />
 
@@ -350,7 +350,7 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 <br />
 <br />
 
-## 8. Performance data 
+# 8. Performance data 
    Time taken to successfully attach 65536 users (with PDN connectivity) into 
    core network is around 45 seconds with few prints.
    
