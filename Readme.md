@@ -1,5 +1,25 @@
-# README:
+# README
 
+# Table of Contents<!-- omit in toc -->
+
+- [1. Aim of this Project](#aim-of-this-project)
+- [2. Motivation behind idea and implementation of this protocol ](#Motivation-behind-idea-and-implementation-of-this-protocol)
+- [3. Fundamental Idea behind NMP](#Fundamental-Idea-behind-NMP)
+- [4. Explaination of NMP (Network Message Protocol) header](#Explaination-of-NMP-(Network-Message-Protocol)-header)
+- [5. Explaination of items to be carried by NMP message](#Explaination-of-items-to-be-carried-by-NMP-message)
+- [6. Demonstration in a sample network](#Demonstration-in-a-sample-network)
+  - [6.1  Simulation of NG Setup with AMF in NMP packets](#Simulation-of-NG-Setup-with-AMF-in-NMP-packets)
+    - [6.1.1  Parsed Message from gnodeB to AMF (NG Setup Request)](#Parsed-Message-from-gnodeB-to-AMF-NG-Setup-Request)
+    - [6.1.2  Parsed Message from AMF to gnodeB (NG Setup Response)](#Parsed-Message-from-AMF-to-gnodeB-NG-Setup-Response)
+  - [6.2 Simulation of Initial UE Registration Message and PDU Setup Request in NMP packets](#Simulation-of-Initial-UE-Registration-Message-and-PDU-Setup-Request-in-NMP-packets)
+  - [6.3 Simulation of PFCP packet flows in NMP packets](#Simulation-of-PFCP-packet-flows-in-NMP-packets)
+    - [6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request)](#Parsed-Message-from-AMF+SMF-to-UPF-Session-Create-Request)
+    - [6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response)](#Parsed-Message-from-UPF-to-AMF+SMF-Session-Create-Response)
+- [7. Network Diagram for simulation inside a single virtual machine](#Network-Diagram-for-simulation-inside-a-single-virtual-machine)
+- [8. Performance data ](#Performance-data)
+
+<br />
+<br />
 
 ## 1. Aim of this Project
 -   This project demonstrate the use of newly created NMP (Network Message Protocol) 
@@ -29,7 +49,7 @@
     
     
     
-## 3. Fundamental Idea behind NMP: 
+## 3. Fundamental Idea behind NMP 
     
  - Any piece of information to be exchanged between two entities can be 
     classified as one of the following:
@@ -185,7 +205,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 
 
-  ### 6.1 Sequence Diagram [ NG Setup with AMF ]
+  ### 6.1 Simulation of NG Setup with AMF in NMP packets
   ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
 
   ![ng-setup-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/586614ca-1358-4477-9701-ca66fe9ac9df)
@@ -193,7 +213,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
   
-  ### Parsed Message from gnodeB to AMF (NG Setup Request)
+  #### 6.1.1 Parsed Message from gnodeB to AMF (NG Setup Request)
 
   ![ng-setup-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b13e95be-abef-45ec-93bd-5c2fe214d3ab)
   ![ng-setup-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ebd2dcd3-2aa7-4a78-be63-ee66fc091fe4)
@@ -201,7 +221,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-  ### Parsed Message from AMF to gnodeB (NG Setup Response)
+  #### 6.1.2 Parsed Message from AMF to gnodeB (NG Setup Response)
 
   ![ng-setup-response-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/63badf4a-e355-4b1a-8d13-a483f85c20fa)
   ![ng-setup-response-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/29eb922e-8e0f-46be-aea3-32e07d6dd68a)
@@ -211,7 +231,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
   
  
-  ### 6.2 SequenceDiagram [ Initial UE Registration Message and PDU Setup Request ] 
+  ### 6.2 Simulation of Initial UE Registration Message and PDU Setup Request in NMP packets
   
   ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/197635e8-3506-483e-9a66-75c8bb8c7e4f)
 
@@ -239,13 +259,27 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-### 6.3 Simulation of PFCP packet flows in NMP packets [ Session Create Request / Response (SMF <--> UPF) ] 
+### 6.3 Simulation of PFCP packet flows in NMP packets 
+N4 interface between SMF and UPF carries PFCP protocol packets for user-plane parameter setup.
+
+Following simulation carries same information in NMP packets as depicted in screenshots.
+
+In this simulation, SMF is integrated within AMF and this is the reason that N4 packet is originating from AMF N4 interface.
+
+<br />
+
+##### 6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request) 
 
 ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a96f6064-d2ec-42d7-aaed-cdc7c2e3a694)
 ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/f9978191-cbcf-41a9-bbe9-7dfe08fb2f64)
 ![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d30408fa-e15a-4e01-9d85-ad1533d18875)
 ![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/cc4163bf-69cb-4109-8849-c095894c6cab)
 ![5](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b4d7f962-a04b-48a8-8759-dd6b2a5f30d3)
+
+<br />
+
+##### 6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response) 
+
 ![6](https://github.com/bhati-github/5GCore_NMP/assets/49303596/4765a4e4-a7c4-4fd9-8a0e-79a0bf7609c0)
 
 <br />
@@ -253,7 +287,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-## 7. Network Diagram for simulation inside a single virtual machine (Preferred approach)
+## 7. Network Diagram for simulation inside a single virtual machine
 
 <br />
 
