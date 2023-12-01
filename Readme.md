@@ -387,7 +387,15 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 
 
 Thankyou so much for reading such a big file. Please contact me on my email id for any questions.
+
 <br />
+<br />
+
+If you liked this demostration project, please give it a "star" and spread this in your circle.
+
+<br />
+<br />
+
 Abhishek Bhati
 <br />
 ab.bhati@gmail.com
