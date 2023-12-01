@@ -233,13 +233,13 @@ UDP port for NMP protocol is 1208 (just a random selection).
 
 ### 6.1 Simulation of NG Setup with AMF in NMP packets
   ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
-
+<br />
   ![ng-setup-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/586614ca-1358-4477-9701-ca66fe9ac9df)
-
+Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP is carrying NGAP protocol messages.
 <br />
 <br />
   
-#### 6.1.1 Parsed Message from gnodeB to AMF (NG Setup Request)
+#### 6.1.1 Parsed Message from gnodeB to AMF (NG Setup Request Message over NMP protocol)
 
   ![ng-setup-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b13e95be-abef-45ec-93bd-5c2fe214d3ab)
   ![ng-setup-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ebd2dcd3-2aa7-4a78-be63-ee66fc091fe4)
@@ -247,7 +247,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-#### 6.1.2 Parsed Message from AMF to gnodeB (NG Setup Response)
+#### 6.1.2 Parsed Message from AMF to gnodeB (NG Setup Response over NMP protocol)
 
   ![ng-setup-response-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/63badf4a-e355-4b1a-8d13-a483f85c20fa)
   ![ng-setup-response-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/29eb922e-8e0f-46be-aea3-32e07d6dd68a)
@@ -262,8 +262,9 @@ UDP port for NMP protocol is 1208 (just a random selection).
   ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/197635e8-3506-483e-9a66-75c8bb8c7e4f)
 
   ![ue-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/dae0a14b-21e0-4c74-9e02-febb9a92da51)
-
+Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP is carrying NGAP procedure messages.
 <br />
+In below snapshots, you can see that same NGAP procedures are carried over NMP protocol.
 <br />
 
   ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/78cdfa3d-a212-447b-91da-f082723cb2cb)
