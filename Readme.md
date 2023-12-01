@@ -112,28 +112,34 @@ UDP port for NMP protocol is 1208 (just a random selection).
 
 <br />
 
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     // Item id's carrying 1 byte value
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     ITEM_ID__MSG_RESPONSE,
     ITEM_ID__UPLINK_QOS_PROFILE,
     ITEM_ID__DNLINK_QOS_PROFILE,
     ITEM_ID__PDR_ACTION,
     ITEM_ID__FAR_ACTION_FLAGS,
     ITEM_ID__FAR_DST_INTERFACE,
+    ITEM_ID__DEFAULT_PAGING_DRX,
+    ITEM_ID__RELATIVE_AMF_CAPACITY,
 
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     // Item id's carrying 2 byte value
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    ITEM_ID__RAN_UE_NGAP_ID,
+    ITEM_ID__AMF_UE_NGAP_ID,
     ITEM_ID__PDR_RULE_ID,
     ITEM_ID__PDR_PRECEDENCE,
     ITEM_ID__PDR_FAR_ID,
     ITEM_ID__FAR_RULE_ID,
+    ITEM_ID__RRC_ESTABLISH_CAUSE,
 
-    //////////////////////////////////////////////
-    // Item id's carrying 4 byte value
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // Item id's carrying more than 2 and upto 4 byte value
+    ////////////////////////////////////////////////////////
     ITEM_ID__MCC_MNC,
+    ITEM_ID__GNODEB_ID,
     ITEM_ID__TAC,
     ITEM_ID__CELL_ID,
     ITEM_ID__TMSI,
@@ -141,42 +147,60 @@ UDP port for NMP protocol is 1208 (just a random selection).
     ITEM_ID__PDR_PDI_MATCH_IPV4_ADDR,
     ITEM_ID__PDR_PDI_MATCH_GTPU_TEID,
 
-    //////////////////////////////////////////////
-    // Item id's carrying 8 byte value
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // Item id's carrying more than 4 and upto 8 byte value
+    ////////////////////////////////////////////////////////
     ITEM_ID__IMSI,
+    ITEM_ID__NSSAI,
     ITEM_ID__GTPU_SELF_IPV4_ENDPOINT,
     ITEM_ID__GTPU_PEER_IPV4_ENDPOINT,
     ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE,
+    ITEM_ID__USER_LOCATION_INFO_TAC,
 
-    //////////////////////////////////////////////
-    // Item id's carrying 16 byte value
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // Item id's carrying more than 8 and upto 16 byte value
+    ////////////////////////////////////////////////////////
     ITEM_ID__UE_IDENTIFIER_SECRET,
     ITEM_ID__UE_IPV6_ADDR,
+    ITEM_ID__USER_LOCATION_INFO_NR_CGI,
 
-    //////////////////////////////////////////////
-    // Item id's carrying more than 16 byte value
+    ////////////////////////////////////////////////////////
+    // Also known as Type-2 items.
+    // Item id's carrying more than 16 byte value (variable length)
     // 2 bytes(item_id)  +
     // 2 bytes(item_len) +
     // actual item bytes
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     ITEM_ID__GTPU_SELF_IPV6_ENDPOINT,
     ITEM_ID__GTPU_PEER_IPV6_ENDPOINT,
     ITEM_ID__FAR_OUTER_IPV6_HDR_CREATE,
-    ITEM_ID__RANDOM_STRING,
+    ITEM_ID__NAS_PDU,
+    ITEM_ID__RAN_NODE_NAME,
+    ITEM_ID__AMF_NAME,
+    ITEM_ID__GUAMI,
 
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     // Item id's carrying group of individual items
+    // Item group can contain any possible combination
+    // of type-1 and type-2 items.
+    // Think about concept of recursion.
+    //
     // 2 bytes(group_item_id) +
     // 2 bytes(item_count)    +
     // 2 bytes(item_len)      +
     // actual item bytes
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     ITEM_GROUP_ID__N3_PDR,
     ITEM_GROUP_ID__N6_PDR,
     ITEM_GROUP_ID__N3_FAR,
     ITEM_GROUP_ID__N6_FAR,
+    ITEM_GROUP_ID__USER_LOCATION_INFO,
+    ITEM_GROUP_ID__GLOBAL_RAN_NODE_ID,
+    ITEM_GROUP_ID__GUAMI_LIST,
+    ITEM_GROUP_ID__SUPPORTED_TA_LIST,
+    ITEM_GROUP_ID__SUPPORTED_TA_LIST_ITEM,
+    ITEM_GROUP_ID__PLMN_SUPPORT_LIST,
+    ITEM_GROUP_ID__PLMN_SUPPORT_LIST_ITEM,
 
 <br />
 <br />
@@ -193,7 +217,7 @@ UDP port for NMP protocol is 1208 (just a random selection).
   As part of this demonstration, all messages on this interface are carried by NMP protocol.
    
 - N4 interface is used for datapath setup inside UPF. (SMF <---> UPF).
-   As part of this demonstration, all messages on this interface are carried by NMP protocol
+   As part of this demonstration, all messages on this interface are carried by NMP protocol.
    
    
 - N3 interface carry data packets of UE via GTP-U packets. User plane GTP-U packet flows are not part of this demonstration. 
