@@ -189,17 +189,19 @@ UDP port for NMP protocol is 1208 (just a random selection).
    The code inside this demonstration project illustrates the use of NMP protocol 
    across sample interfaces in this diagram. 
 
-   N1/N2 interface is used for call setup packets between gnodeB and AMF.
+- N1/N2 interface is used for call setup packets between gnodeB and AMF.
+  As part of this demonstration, all messages on this interface are carried by NMP protocol.
    
-   N4 interface is used for datapath setup inside UPF. (SMF <---> UPF)
+- N4 interface is used for datapath setup inside UPF. (SMF <---> UPF).
+   As part of this demonstration, all messages on this interface are carried by NMP protocol
    
-   N3 interface carry data packets of UE via GTP-U packets
    
-   N6 interface is towards Internet
+- N3 interface carry data packets of UE via GTP-U packets. User plane GTP-U packet flows are not part of this demonstration. 
+   
+- N6 interface is towards Internet. De-capsulated GTP-U packets towards Internet are not part of this demonstration.
    
 
-   There is no separate SMF in this diagram as session management function is 
-   integrated within AMF for simplicity of demonstration.
+- There is no separate SMF in this diagram as session management function is integrated within AMF for simplicity of demonstration.
 
 <br />
 <br />
