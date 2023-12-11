@@ -133,6 +133,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     plmn_item_t plmn_items[4];
     uint16_t plmn_item_count = 0;
     nmp_msg_data_t nmp_n1_n2_send_msg_data;
+    struct sockaddr_in  target_service_sockaddr;
 
     if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
@@ -238,11 +239,13 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_n2_socket_id,
+        target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
+        target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
+        n = sendto(g__amf_config.my_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
+                   (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {
@@ -337,11 +340,13 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_n2_socket_id,
+        target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
+        target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
+        n = sendto(g__amf_config.my_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
+                   (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {
@@ -435,11 +440,13 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_n2_socket_id,
+        target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
+        target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
+        n = sendto(g__amf_config.my_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
+                   (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {
@@ -572,11 +579,13 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
-        n = sendto(g__amf_config.amf_n1_n2_socket_id,
+        target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
+        target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
+        n = sendto(g__amf_config.my_n1_n2_socket_id,
                    (char *)ptr,
                    offset,
                    MSG_WAITALL,
-                   (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
+                   (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
         if(n != offset)
         {

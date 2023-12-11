@@ -21,8 +21,10 @@ struct nmp_msg_data {
     uint16_t  msg_item_len;
     uint32_t  msg_identifier;
     uint16_t  msg_item_count;
+    uint16_t  msg_response_code;
     uint16_t  gnb_index;
-    uint8_t   msg_response;
+    uint32_t  fiveg_service_addr;
+    uint16_t  fiveg_service_port;
 
     uint16_t  mcc;
     uint16_t  mnc;
@@ -77,9 +79,19 @@ struct nmp_msg_data {
     v6_teid_endpoint_t  self_v6_endpoint;
     v6_teid_endpoint_t  peer_v6_endpoint;
 
+    uint8_t  nrf_registration_req_data[2048];
+    uint16_t nrf_registration_req_data_len;
+   
+    uint8_t  service_info_json_data[2048]; 
+    uint8_t   msg_response_description[2048];
+
 } __attribute__((packed));
+
 typedef struct nmp_msg_data  nmp_msg_data_t;
 
+void
+get_node_type_string(uint16_t node_type, 
+                     char    *string);
 
 int
 parse_nmp_msg(uint8_t         *msg_ptr,

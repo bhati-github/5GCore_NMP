@@ -72,6 +72,7 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     uint16_t mcc = 404;
     uint16_t mnc = 10;
     struct sockaddr_in amf_sockaddr;
+    struct sockaddr_in  target_service_sockaddr;
     uint32_t request_identifier = 0;
     nmp_msg_data_t nmp_n1_n2_send_msg_data;
     nmp_msg_data_t nmp_n1_n2_rcvd_msg_data;
@@ -163,11 +164,13 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__gnb_config.amf_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__gnb_config.amf_n1_n2_sockaddr.sin_port;
+    n = sendto(g__gnb_config.my_n1_n2_socket_id,
                (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -189,7 +192,7 @@ perform_ng_setup_procedure(uint8_t  debug_flag)
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+    n = recvfrom(g__gnb_config.my_n1_n2_socket_id,
                  (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,

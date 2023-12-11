@@ -48,15 +48,6 @@
 // 1 byte Items
 ///////////////////////////////////////////
 int
-nmp_add_item__msg_response(uint8_t *ptr,
-                           uint8_t  response)
-{
-    *((uint16_t *)(ptr)) = htons(ITEM_ID__MSG_RESPONSE);
-    *(ptr + 2) = response; 
-    return (2 + 1);
-}
-
-int
 nmp_add_item__pdr__action(uint8_t *ptr,
                           uint8_t  action)
 {
@@ -183,6 +174,15 @@ nmp_add_item__rrc_establish_cause(uint8_t *ptr,
 {
     *((uint16_t *)(ptr)) = htons(ITEM_ID__RRC_ESTABLISH_CAUSE);
     *((uint16_t *)(ptr + 2)) = htons(rrc_establish_cause);
+    return (2 + 2);
+}
+
+int
+nmp_add_item__msg_response_code(uint8_t *ptr,
+                                uint16_t msg_response_code)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__MSG_RESPONSE_CODE);
+    *((uint16_t *)(ptr + 2)) = htons(msg_response_code);
     return (2 + 2);
 }
 
@@ -381,6 +381,18 @@ nmp_add_item__user_location_info_nr_cgi(uint8_t *ptr,
 // Data more than 16 bytes (variable lenth items)
 //////////////////////////////////////////////////
 int
+nmp_add_item__msg_response_description(uint8_t *ptr,
+                                       uint8_t *response_description_ptr,
+                                       uint16_t response_description_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__MSG_RESPONSE_DESCRIPTION);
+    *((uint16_t *)(ptr + 2)) = htons(response_description_len);
+    memcpy(ptr + 2 + 2, response_description_ptr, response_description_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + response_description_len); 
+}
+
+int
 nmp_add_item__nas_pdu(uint8_t *ptr,
                       uint8_t *nas_pdu_ptr,
                       uint16_t nas_pdu_len)
@@ -428,4 +440,15 @@ nmp_add_item__guami(uint8_t  *ptr,
     return (2 + 2 + guami_item_len);
 }
 
+int
+nmp_add_item__service_info_as_json_data(uint8_t  *ptr,
+                                        uint8_t  *service_json_info_ptr,
+                                        uint16_t  service_json_info_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__SERVICE_INFO_AS_JSON_DATA);
+    *((uint16_t *)(ptr + 2)) = htons(service_json_info_len);
+    memcpy(ptr + 2 + 2, service_json_info_ptr, service_json_info_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + service_json_info_len);
+}
  

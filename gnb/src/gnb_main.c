@@ -53,8 +53,8 @@ gnb_config_t   g__gnb_config;
 uint8_t  g__n1_n2_send_msg_buffer[MSG_BUFFER_LEN];
 uint8_t  g__n1_n2_rcvd_msg_buffer[MSG_BUFFER_LEN];
 
-uint8_t  g__gnb_n1_n2_ip_is_set = 0;
-uint8_t  g__gnb_n3_ip_is_set = 0;
+uint8_t  g__my_n1_n2_ip_is_set = 0;
+uint8_t  g__my_n3_ip_is_set = 0;
 uint8_t  g__amf_n1_n2_ip_is_set = 0;
 uint32_t g__user_count = 0;
 
@@ -66,25 +66,25 @@ create_gnb_n1_n2_listener_socket()
     struct sockaddr_in  n1_n2_listener_addr;
 
     // Creating socket file descriptor
-    g__gnb_config.gnb_n1_n2_socket_id = socket(AF_INET, SOCK_DGRAM, 0);
-    if(g__gnb_config.gnb_n1_n2_socket_id < 0)
+    g__gnb_config.my_n1_n2_socket_id = socket(AF_INET, SOCK_DGRAM, 0);
+    if(g__gnb_config.my_n1_n2_socket_id < 0)
     {
-        perror("gnodeB: N1/N2 interface Listener Socket Creation failed");
+        perror("gnodeB: My N1/N2 interface NMP-Listener Socket Creation failed");
         return -1;
     }
 
     memset(&n1_n2_listener_addr, 0, sizeof(struct sockaddr_in));
     n1_n2_listener_addr.sin_family      = AF_INET;
-    n1_n2_listener_addr.sin_addr.s_addr = htonl(g__gnb_config.gnb_n1_n2_addr.u.v4_addr);
+    n1_n2_listener_addr.sin_addr.s_addr = htonl(g__gnb_config.my_n1_n2_addr.u.v4_addr);
     n1_n2_listener_addr.sin_port        = htons(UDP_PORT_IS_NMP);
 
-    if(bind(g__gnb_config.gnb_n1_n2_socket_id,
+    if(bind(g__gnb_config.my_n1_n2_socket_id,
            (struct sockaddr *)&n1_n2_listener_addr,
            sizeof(struct sockaddr_in)) < 0)
     {
         printf("%s: Error in bind() operation \n", __func__);
         perror("Bind_Operation: ");
-        close(g__gnb_config.gnb_n1_n2_socket_id);
+        close(g__gnb_config.my_n1_n2_socket_id);
         return -1;
     }
 
@@ -108,40 +108,40 @@ main(int argc, char **argv)
 
     while(0 != arg_num)
     {
-        if(0 == strcmp(argv[arg_index], "-gnbn1n2ip"))
+        if(0 == strcmp(argv[arg_index], "-myn1n2ip"))
         {
             if(NULL != argv[arg_index + 1])
             {
                 if(0 == inet_aton(argv[arg_index + 1], &v4_addr))
                 {
-                    printf("-gnbn1n2ip %s is not valid \n", argv[arg_index + 1]);
+                    printf("-myn1n2ip %s is not valid \n", argv[arg_index + 1]);
                     return -1;
                 }
-                g__gnb_config.gnb_n1_n2_addr.ip_version = IP_VER_IS_V4;
-                g__gnb_config.gnb_n1_n2_addr.u.v4_addr  = htonl(v4_addr.s_addr);
-                g__gnb_n1_n2_ip_is_set = 1;
+                g__gnb_config.my_n1_n2_addr.ip_version = IP_VER_IS_V4;
+                g__gnb_config.my_n1_n2_addr.u.v4_addr  = htonl(v4_addr.s_addr);
+                g__my_n1_n2_ip_is_set = 1;
             }
             else
             {
-                printf("-gnbn1n2ip %s is not valid \n", argv[arg_index + 1]);
+                printf("-myn1n2ip %s is not valid \n", argv[arg_index + 1]);
                 return -1;
             }
             arg_num   -= 2;
             arg_index += 2;
             continue;
         }
-        else if(0 == strcmp(argv[arg_index], "-gnbn3ip"))
+        else if(0 == strcmp(argv[arg_index], "-myn3ip"))
         {
             if(NULL != argv[arg_index + 1])
             {
                 if(0 == inet_aton(argv[arg_index + 1], &v4_addr))
                 {
-                    printf("-gnbn3ip %s is not valid \n", argv[arg_index + 1]);
+                    printf("-myn3ip %s is not valid \n", argv[arg_index + 1]);
                     return -1;
                 }
-                g__gnb_config.gnb_n3_addr.ip_version = IP_VER_IS_V4;
-                g__gnb_config.gnb_n3_addr.u.v4_addr  = htonl(v4_addr.s_addr);
-                g__gnb_n3_ip_is_set = 1;
+                g__gnb_config.my_n3_addr.ip_version = IP_VER_IS_V4;
+                g__gnb_config.my_n3_addr.u.v4_addr  = htonl(v4_addr.s_addr);
+                g__my_n3_ip_is_set = 1;
             }
             else
             {
@@ -229,10 +229,10 @@ main(int argc, char **argv)
 
     printf("\n");
 
-    // Check if ip address of gnodeb N1/N2 interface is set by user
-    if(g__gnb_n1_n2_ip_is_set)
+    // Check if my N1/N2 interface IP address is set by user
+    if(g__my_n1_n2_ip_is_set)
     {
-        get_ipv4_addr_string(g__gnb_config.gnb_n1_n2_addr.u.v4_addr, string);
+        get_ipv4_addr_string(g__gnb_config.my_n1_n2_addr.u.v4_addr, string);
         printf("%-32s : %s \n", "gnodeB N1/N2 Interface IPv4 Addr", string);
     }
     else
@@ -243,10 +243,10 @@ main(int argc, char **argv)
     }
 
 
-    // Check if ip address of gnodeb N3 interface is set by user
-    if(g__gnb_n3_ip_is_set)
+    // Check if my N3 interface IP address is set by user
+    if(g__my_n3_ip_is_set)
     {
-        get_ipv4_addr_string(g__gnb_config.gnb_n3_addr.u.v4_addr, string);
+        get_ipv4_addr_string(g__gnb_config.my_n3_addr.u.v4_addr, string);
         printf("%-32s : %s \n", "gnodeB N3 Interface IPv4 Addr", string);
     }
     else

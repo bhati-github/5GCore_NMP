@@ -115,24 +115,32 @@ struct amf_config {
     uint8_t    debug_switch;
 
     uint16_t   my_id;
+    uint16_t   nrf_id;
+    uint16_t   upf_id;
 
-    ip_addr_t  amf_n1_n2_addr;
-    int        amf_n1_n2_socket_id;
-
-    ip_addr_t  amf_n4_addr;
-    int        amf_n4_socket_id;
+    ip_addr_t  my_n1_n2_addr;
+    int        my_n1_n2_socket_id;
+    
+    ip_addr_t  my_Namf_addr;
+    int        my_Namf_socket_id;
+    
+    ip_addr_t           Nnrf_addr;
+    struct sockaddr_in  Nnrf_sockaddr;
+    
+    ip_addr_t  smf_n4_addr;
+    int        smf_n4_socket_id;
 
     int        pkt_delay;	
 
     uint16_t    gnb_count;
     gnb_data_t  gnb_data[MAX_GNB_COUNT];
 
-    uint16_t            upf_id;
     ip_addr_t           upf_n4_addr;
     struct sockaddr_in  upf_n4_sockaddr;
     ip_addr_t           upf_n3_addr;
 
     session_info_t      upf_session_data[MAX_UPF_SESSIONS];
+
 } __attribute__((packed));
 typedef struct amf_config   amf_config_t;
 
@@ -146,6 +154,9 @@ extern uint8_t  g__n1_n2_rcvd_msg_buffer[MSG_BUFFER_LEN];
 
 extern uint8_t  g__n4_send_msg_buffer[MSG_BUFFER_LEN];
 extern uint8_t  g__n4_rcvd_msg_buffer[MSG_BUFFER_LEN];
+
+extern uint8_t  g__Namf_send_msg_buffer[MSG_BUFFER_LEN];
+extern uint8_t  g__Namf_rcvd_msg_buffer[MSG_BUFFER_LEN];
 
 extern uint32_t g__ue_ipv4_addr_subnet;
 extern uint32_t g__ue_ipv4_addr_mask;

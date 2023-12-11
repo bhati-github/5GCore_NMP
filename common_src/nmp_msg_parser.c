@@ -47,8 +47,9 @@
 #include "color_print.h"
 
 
-static void
-get_node_type_string(uint16_t node_type, char *string)
+void
+get_node_type_string(uint16_t node_type, 
+                     char    *string)
 {
     switch (node_type)
     {
@@ -62,6 +63,10 @@ get_node_type_string(uint16_t node_type, char *string)
 
         case NODE_TYPE__GNB:
             strcpy(string, "GNB");
+            break;
+        
+        case NODE_TYPE__NRF:
+            strcpy(string, "NRF");
             break;
 
         case NODE_TYPE__UPF:
@@ -144,12 +149,12 @@ dump_msg_type(uint16_t msg_type)
 {
     switch (msg_type)
     {
-        case MSG_TYPE__KEEPALIVE_REQUEST:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "KEEPALIVE_REQUEST"); printf("\n");
+        case MSG_TYPE__KEEPALIVE_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "KEEPALIVE_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__KEEPALIVE_RESPONSE:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "KEEPALIVE_RESPONSE"); printf("\n");
+        case MSG_TYPE__KEEPALIVE_RESP:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "KEEPALIVE_RESP"); printf("\n");
             break;
 
         case MSG_TYPE__ALL_OK:
@@ -196,28 +201,44 @@ dump_msg_type(uint16_t msg_type)
             printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "PDU_SESSION_RESOURCE_SETUP_RESP"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_CREATE_REQUEST:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_CREATE_REQUEST"); printf("\n");
+        case MSG_TYPE__SESSION_CREATE_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_CREATE_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_CREATE_RESPONSE:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_CREATE_RESPONSE"); printf("\n");
+        case MSG_TYPE__SESSION_CREATE_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_CREATE_RESP"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_MODIFY_REQUEST:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_MODIFY_REQUEST"); printf("\n");
+        case MSG_TYPE__SESSION_MODIFY_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_MODIFY_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_MODIFY_RESPONSE:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_MODIFY_RESPONSE"); printf("\n");
+        case MSG_TYPE__SESSION_MODIFY_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_MODIFY_RESP"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_DELETE_REQUEST:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_DELETE_REQUEST"); printf("\n");
+        case MSG_TYPE__SESSION_DELETE_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_DELETE_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_DELETE_RESPONSE:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_DELETE_RESPONSE"); printf("\n");
+        case MSG_TYPE__SESSION_DELETE_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_DELETE_RESP"); printf("\n");
+            break;
+       
+        case MSG_TYPE__NRF_SERVICE_REGISTRATION_REQ:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_REGISTRATION_REQ"); printf("\n");
+            break;
+
+        case MSG_TYPE__NRF_SERVICE_REGISTRATION_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_REGISTRATION_RESP"); printf("\n");
+            break;
+
+        case MSG_TYPE__NRF_SERVICE_DISCOVERY_REQ:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_DISCOVERY_REQ"); printf("\n");
+            break;
+
+        case MSG_TYPE__NRF_SERVICE_DISCOVERY_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_DISCOVERY_RESP"); printf("\n");
             break;
 
         default:
@@ -235,11 +256,6 @@ dump_item_id(char *space, uint16_t item_id)
         ////////////////////////////////////////////////////////////////////
         // Item id's carrying 1 byte value
         ////////////////////////////////////////////////////////////////////
-        case ITEM_ID__MSG_RESPONSE:
-            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
-                   "MSG_RESPONSE", ITEM_ID__MSG_RESPONSE, ITEM_ID__MSG_RESPONSE);
-            break;
-
         case ITEM_ID__UPLINK_QOS_PROFILE:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID",
                    "UPLINK_QOS_PROFILE", ITEM_ID__UPLINK_QOS_PROFILE, ITEM_ID__UPLINK_QOS_PROFILE);
@@ -312,6 +328,11 @@ dump_item_id(char *space, uint16_t item_id)
         case ITEM_ID__RRC_ESTABLISH_CAUSE:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
                    "RRC_ESTABLISH_CAUSE", ITEM_ID__RRC_ESTABLISH_CAUSE, ITEM_ID__RRC_ESTABLISH_CAUSE);
+            break;
+        
+        case ITEM_ID__MSG_RESPONSE_CODE:
+            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
+                   "MSG_RESPONSE_CODE", ITEM_ID__MSG_RESPONSE_CODE, ITEM_ID__MSG_RESPONSE_CODE);
             break;
 
 
@@ -413,6 +434,11 @@ dump_item_id(char *space, uint16_t item_id)
         ////////////////////////////////////////////////////////////////////
         // Item id's carrying more than 16 byte value (variable length)
         ////////////////////////////////////////////////////////////////////
+        case ITEM_ID__MSG_RESPONSE_DESCRIPTION:
+            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID",
+                   "ITEM_ID__MSG_RESPONSE_DESCRIPTION", ITEM_ID__MSG_RESPONSE_DESCRIPTION, ITEM_ID__MSG_RESPONSE_DESCRIPTION);
+            break;
+
         case ITEM_ID__GTPU_SELF_IPV6_ENDPOINT:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID", 
                    "GTPU_SELF_IPV6_ENDPOINT", ITEM_ID__GTPU_SELF_IPV6_ENDPOINT, ITEM_ID__GTPU_SELF_IPV6_ENDPOINT);
@@ -446,6 +472,11 @@ dump_item_id(char *space, uint16_t item_id)
         case ITEM_ID__GUAMI:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID", 
                    "ITEM_ID__GUAMI", ITEM_ID__GUAMI, ITEM_ID__GUAMI);
+            break;
+        
+        case ITEM_ID__SERVICE_INFO_AS_JSON_DATA:
+            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID", 
+                   "ITEM_ID__SERVICE_INFO_AS_JSON_DATA", ITEM_ID__SERVICE_INFO_AS_JSON_DATA, ITEM_ID__SERVICE_INFO_AS_JSON_DATA);
             break;
         
         ////////////////////////////////////////////////////////////////////
@@ -522,7 +553,6 @@ get_item_type(uint16_t item_id,
     switch (item_id)
     {
         ///////////////////////////////
-        case ITEM_ID__MSG_RESPONSE:
         case ITEM_ID__UPLINK_QOS_PROFILE:
         case ITEM_ID__DNLINK_QOS_PROFILE:
         case ITEM_ID__PDR_ACTION:
@@ -541,6 +571,7 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__PDR_FAR_ID:
         case ITEM_ID__FAR_RULE_ID:
         case ITEM_ID__RRC_ESTABLISH_CAUSE:
+        case ITEM_ID__MSG_RESPONSE_CODE:
             *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (2 bytes)
             return 0;
 
@@ -574,6 +605,7 @@ get_item_type(uint16_t item_id,
             return 0;
 
         ///////////////////////////////
+        case ITEM_ID__MSG_RESPONSE_DESCRIPTION:
         case ITEM_ID__GTPU_SELF_IPV6_ENDPOINT:
         case ITEM_ID__GTPU_PEER_IPV6_ENDPOINT:
         case ITEM_ID__FAR_OUTER_IPV6_HDR_CREATE:
@@ -581,6 +613,7 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__RAN_NODE_NAME:
         case ITEM_ID__AMF_NAME:
         case ITEM_ID__GUAMI:
+        case ITEM_ID__SERVICE_INFO_AS_JSON_DATA:
             *item_type = ITEM_TYPE_IS_TYPE_2; // value is now a bytestream of variable length 
             return 0;
 
@@ -627,28 +660,6 @@ get_type1_item_value(char           *space,
         /////////////////////////////////////////////////////////////////////
         // Extract 1 byte items.
         /////////////////////////////////////////////////////////////////////
-        case ITEM_ID__MSG_RESPONSE:
-            nmp_msg_parsed_data_ptr->msg_response = *(ptr);
-            if(debug_flag)
-            {
-                printf("%s%-16s : 1 byte (0x%02x) \n", space, "Item Value", *(ptr));
-
-                if(MSG_RESPONSE_IS_OK == nmp_msg_parsed_data_ptr->msg_response)
-                {
-                    printf("%s%-32s : Ok \n", space, "Message Response");
-                }
-                else if(MSG_RESPONSE_IS_NOT_OK == nmp_msg_parsed_data_ptr->msg_response)
-                {
-                    printf("%s%-32s :-> Not Ok \n", space, "Message Response");
-                }
-                else
-                {
-                    printf("%s%-32s :-> Unknown \n", space, "Message Response");
-                }
-            }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
-            return 1;
-
         case ITEM_ID__UPLINK_QOS_PROFILE:
             nmp_msg_parsed_data_ptr->ul_qos_profile = *(ptr);
 
@@ -814,6 +825,17 @@ get_type1_item_value(char           *space,
             if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
+        case ITEM_ID__MSG_RESPONSE_CODE:
+            nmp_msg_parsed_data_ptr->msg_response_code = htons(*((uint16_t *)ptr));
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
+                printf("%s%-32s :-> %u \n", space, "Message Response Code",
+                             nmp_msg_parsed_data_ptr->msg_response_code);
+            }
+            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            return 2;
 
 
         /////////////////////////////////////////////////////////////////////
@@ -1190,6 +1212,17 @@ get_type2_item_value(char           *space,
     if(debug_flag) printf("%s%-16s : %u (0x%04x) \n", space, "Item Length", item_len, item_len);
     switch (item_id)
     {
+        case ITEM_ID__MSG_RESPONSE_DESCRIPTION:
+            memcpy(nmp_msg_parsed_data_ptr->msg_response_description, ptr + 2, item_len);
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : %u bytes (", space, "Item Value", item_len);
+                printf("%s", (char *)(ptr + 2));
+                printf(")\n");
+            }
+            return (2 + item_len);
+
         case ITEM_ID__GTPU_SELF_IPV6_ENDPOINT:
 
             if(item_len != 20)
@@ -1365,7 +1398,20 @@ get_type2_item_value(char           *space,
             }
             return (2 + item_len);
 
-        
+        case ITEM_ID__SERVICE_INFO_AS_JSON_DATA:
+            memcpy(nmp_msg_parsed_data_ptr->service_info_json_data, ptr + 2, item_len);
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : %u bytes (", space, "Item Value", item_len);
+                for(i = 0; i < item_len; i++)
+                {
+                    printf("%02x", *(ptr + 2 + i));
+                }
+                printf(")\n");
+            }
+            return (2 + item_len);
+ 
         default:
             printf("Error: Unknown Type-2 Item \n");
             return -1;

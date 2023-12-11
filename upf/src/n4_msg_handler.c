@@ -90,11 +90,11 @@ int
 process_rcvd_n4_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
                     uint8_t         debug_flag)
 {
-    if(MSG_TYPE__SESSION_CREATE_REQUEST == nmp_n4_rcvd_msg_data_ptr->msg_type)
+    if(MSG_TYPE__SESSION_CREATE_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
     {
         return process_session_create_request_msg(nmp_n4_rcvd_msg_data_ptr, debug_flag);	
     }
-    else if(MSG_TYPE__SESSION_MODIFY_REQUEST == nmp_n4_rcvd_msg_data_ptr->msg_type)
+    else if(MSG_TYPE__SESSION_MODIFY_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
     {
         return process_session_modify_request_msg(nmp_n4_rcvd_msg_data_ptr, debug_flag);
     }
@@ -114,9 +114,9 @@ listen_for_n4_messages()
     int n = 0;
     int len = 0;
     char string[128];
-    uint32_t amf_addr = 0;
-    uint16_t amf_port = 0;
-    struct sockaddr_in  amf_sockaddr;
+    uint32_t smf_addr = 0;
+    uint16_t smf_port = 0;
+    struct sockaddr_in  smf_sockaddr;
     nmp_msg_data_t nmp_n4_rcvd_msg_data;
 
     while(1)
@@ -125,22 +125,22 @@ listen_for_n4_messages()
         // Wait for request messages from AMF..
         ///////////////////////////////////////////////
         len = sizeof(struct sockaddr_in);
-        memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-        n = recvfrom(g__upf_config.upf_n4_socket_id,
+        memset(&smf_sockaddr, 0x0, sizeof(struct sockaddr_in));
+        n = recvfrom(g__upf_config.my_n4_socket_id,
                      (char *)g__n4_rcvd_msg_buffer,
                      MSG_BUFFER_LEN,
                      MSG_WAITALL,
-                     (struct sockaddr *)&(amf_sockaddr),
+                     (struct sockaddr *)&(smf_sockaddr),
                      (socklen_t *)&len);
 
-        amf_addr = htonl(amf_sockaddr.sin_addr.s_addr);
-        amf_port = htons(amf_sockaddr.sin_port);
+        smf_addr = htonl(smf_sockaddr.sin_addr.s_addr);
+        smf_port = htons(smf_sockaddr.sin_port);
 
         if(g__upf_config.debug_switch)
         {
-            get_ipv4_addr_string(amf_addr, string);
-            printf("-----------> Rcvd request (%u bytes) from AMF (%s:%u) \n",
-                    n, string, amf_port);
+            get_ipv4_addr_string(smf_addr, string);
+            printf("-----------> Rcvd request (%u bytes) from SMF (%s:%u) \n",
+                    n, string, smf_port);
         }
 
         if(-1 == validate_rcvd_msg_on_n4_interface(g__n4_rcvd_msg_buffer, n, 0))

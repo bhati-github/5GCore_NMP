@@ -125,19 +125,27 @@ typedef struct {
 ////////////////////////////////////////
 ////////////////////////////////////////
 #define GNB_ID_BASE        100        
-#define AMF_ID_BASE        8000
-#define UPF_ID_BASE        10000
+#define AMF_ID_BASE        5100
+#define NRF_ID_BASE        5200
+#define SMF_ID_BASE        5300
+#define UPF_ID_BASE        5400
 #define UDP_PORT_IS_NMP    1208
 
-#define NODE_TYPE__AMF     1
-#define NODE_TYPE__UE      2
-#define NODE_TYPE__GNB     3
-#define NODE_TYPE__UPF     4
+#define NODE_TYPE__UE      1
+#define NODE_TYPE__GNB     2
+#define NODE_TYPE__AMF     3
+#define NODE_TYPE__NRF     4
+#define NODE_TYPE__SMF     5
+#define NODE_TYPE__UPF     6
 
-#define MSG_TYPE__KEEPALIVE_REQUEST    0
-#define MSG_TYPE__KEEPALIVE_RESPONSE   1
+#define MSG_RESPONSE_CODE__OK      201
+#define MSG_RESPONSE_CODE__NOT_OK  404
+
+#define MSG_TYPE__KEEPALIVE_REQ    0
+#define MSG_TYPE__KEEPALIVE_RESP   1
 
 #define MSG_TYPE__ALL_OK  2
+#define MSG_TYPE__NOT_OK  3
 
 #define MSG_TYPE__NG_SETUP_REQ  11
 #define MSG_TYPE__NG_SETUP_RESP 12
@@ -152,18 +160,20 @@ typedef struct {
 #define MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT 20
 #define MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP 21
 
-#define MSG_TYPE__SESSION_CREATE_REQUEST  22
-#define MSG_TYPE__SESSION_CREATE_RESPONSE 23
+#define MSG_TYPE__SESSION_CREATE_REQ  22
+#define MSG_TYPE__SESSION_CREATE_RESP 23
 
-#define MSG_TYPE__SESSION_MODIFY_REQUEST     24
-#define MSG_TYPE__SESSION_MODIFY_RESPONSE    25
+#define MSG_TYPE__SESSION_MODIFY_REQ     24
+#define MSG_TYPE__SESSION_MODIFY_RESP    25
 
-#define MSG_TYPE__SESSION_DELETE_REQUEST     26
-#define MSG_TYPE__SESSION_DELETE_RESPONSE    27
+#define MSG_TYPE__SESSION_DELETE_REQ     26
+#define MSG_TYPE__SESSION_DELETE_RESP    27
 
-#define MSG_TYPE__BEARER_SETUP_REQUEST 28
+#define MSG_TYPE__BEARER_SETUP_REQ 28
 
-#define MSG_RESPONSE_IS_OK 1
-#define MSG_RESPONSE_IS_NOT_OK 2
+#define MSG_TYPE__NRF_SERVICE_REGISTRATION_REQ   41
+#define MSG_TYPE__NRF_SERVICE_REGISTRATION_RESP  42
+#define MSG_TYPE__NRF_SERVICE_DISCOVERY_REQ      43
+#define MSG_TYPE__NRF_SERVICE_DISCOVERY_RESP     44
 
 #endif

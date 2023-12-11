@@ -78,6 +78,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     data_64bit_t nr_cell_identity;
     nr_cell_identity.u64 = 100;
     struct sockaddr_in amf_sockaddr;
+    struct sockaddr_in  target_service_sockaddr;
     uint32_t request_identifier = 0;
     nmp_msg_data_t nmp_n1_n2_send_msg_data;
     nmp_msg_data_t nmp_n1_n2_rcvd_msg_data;
@@ -165,11 +166,13 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__gnb_config.amf_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__gnb_config.amf_n1_n2_sockaddr.sin_port;
+    n = sendto(g__gnb_config.my_n1_n2_socket_id,
                (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -185,7 +188,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+    n = recvfrom(g__gnb_config.my_n1_n2_socket_id,
                  (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
@@ -219,9 +222,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         return -1;
     }
 
-    if(nmp_n1_n2_rcvd_msg_data.msg_response)
+    if(nmp_n1_n2_rcvd_msg_data.msg_response_code)
     {
-        if(MSG_RESPONSE_IS_OK == nmp_n1_n2_rcvd_msg_data.msg_response)
+        if(MSG_RESPONSE_CODE__OK == nmp_n1_n2_rcvd_msg_data.msg_response_code)
         {
             printf("Initial UE Msg (Registration Request) response is [Ok] \n");
             return 0;
@@ -314,11 +317,13 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__gnb_config.amf_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__gnb_config.amf_n1_n2_sockaddr.sin_port;
+    n = sendto(g__gnb_config.my_n1_n2_socket_id,
                (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -334,7 +339,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+    n = recvfrom(g__gnb_config.my_n1_n2_socket_id,
                  (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
@@ -368,9 +373,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         return -1;
     }
 
-    if(nmp_n1_n2_rcvd_msg_data.msg_response)
+    if(nmp_n1_n2_rcvd_msg_data.msg_response_code)
     {
-        if(MSG_RESPONSE_IS_OK == nmp_n1_n2_rcvd_msg_data.msg_response)
+        if(MSG_RESPONSE_CODE__OK == nmp_n1_n2_rcvd_msg_data.msg_response_code)
         {
             printf("Initial UE Msg (Registration Request) response is [Ok] \n");
             return 0;
@@ -462,11 +467,13 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__gnb_config.amf_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__gnb_config.amf_n1_n2_sockaddr.sin_port;
+    n = sendto(g__gnb_config.my_n1_n2_socket_id,
                (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -557,11 +564,13 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__gnb_config.amf_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__gnb_config.amf_n1_n2_sockaddr.sin_port;
+    n = sendto(g__gnb_config.my_n1_n2_socket_id,
                (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -577,7 +586,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+    n = recvfrom(g__gnb_config.my_n1_n2_socket_id,
                  (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
@@ -611,9 +620,9 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         return -1;
     }
 
-    if(nmp_n1_n2_rcvd_msg_data.msg_response)
+    if(nmp_n1_n2_rcvd_msg_data.msg_response_code)
     {
-        if(MSG_RESPONSE_IS_OK == nmp_n1_n2_rcvd_msg_data.msg_response)
+        if(MSG_RESPONSE_CODE__OK == nmp_n1_n2_rcvd_msg_data.msg_response_code)
         {
             printf("Initial UE Msg (Registration Request) response is [Ok] \n");
             return 0;
@@ -672,7 +681,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     item_count += 1;
 
     // Add GTP-U TEID endpoint for uplink direction (gtp-u tunnel from gNB to UPF)
-    tunnel_ipv4_addr = g__gnb_config.gnb_n3_addr.u.v4_addr;  // gnodeB N3 interface IP
+    tunnel_ipv4_addr = g__gnb_config.my_n3_addr.u.v4_addr;  // gnodeB N3 interface IP
     uplink_teid = 0x100;
     ret = nmp_add_item__gtpu_self_ipv4_endpoint(ptr + offset, tunnel_ipv4_addr, uplink_teid);
     if(-1 == ret)
@@ -705,11 +714,13 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
 
     // Send this message to AMF
-    n = sendto(g__gnb_config.gnb_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__gnb_config.amf_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__gnb_config.amf_n1_n2_sockaddr.sin_port;
+    n = sendto(g__gnb_config.my_n1_n2_socket_id,
                (char *)g__n1_n2_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__gnb_config.amf_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -731,7 +742,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     ///////////////////////////////////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+    n = recvfrom(g__gnb_config.my_n1_n2_socket_id,
                  (char *)g__n1_n2_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,

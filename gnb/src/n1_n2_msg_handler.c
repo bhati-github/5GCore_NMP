@@ -80,7 +80,7 @@ int
 process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                        uint8_t         debug_flag)
 {
-    if(MSG_TYPE__BEARER_SETUP_REQUEST == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
+    if(MSG_TYPE__BEARER_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         return process_bearer_setup_request_msg(nmp_n1_n2_rcvd_msg_data_ptr, debug_flag);	
     }
@@ -111,7 +111,7 @@ listen_for_n1_n2_messages()
         ///////////////////////////////////////////////
         len = sizeof(struct sockaddr_in);
         memset(&amf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-        n = recvfrom(g__gnb_config.gnb_n1_n2_socket_id,
+        n = recvfrom(g__gnb_config.my_n1_n2_socket_id,
                      (char *)g__n1_n2_rcvd_msg_buffer,
                      MSG_BUFFER_LEN,
                      MSG_WAITALL,

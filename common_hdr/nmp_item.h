@@ -9,7 +9,6 @@ enum item_id_t {
     ////////////////////////////////////////////////////////
     // Item id's carrying 1 byte value
     ////////////////////////////////////////////////////////
-    ITEM_ID__MSG_RESPONSE,
     ITEM_ID__UPLINK_QOS_PROFILE,
     ITEM_ID__DNLINK_QOS_PROFILE,
     ITEM_ID__PDR_ACTION,
@@ -28,6 +27,7 @@ enum item_id_t {
     ITEM_ID__PDR_FAR_ID,
     ITEM_ID__FAR_RULE_ID,
     ITEM_ID__RRC_ESTABLISH_CAUSE,
+    ITEM_ID__MSG_RESPONSE_CODE,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying more than 2 and upto 4 byte value
@@ -65,6 +65,7 @@ enum item_id_t {
     // 2 bytes(item_len) +
     // actual item bytes
     ////////////////////////////////////////////////////////
+    ITEM_ID__MSG_RESPONSE_DESCRIPTION,
     ITEM_ID__GTPU_SELF_IPV6_ENDPOINT,
     ITEM_ID__GTPU_PEER_IPV6_ENDPOINT,
     ITEM_ID__FAR_OUTER_IPV6_HDR_CREATE,
@@ -72,6 +73,7 @@ enum item_id_t {
     ITEM_ID__RAN_NODE_NAME,
     ITEM_ID__AMF_NAME,
     ITEM_ID__GUAMI,
+    ITEM_ID__SERVICE_INFO_AS_JSON_DATA,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying group of individual items
@@ -133,10 +135,6 @@ typedef struct {
 // Add items which carry only 1 byte value
 ////////////////////////////////////////////////////////
 int
-nmp_add_item__msg_response(uint8_t *ptr,
-                           uint8_t  response);
-
-int
 nmp_add_item__pdr__action(uint8_t *ptr,
                           uint8_t  action);
 
@@ -195,6 +193,10 @@ nmp_add_item__far__rule_id(uint8_t *ptr,
 int
 nmp_add_item__rrc_establish_cause(uint8_t *ptr,
                                   uint16_t rrc_establish_cause);
+
+int
+nmp_add_item__msg_response_code(uint8_t *ptr,
+                                uint16_t msg_response_code);
 
 ///////////////////////////////////////////////////////////
 // Add items which carry more than 2 and upto 4 byte value
@@ -286,6 +288,11 @@ nmp_add_item__user_location_info_nr_cgi(uint8_t *ptr,
 // More than 16 byte Items (variable length byte stream)
 /////////////////////////////////////////////////////////
 int
+nmp_add_item__msg_response_description(uint8_t *ptr,
+                                       uint8_t *response_description_ptr,
+                                       uint16_t response_description_len);
+
+int
 nmp_add_item__nas_pdu(uint8_t *ptr,
                       uint8_t *nas_pdu_ptr,
                       uint16_t nas_pdu_len);
@@ -304,6 +311,12 @@ int
 nmp_add_item__guami(uint8_t  *ptr,
                     uint8_t  *guami_item_ptr,
                     uint16_t  guami_item_len);
+
+int
+nmp_add_item__service_info_as_json_data(uint8_t  *ptr,
+                                        uint8_t  *service_json_info_ptr,
+                                        uint16_t  service_json_info_len);
+
 
 ////////////////////////////
 // Item Groups

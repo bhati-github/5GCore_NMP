@@ -66,6 +66,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     uint32_t upf_addr = 0;
     uint16_t upf_port = 0;	
     struct sockaddr_in upf_sockaddr;
+    struct sockaddr_in  target_service_sockaddr;
     uint32_t request_identifier = 0;
     pdr_t *pdr_ptr = NULL;
     far_t *far_ptr = NULL;
@@ -92,7 +93,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
     nmp_hdr_ptr->dst_node_id    = htons(g__amf_config.upf_id);
 
-    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SESSION_CREATE_REQUEST);
+    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SESSION_CREATE_REQ);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
@@ -201,11 +202,13 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     }
 
     // Send this message to UPF
-    n = sendto(g__amf_config.amf_n4_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__amf_config.upf_n4_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__amf_config.upf_n4_sockaddr.sin_port;
+    n = sendto(g__amf_config.smf_n4_socket_id,
                (char *)g__n4_send_msg_buffer,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.upf_n4_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
     if(n != offset)
@@ -219,7 +222,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     ///////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&upf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__amf_config.amf_n4_socket_id,
+    n = recvfrom(g__amf_config.smf_n4_socket_id,
                  (char *)g__n4_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
@@ -253,14 +256,16 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
         return -1;
     }
 
-    if(MSG_RESPONSE_IS_OK == nmp_n4_rcvd_msg_data.msg_response)
+    if(MSG_RESPONSE_CODE__OK == nmp_n4_rcvd_msg_data.msg_response_code)
     {
         printf("%s: Msg response from UPF is [Ok] \n", __func__);
+        printf("Response Description: %s \n", nmp_n4_rcvd_msg_data.msg_response_description);
         return 0;
     }
     else
     {
         printf("%s: Msg response from UPF is [Not Ok] \n", __func__);
+        printf("Response Description: %s \n", nmp_n4_rcvd_msg_data.msg_response_description);
         return -1;
     }
 }

@@ -59,6 +59,7 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     uint16_t dst_node_id = 0;
     uint16_t item_count = 0;
     nmp_msg_data_t nmp_n1_n2_send_msg_data;
+    struct sockaddr_in  target_service_sockaddr;
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
@@ -92,11 +93,13 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     // write this msg on n1 socket (towards gnodeb)
     ////////////////////////////////////////////////
     gnb_index = nmp_n1_n2_rcvd_msg_data_ptr->gnb_index;
-    n = sendto(g__amf_config.amf_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
+    n = sendto(g__amf_config.my_n1_n2_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {
@@ -120,6 +123,7 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
     uint16_t dst_node_id = 0;
     uint16_t item_count = 0;
     nmp_msg_data_t nmp_n1_n2_send_msg_data;
+    struct sockaddr_in  target_service_sockaddr;
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
@@ -153,11 +157,13 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
     // write this msg on n1 socket (towards gnodeb)
     ////////////////////////////////////////////////
     gnb_index = nmp_n1_n2_rcvd_msg_data_ptr->gnb_index;
-    n = sendto(g__amf_config.amf_n1_n2_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
+    n = sendto(g__amf_config.my_n1_n2_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {

@@ -56,9 +56,12 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     int ret = 0;
     int offset = 0;
     char string[128];
+    char response[256];
+    uint16_t response_code = MSG_RESPONSE_CODE__OK;
     uint16_t item_count = 0;
     uint16_t dst_node_id = 0;
     nmp_msg_data_t nmp_n4_send_msg_data;
+    struct sockaddr_in  target_service_sockaddr;
 
     printf("Session Modified for User IMSI: ");
     for(i = 0; i < 8; i++)
@@ -81,7 +84,7 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     dst_node_id = (nmp_n4_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
     nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
-    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SESSION_MODIFY_RESPONSE);
+    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SESSION_MODIFY_RESP);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
@@ -89,8 +92,18 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
 
     offset = sizeof(nmp_hdr_t);
 
-    // Item: Response
-    ret = nmp_add_item__msg_response(ptr + offset, MSG_RESPONSE_IS_OK);
+    // Item: Response code
+    ret = nmp_add_item__msg_response_code(ptr + offset, response_code);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+    // Item: Response Description
+    strcpy(response, "Sesion is Modified Successfully");
+    ret = nmp_add_item__msg_response_description(ptr + offset, (uint8_t *)response, strlen((char *)response));
     if(-1 == ret)
     {
         return -1;
@@ -113,11 +126,13 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     //////////////////////////////////////////////////////////
     // write this msg on N4 interface NMP socket (towards AMF)
     //////////////////////////////////////////////////////////
-    n = sendto(g__upf_config.upf_n4_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__upf_config.smf_n4_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__upf_config.smf_n4_sockaddr.sin_port;
+    n = sendto(g__upf_config.my_n4_socket_id,
                (char *)ptr,
                offset,
                MSG_WAITALL,
-               (struct sockaddr *)&(g__upf_config.amf_n4_sockaddr),
+               (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
     if(n != offset)
     {
