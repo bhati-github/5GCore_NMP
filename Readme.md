@@ -206,12 +206,11 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 
 ## 6. Demonstration in a sample network
+<br />
 
-   ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/9291faeb-cd9a-4750-86a7-ea6617e783e0)
+  ![5g-core-diagram](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e142a087-3ece-45a5-9b4d-7d19b308e53e)
 
-
-   The code inside this demonstration project illustrates the use of NMP protocol 
-   across sample interfaces in this diagram. 
+<br />
 
 - N1/N2 interface is used for call setup packets between gnodeB and AMF.
   As part of this demonstration, all messages on this interface are carried by NMP protocol.
@@ -219,19 +218,24 @@ UDP port for NMP protocol is 1208 (just a random selection).
 - N4 interface is used for datapath setup inside UPF. (SMF <---> UPF).
    As part of this demonstration, all messages on this interface are carried by NMP protocol.
    
-   
 - N3 interface carry data packets of UE via GTP-U packets. User plane GTP-U packet flows are not part of this demonstration. 
    
 - N6 interface is towards Internet. De-capsulated GTP-U packets towards Internet are not part of this demonstration.
    
-
 - There is no separate SMF in this diagram as session management function is integrated within AMF for simplicity of demonstration.
 
 <br />
 <br />
 
+This sample network is created inside a virtual machine using "dummy interfaces".
 
-### 6.1 Simulation of NG Setup with AMF in NMP packets
+![dummy-interfaces-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/9652bfae-937b-4172-b6b5-b2b9b8125ec2)
+<br />
+![dummy-interfaces-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/7753f2ec-7ca3-4a70-a09f-35aad78799f1)
+<br />
+<br />
+
+### 6.1 Simulation snapshots of NG Setup with AMF in NMP packets
   ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
 <br />
   ![ng-setup-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/586614ca-1358-4477-9701-ca66fe9ac9df)
@@ -257,7 +261,7 @@ Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP i
 <br />
   
  
-### 6.2 Simulation of Initial UE Registration Message and PDU Setup Request in NMP packets
+### 6.2 Simulation snapshots of Initial UE Registration Message and PDU Setup Request in NMP packets
   
   ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/197635e8-3506-483e-9a66-75c8bb8c7e4f)
 
@@ -286,7 +290,7 @@ In below snapshots, you can see that same NGAP procedures are carried over NMP p
 <br />
 <br />
 
-### 6.3 Simulation of PFCP packet flows in NMP packets 
+### 6.3 Simulation snapshots of PFCP packet flows in NMP packets 
 N4 interface between SMF and UPF carries PFCP protocol packets for user-plane parameter setup.
 
 Following simulation carries same information in NMP packets as depicted in screenshots.
@@ -314,59 +318,147 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 <br />
 <br />
 
-## 7. Network Diagram for simulation inside a single virtual machine
+## 7. Steps for running the simulation completely inside a single virtual machine
+
+First step is to create dummy interfaces inside VM using these commands.
 
 <br />
 
-![vm-network](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ae57c728-fbfa-4ab2-b9b1-2f5d0c77ec78)
+    // For gnodeB N1/N2
+    sudo ip link add eth1 type dummy
+    sudo ip addr add 10.10.10.1/24 dev eth1
+    sudo ip link set eth1 up
 
-<br />
-<br />          
+    // For gnodeB N3
+    sudo ip link add eth2 type dummy
+    sudo ip addr add 3.3.3.1/24 dev eth2
+    sudo ip link set eth2 up
+    
+    // For AMF N1/N2
+    sudo ip link add eth3 type dummy
+    sudo ip addr add 10.10.10.2/24 dev eth3
+    sudo ip link set eth3 up
+    
+    // For AMF Namf
+    sudo ip link add eth4 type dummy
+    sudo ip addr add 50.50.50.1/24 dev eth4
+    sudo ip link set eth4 up
 
-    Once again, open three terminal windows from same vm. 
-    -> Left side terminal executes 'gnb' binary.
-    -> Middle terminal executes 'amf' binary.
-    -> Right side terminal executes UPF control plane binary. 
-       Actual UPF is not required for NMP demonstration.
+    // For SMF Nsmf
+    sudo ip link add eth5 type dummy
+    sudo ip addr add 50.50.50.2/24 dev eth5
+    sudo ip link set eth5 up
+    
+    // For SMF N4
+    sudo ip link add eth6 type dummy
+    sudo ip addr add 20.20.20.1/24 dev eth6
+    sudo ip link set eth6 up
+    
+    // For UPF N3
+    sudo ip link add eth7 type dummy
+    sudo ip addr add 3.3.3.2/24 dev eth7
+    sudo ip link set eth7 up
+    
+    // For UPF N4
+    sudo ip link add eth8 type dummy
+    sudo ip addr add 20.20.20.2/24 dev eth8
+    sudo ip link set eth8 up
+    
+    // For UPF N6
+    sudo ip link add eth9 type dummy
+    sudo ip addr add 6.6.6.1/24 dev eth9
+    sudo ip link set eth9 up
+    
+    // For AF Naf
+    sudo ip link add eth10 type dummy
+    sudo ip addr add 50.50.50.3/24 dev eth10
+    sudo ip link set eth10 up
+    
+    // For AUSF Nausf
+    sudo ip link add eth11 type dummy
+    sudo ip addr add 50.50.50.4/24 dev eth11
+    sudo ip link set eth11 up
+    
+   // For NRF Nnrf
+   sudo ip link add eth12 type dummy
+   sudo ip addr add 50.50.50.5/24 dev eth12
+   sudo ip link set eth12 up
+   
+   // For NSSF Nnssf
+   sudo ip link add eth13 type dummy
+   sudo ip addr add 50.50.50.6/24 dev eth13
+   sudo ip link set eth13 up
+   
+   // For NEF Nnef
+   sudo ip link add eth14 type dummy
+   sudo ip addr add 50.50.50.7/24 dev eth14
+   sudo ip link set eth14 up
+   
+  // For PCF Npcf
+  sudo ip link add eth15 type dummy
+  sudo ip addr add 50.50.50.8/24 dev eth15
+  sudo ip link set eth15 up
+
+  // For UDM Nudm
+  sudo ip link add eth16 type dummy
+  sudo ip addr add 50.50.50.9/24 dev eth16
+  sudo ip link set eth16 up
+  
+
+   
+  Once again, open four terminal windows from same vm. 
+    -> 1st terminal executes 'gnb' binary.
+    -> 2nd terminal executes 'amf' binary.
+    -> 3rd terminal executes 'nrf' binary.
+    -> 4th terminal executes 'upf' control plane binary. Actual UPF is not required for NMP demonstration.
     
     (Use -debug option as an extra command line argument to see the parsed messages)
 
-    1. Run AMF in middle terminal as follows:
+    1. Run NRF in 3rd terminal.
+       cd 5GCore_NMP/nrf/
+       make clean;make
+       sudo ./nrf -Nnrfip 50.50.50.5 -Namfip 50.50.50.1  -Nsmfip 50.50.50.2
+
+       -Nnrfip 50.50.50.5   (NRF Nnrf interface IP address)
+       -Namfip 50.50.50.1   (AMF Namf interface IP address)
+       -Nsmfip 50.50.50.2   (SMF Nsmf interface IP address)
+       
+    2. Run AMF in 2nd terminal as follows:
        cd 5GCore_NMP/amf/
        make clean;make
-       sudo ./amf -amfn1n2ip 192.168.1.16 -amfn4ip 192.168.1.17 -upfn4ip 192.168.1.18 -upfn3ip 192.168.1.18 -gnbreg 192.168.1.15 192.168.1.15
+       sudo ./amf -myn1n2ip 10.10.10.2 -myNamfip 50.50.50.1 -Nnrfip 50.50.50.5 -smfn4ip 20.20.20.1 -upfn4ip 20.20.20.2 -upfn3ip 3.3.3.2 -gnbreg 10.10.10.1 3.3.3.1
 
        In above command, options are as follows:
-       -amfn1n2ip 192.168.1.16 (AMF N1/N2 interface IP address is 192.168.1.16)
-       -amfn4ip 192.168.1.17 (AMF N4 interface IP address is 192.168.1.17)
-       -upfn4ip 192.168.1.18 (UPF N4 interface IP address is 192.168.1.18)
-       -upfn3ip 192.168.1.18 (UPF N3 interface IP address is 192.168.1.18)
-       -gnbreg 192.168.1.15 192.168.1.15  (Register a gnodeB into AMF with its N1/N2 interface and N3 interface details)
-                                             You can simulate AMF instance with multiple gnodeB's also.
-
-       For example, if you wish to simulate AMF with 3 gnodeB's. Then provide -gnbreg options as follows:
-       -gnbreg 192.168.1.21 192.168.1.21 -gnbreg 192.168.1.22 192.168.1.22 -gnbreg 192.168.1.23 192.168.1.23 
-
-
-    2. Run UPF in right terminal as follows:
+       -myn1n2ip 10.10.10.2      (AMF N1/N2 interface IP address)
+       -myNamfip 50.50.50.1      (AMF Namf interface IP address)
+       -Nnrfip 50.50.50.5        (NRF Nnrf interface IP address)
+       -smfn4ip 20.20.20.1       (SMF N4 interface IP address)
+       -upfn4ip 20.20.20.2       (UPF N4 interface IP address)
+       -upfn3ip 3.3.3.2          (UPF N3 interface IP address)
+       -gnbreg 10.10.10.1 3.3.3.1  (Register a gnodeB into AMF with its N1/N2 interface and N3 interface details)
+                                             
+       
+    3. Run UPF in 4th terminal as follows:
        cd 5GCore_NMP/upf/
        make clean;make
-       sudo ./upf -upfn4ip 192.168.1.18 -amfn4ip 192.168.1.17
+       sudo ./upf -myn3ip 3.3.3.2 -myn4ip 20.20.20.2 -smfn4ip 20.20.20.1 -myn6ip 6.6.6.1
 
        In above command, options are as follows:
-       -upfn4ip 192.168.1.18 (UPF N4 interface IP address is 192.168.1.18)
-       -amfn4ip 192.168.1.17 (AMF N4 interface IP address is 192.168.1.17)
+       -myn3ip 3.3.3.2     (UPF N3 interface IP address)
+       -myn4ip 20.20.20.2  (UPF N4 interface IP address)
+       -smfn4ip 20.20.20.1 (AMF N4 interface IP address)
+       -myn6ip 6.6.6.1     (UPF N6 interface IP address)
        
 
-    3. At the end, run gnodeB in left side terminal. ( -c option tells how many user attach requests to be simulated )
-       sudo ./gnb -gnbn1n2ip 192.168.1.15 -gnbn3ip 192.168.1.15 -amfn1n2ip 192.168.1.16 -c 1
+    4. Finalyy, run gnb in 1st terminal. 
+       sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1
        or
-       sudo ./gnb -gnbn1n2ip 192.168.1.15 -gnbn3ip 192.168.1.15 -amfn1n2ip 192.168.1.16 -c 1 -debug
-
+       sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1 -debug
+       
        In above command, options are as follows:
-       -gnbn1n2ip 192.168.1.15 (gnodeB N1/N2 interface IP address is 192.168.1.15)
-       -gnbn3ip 192.168.1.15   (gnodeB N3 interface IP address is 192.168.1.15)
-       -amfn1n2ip 192.168.1.16 (AMF N1/N2 interface IP address is 192.168.1.16)
+       -myn1n2ip 10.10.10.1  (gnodeB N1/N2 interface IP address)
+       -myn3ip  3.3.3.1      (gnodeB N3 interface IP address)
+       -amfn1n2ip 10.10.10.2 (AMF N1/N2 interface IP address)
        -c 10  (Simmulate upto 10 UE attach requests)
        -debug (Show complete NMP message parsing) 
 	
