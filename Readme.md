@@ -222,8 +222,11 @@ UDP port for NMP protocol is 1208 (just a random selection).
    
 - N6 interface is towards Internet. De-capsulated GTP-U packets towards Internet are not part of this demonstration.
    
-- There is no separate SMF in this diagram as session management function is integrated within AMF for simplicity of demonstration.
-
+- SMF is currently integrated within AMF for simplicity in NMP demonstration.
+  
+- Overall, colored blocks in above diagram are implemented and all of them communicates over NMP protocol.
+  
+  
 <br />
 <br />
 
@@ -379,34 +382,35 @@ First step is to create dummy interfaces inside VM using these commands.
     sudo ip addr add 50.50.50.4/24 dev eth11
     sudo ip link set eth11 up
     
-   // For NRF Nnrf
-   sudo ip link add eth12 type dummy
-   sudo ip addr add 50.50.50.5/24 dev eth12
-   sudo ip link set eth12 up
+    // For NRF Nnrf
+    sudo ip link add eth12 type dummy
+    sudo ip addr add 50.50.50.5/24 dev eth12
+    sudo ip link set eth12 up
    
-   // For NSSF Nnssf
-   sudo ip link add eth13 type dummy
-   sudo ip addr add 50.50.50.6/24 dev eth13
-   sudo ip link set eth13 up
+    // For NSSF Nnssf
+    sudo ip link add eth13 type dummy
+    sudo ip addr add 50.50.50.6/24 dev eth13
+    sudo ip link set eth13 up
    
-   // For NEF Nnef
-   sudo ip link add eth14 type dummy
-   sudo ip addr add 50.50.50.7/24 dev eth14
-   sudo ip link set eth14 up
+    // For NEF Nnef
+    sudo ip link add eth14 type dummy
+    sudo ip addr add 50.50.50.7/24 dev eth14
+    sudo ip link set eth14 up
    
-  // For PCF Npcf
-  sudo ip link add eth15 type dummy
-  sudo ip addr add 50.50.50.8/24 dev eth15
-  sudo ip link set eth15 up
+    // For PCF Npcf
+    sudo ip link add eth15 type dummy
+    sudo ip addr add 50.50.50.8/24 dev eth15
+    sudo ip link set eth15 up
 
-  // For UDM Nudm
-  sudo ip link add eth16 type dummy
-  sudo ip addr add 50.50.50.9/24 dev eth16
-  sudo ip link set eth16 up
-  
+    // For UDM Nudm
+    sudo ip link add eth16 type dummy
+    sudo ip addr add 50.50.50.9/24 dev eth16
+    sudo ip link set eth16 up
 
-   
-  Once again, open four terminal windows from same vm. 
+
+
+    
+    Now, open four terminal windows from same vm. 
     -> 1st terminal executes 'gnb' binary.
     -> 2nd terminal executes 'amf' binary.
     -> 3rd terminal executes 'nrf' binary.
@@ -450,7 +454,7 @@ First step is to create dummy interfaces inside VM using these commands.
        -myn6ip 6.6.6.1     (UPF N6 interface IP address)
        
 
-    4. Finalyy, run gnb in 1st terminal. 
+    4. Finally, run gnb in 1st terminal. 
        sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1
        or
        sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1 -debug
