@@ -450,7 +450,7 @@ First step is to create dummy interfaces inside VM using these commands.
        In above command, options are as follows:
        -myn3ip 3.3.3.2     (UPF N3 interface IP address)
        -myn4ip 20.20.20.2  (UPF N4 interface IP address)
-       -smfn4ip 20.20.20.1 (AMF N4 interface IP address)
+       -smfn4ip 20.20.20.1 (SMF N4 interface IP address)
        -myn6ip 6.6.6.1     (UPF N6 interface IP address)
        
 
