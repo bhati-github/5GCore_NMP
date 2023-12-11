@@ -475,9 +475,7 @@ First step is to create dummy interfaces inside VM using these commands.
 
 ## 8. Performance data 
    Time taken to successfully attach 65536 users (with PDN connectivity) into 
-   core network is around 45 seconds with few prints.
-   
-   Without print statements, it takes about 30 seconds..
+   core network is around 45 seconds with few prints. Without print statements, it takes about 30 seconds..
 
 <br />
 <br />
