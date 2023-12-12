@@ -24,7 +24,7 @@
 ## 1. Aim of this Project
 -   This project demonstrate the use of newly created NMP (Network Message Protocol) 
     which can be used for information exchange between telecommunication network nodes.
--   Simulate NGAP procedure flows over NMP protocol instead of SCTP protocol
+-   Simulate NGAP procedure packet flows over NMP protocol instead of SCTP protocol
 -   Simulate N4 interface packet flows over NMP protocol instead of PFCP protocol
 -   It is a generic information exchange protocol which can be used across IP networks.
 
