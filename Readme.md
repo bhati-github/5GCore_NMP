@@ -224,7 +224,8 @@ UDP port for NMP protocol is 1208 (just a random selection).
    
 - SMF is currently integrated within AMF for simplicity in NMP demonstration.
   
-- Overall, colored blocks in above diagram are implemented and all of them communicates over NMP protocol.
+- Overall, colored blocks in above diagram are implemented and all of them communicates over NMP protocol
+  except N3 and N6 interface for obvious reasons as these interfaces are meant to carry user data packets.
   
   
 <br />
