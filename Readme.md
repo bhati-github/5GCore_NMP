@@ -231,12 +231,9 @@ UDP port for NMP protocol is 1208 (just a random selection).
 <br />
 <br />
 
-This sample network is created inside a virtual machine using "dummy interfaces".
+This sample network is created inside a virtual machine using "dummy interfaces". Steps to create these interfaces 
+and simulating call flows over NMP are described in detail later in this document.
 
-![dummy-interfaces-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/9652bfae-937b-4172-b6b5-b2b9b8125ec2)
-<br />
-![dummy-interfaces-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/7753f2ec-7ca3-4a70-a09f-35aad78799f1)
-<br />
 <br />
 
 ### 6.1 Simulation snapshots of NG Setup with AMF in NMP packets
