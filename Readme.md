@@ -245,22 +245,21 @@ Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP i
 <br />
   
 #### 6.1.1 Parsed Message from gnodeB to AMF (NG Setup Request Message over NMP protocol)
-
-  ![ng-setup-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b13e95be-abef-45ec-93bd-5c2fe214d3ab)
-  ![ng-setup-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/ebd2dcd3-2aa7-4a78-be63-ee66fc091fe4)
-
 <br />
+
+ ![ng-setup-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/3223d198-642c-4c27-8776-81f46cb7170a)
+ ![ng-setup-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/abf5f0d5-a501-47d5-be38-3fd1fd46b254)
+
 <br />
 
 #### 6.1.2 Parsed Message from AMF to gnodeB (NG Setup Response over NMP protocol)
+<br />
 
-  ![ng-setup-response-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/63badf4a-e355-4b1a-8d13-a483f85c20fa)
-  ![ng-setup-response-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/29eb922e-8e0f-46be-aea3-32e07d6dd68a)
+ ![ng-setup-response-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/4dcbe230-9dea-4b57-a0ed-b3e92b58dee4)
+ ![ng-setup-response-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/316ca72e-32b9-437b-9766-6ad059f658f8)
 
 <br />
-<br />
-<br />
-  
+ 
  
 ### 6.2 Simulation snapshots of Initial UE Registration Message and PDU Setup Request in NMP packets
   
@@ -272,22 +271,16 @@ Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP i
 In below snapshots, you can see that same NGAP procedures are carried over NMP protocol.
 <br />
 
-  ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/78cdfa3d-a212-447b-91da-f082723cb2cb)
-  ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/6ab7a694-adcc-4ab8-bf1f-fb5c9ecda885)
-  ![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2121c876-1fec-4076-9d94-f4cb82d13c0d)
-  ![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/1b25c0cd-ca3c-498b-9c58-7c9eb13b8893)
-  ![5](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e1b64aec-fe62-4f2d-81d8-8875abb94e86)
-  ![6](https://github.com/bhati-github/5GCore_NMP/assets/49303596/35441ab8-8fea-4c23-b88c-6a48241f7e25)
-  ![7](https://github.com/bhati-github/5GCore_NMP/assets/49303596/7b31a711-15f2-4729-a3ed-dd81234289f9)
-  ![8](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a7d49db6-5aa5-45e2-a819-bb90ed9a00d7)
-  ![9](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a0bd40ee-c79d-4ca9-9c97-028af6c1aab8)
-  ![10](https://github.com/bhati-github/5GCore_NMP/assets/49303596/35fcec24-2c83-45e5-9c4a-072f9ad8e112)
-  ![11](https://github.com/bhati-github/5GCore_NMP/assets/49303596/513335f2-77de-4729-a6f7-9179abfa09eb)
-  ![12](https://github.com/bhati-github/5GCore_NMP/assets/49303596/4eee0c8f-7492-45a8-b1f1-8bae2906ccc6)
-  ![13](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d96fa75a-36ba-43c8-8a9e-ff6537e991a6)
+ ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/f1cbac95-7f5c-40e6-acc0-4fb6e2944e5b)
+ ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d9f71c8e-dafe-4eb7-a85b-c586209bd6de)
+ ![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/0ad2edb5-2be4-4436-b74c-f5a725df395e)
+ ![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/1beb2055-f810-42f5-a1ce-b68570742112)
+ ![5](https://github.com/bhati-github/5GCore_NMP/assets/49303596/8fb9b8f8-df03-4506-8daf-9bd9560c2ca3)
+ ![6](https://github.com/bhati-github/5GCore_NMP/assets/49303596/9288fdf7-3926-4ab6-b3ec-488d6b670e6b)
+ ![7](https://github.com/bhati-github/5GCore_NMP/assets/49303596/1d38b069-8dcd-4e64-b051-6a65cd3cabf8)
+ ![8](https://github.com/bhati-github/5GCore_NMP/assets/49303596/dd41ce54-f940-490d-a065-f22d71b2bb1b)
+ ![9](https://github.com/bhati-github/5GCore_NMP/assets/49303596/3f3f5c2e-74a2-4e1f-a414-b6e47e9e4ca6)
 
-<br />
-<br />
 <br />
 <br />
 
@@ -301,22 +294,20 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 <br />
 
 ##### 6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request) 
+<br />
 
-![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/a96f6064-d2ec-42d7-aaed-cdc7c2e3a694)
-![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/f9978191-cbcf-41a9-bbe9-7dfe08fb2f64)
-![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d30408fa-e15a-4e01-9d85-ad1533d18875)
-![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/cc4163bf-69cb-4109-8849-c095894c6cab)
-![5](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b4d7f962-a04b-48a8-8759-dd6b2a5f30d3)
+ ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/06939c7f-83a3-4333-b998-c896f2177647)
+ ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d111ac22-242e-4d4f-822f-43becf95a422)
+ ![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e1af0a3c-5ae1-4960-9dbf-7011601adbbb)
+ ![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/497cedd9-a0d0-44ad-a9e2-67142e7c218e)
 
 <br />
 
 ##### 6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response) 
+<br />
 
-![6](https://github.com/bhati-github/5GCore_NMP/assets/49303596/4765a4e4-a7c4-4fd9-8a0e-79a0bf7609c0)
+ ![resp](https://github.com/bhati-github/5GCore_NMP/assets/49303596/329786d7-9493-45af-807c-63dad80a8d95)
 
-<br />
-<br />
-<br />
 <br />
 
 ## 7. Steps for running the simulation completely inside a single virtual machine
