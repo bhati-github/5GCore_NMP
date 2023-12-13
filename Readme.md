@@ -263,7 +263,8 @@ Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP i
  
 ### 6.2 Simulation snapshots of Initial UE Registration Message and PDU Setup Request in NMP packets
   
-  ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/197635e8-3506-483e-9a66-75c8bb8c7e4f)
+  ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/1ed44f2b-759b-46b0-bfa2-e6f98ce87231)
+
 
   ![ue-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/dae0a14b-21e0-4c74-9e02-febb9a92da51)
 Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP is carrying NGAP procedure messages.
