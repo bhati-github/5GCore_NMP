@@ -46,6 +46,7 @@
 #include "common_util.h"
 #include "color_print.h"
 
+uint8_t g__byte_debug_flag = 0;
 
 void
 get_node_type_string(uint16_t node_type, 
@@ -668,7 +669,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 1 byte (0x%02x) \n", space, "Item Value", *(ptr));
                 printf("%s%-32s :-> %u \n", space, "Uplink QoS Profile", nmp_msg_parsed_data_ptr->ul_qos_profile);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1;
 
         case ITEM_ID__DNLINK_QOS_PROFILE:
@@ -679,7 +680,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 1 byte (0x%02x) \n", space, "Item Value", *(ptr));
                 printf("%s%-32s :-> %u \n", space, "Dnlink QoS Profile", nmp_msg_parsed_data_ptr->dl_qos_profile);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1;
 
         case ITEM_ID__PDR_ACTION:
@@ -690,7 +691,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 1 byte (0x%02x) \n", space, "Item Value", *(ptr));
                 printf("%s%-32s :-> %u \n", space, "PDR Action", nmp_msg_parsed_data_ptr->pdr_action);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1;
 
         case ITEM_ID__FAR_ACTION_FLAGS:
@@ -702,7 +703,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> 0x%02x \n", space, "FAR Action Flags", 
                         nmp_msg_parsed_data_ptr->far_action_flags);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1;
 
         case ITEM_ID__FAR_DST_INTERFACE:
@@ -714,7 +715,7 @@ get_type1_item_value(char           *space,
                 get_far_dst_interface_string(nmp_msg_parsed_data_ptr->far_dst_interface, string);
                 printf("%s%-32s :-> %s \n", space, "FAR Destination Interface", string);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1;
 
         case ITEM_ID__DEFAULT_PAGING_DRX:
@@ -727,7 +728,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> %s (%u) \n", space, "Default Paging DRX", string, 
                               nmp_msg_parsed_data_ptr->default_paging_drx);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1;
 
         case ITEM_ID__RELATIVE_AMF_CAPACITY:
@@ -739,7 +740,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> %u \n", space, "Relative AMF Capacity", 
                                  nmp_msg_parsed_data_ptr->relative_amf_capacity);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1; 
 
 
@@ -755,7 +756,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
                 printf("%s%-32s :-> %u \n", space, "RAN-UE-NGAP-ID", nmp_msg_parsed_data_ptr->ran_ue_ngap_id);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
         case ITEM_ID__AMF_UE_NGAP_ID:
@@ -766,7 +767,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
                 printf("%s%-32s :-> %u \n", space, "AMF-UE-NGAP-ID", nmp_msg_parsed_data_ptr->amf_ue_ngap_id);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
         case ITEM_ID__PDR_RULE_ID:
@@ -777,7 +778,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
                 printf("%s%-32s :-> %u \n", space, "PDR Rule ID", nmp_msg_parsed_data_ptr->pdr_rule_id);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
         case ITEM_ID__PDR_PRECEDENCE:
@@ -788,7 +789,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
                 printf("%s%-32s :-> %u \n", space, "PDR Precedence", nmp_msg_parsed_data_ptr->pdr_precedence);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
         case ITEM_ID__PDR_FAR_ID:
@@ -799,7 +800,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
                 printf("%s%-32s :-> %u \n", space, "PDR FAR Id", nmp_msg_parsed_data_ptr->pdr_far_id);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
         case ITEM_ID__FAR_RULE_ID:
@@ -810,7 +811,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
                 printf("%s%-32s :-> %u \n", space, "FAR Rule Id", nmp_msg_parsed_data_ptr->far_rule_id);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
         case ITEM_ID__RRC_ESTABLISH_CAUSE:
@@ -822,7 +823,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> %u \n", space, "RRC Establishment Cause", 
                              nmp_msg_parsed_data_ptr->rrc_establish_cause);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
         case ITEM_ID__MSG_RESPONSE_CODE:
@@ -834,7 +835,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> %u \n", space, "Message Response Code",
                              nmp_msg_parsed_data_ptr->msg_response_code);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
 
 
@@ -856,7 +857,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> 0x%x (%u) \n", space, "MNC (Mobile Network Code)",
                         nmp_msg_parsed_data_ptr->mnc, nmp_msg_parsed_data_ptr->mnc);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4;
 
         case ITEM_ID__GNODEB_ID:
@@ -870,7 +871,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> %u \n", space, "gNodeB ID",
                         nmp_msg_parsed_data_ptr->gnodeb_id);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4;
 
         case ITEM_ID__TAC:
@@ -884,7 +885,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> %u \n", space, "TAC (Tracking Area Code)", 
                         nmp_msg_parsed_data_ptr->tac);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4; 
 
         case ITEM_ID__CELL_ID:
@@ -898,7 +899,7 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> %u \n", space, "CELL_ID (Cell Identity)", 
                         nmp_msg_parsed_data_ptr->cell_id);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4;
 
         case ITEM_ID__TMSI:
@@ -913,7 +914,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->tmsi,
                         nmp_msg_parsed_data_ptr->tmsi);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4;
 
         case ITEM_ID__UE_IPV4_ADDR:
@@ -928,7 +929,7 @@ get_type1_item_value(char           *space,
                 get_ipv4_addr_string(nmp_msg_parsed_data_ptr->ue_ip_addr.u.v4_addr, string);
                 printf("%s%-32s :-> %s \n", space, "Allocated UE IPv4 Address", string);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4;
 
         case ITEM_ID__PDR_PDI_MATCH_IPV4_ADDR:
@@ -942,7 +943,7 @@ get_type1_item_value(char           *space,
                 get_ipv4_addr_string(nmp_msg_parsed_data_ptr->pdr_pdi_match_ipv4_addr, string);
                 printf("%s%-32s :-> %s \n", space, "PDR PDI Match IPv4 Addr", string);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4;
 
         case ITEM_ID__PDR_PDI_MATCH_GTPU_TEID:
@@ -957,7 +958,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->pdr_pdi_match_gtpu_teid,
                         nmp_msg_parsed_data_ptr->pdr_pdi_match_gtpu_teid);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 6);
             return 4;
 
 
@@ -983,7 +984,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->imsi.u8[4], nmp_msg_parsed_data_ptr->imsi.u8[5],
                         nmp_msg_parsed_data_ptr->imsi.u8[6], nmp_msg_parsed_data_ptr->imsi.u8[7]);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
             return 8;
 
         case ITEM_ID__NSSAI:
@@ -1007,7 +1008,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->nssai_sd);
 
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
             return 8;   
 
         case ITEM_ID__GTPU_SELF_IPV4_ENDPOINT:
@@ -1030,7 +1031,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->self_v4_endpoint.teid);
 
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
             return 8;
 
         case ITEM_ID__GTPU_PEER_IPV4_ENDPOINT:
@@ -1053,7 +1054,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->peer_v4_endpoint.teid);
 
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
             return 8;
 
         case ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE:
@@ -1076,7 +1077,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->far_outer_v4_hdr_create_teid);
 
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
             return 8;
 
         case ITEM_ID__USER_LOCATION_INFO_TAC:
@@ -1104,7 +1105,7 @@ get_type1_item_value(char           *space,
                         nmp_msg_parsed_data_ptr->user_loc_info_tac);
 
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
             return 8;
 
 
@@ -1130,7 +1131,7 @@ get_type1_item_value(char           *space,
                 } 
                 printf("\n");
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+16 bytes are parsed", ptr - 2, 18);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+16 bytes are parsed", ptr - 2, 18);
             return 16;
 
         case ITEM_ID__UE_IPV6_ADDR:
@@ -1149,7 +1150,7 @@ get_type1_item_value(char           *space,
                 get_ipv6_addr_string(nmp_msg_parsed_data_ptr->ue_ip_addr.u.v6_addr.u8, string);
                 printf("%s%-32s : %s \n", space, "UE IPv6 Address", string);
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+16 bytes are parsed", ptr - 2, 18);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+16 bytes are parsed", ptr - 2, 18);
             return 16;
 
         case ITEM_ID__USER_LOCATION_INFO_NR_CGI:
@@ -1178,7 +1179,7 @@ get_type1_item_value(char           *space,
                     printf("%02x", *(ptr + 8 + i));
                 }
             }
-            if(debug_flag) dump_bytes(space, "Type-1 item, 2+16 bytes are parsed", ptr - 2, 18);
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+16 bytes are parsed", ptr - 2, 18);
             return 16;
 
 
@@ -1575,6 +1576,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
     int ret = 0;
     int offset = 0;
     int item_index = 0;
+    uint8_t g__byte_debug_flag = 0; // make it 1 for byte parsing views..
     nmp_hdr_t *nmp_hdr_ptr = NULL;
     uint8_t *nmp_msg_ptr = NULL;
     uint16_t *item_id_ptr = NULL;
@@ -1603,7 +1605,9 @@ parse_nmp_msg(uint8_t        *msg_ptr,
 
     if(debug_flag)
     {
-        printf("\n\n\n");
+        printf("\n");
+        YELLOW_PRINT("!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=! NEW MESSAGE !=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=! \n");
+        printf("\n");
         MAGENTA_PRINT("--------------------------------------------------------------------------------------\n");
         dump_src_to_dst_node_data(nmp_msg_parsed_data_ptr->src_node_type,
                 nmp_msg_parsed_data_ptr->dst_node_type,
@@ -1619,7 +1623,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
         printf("%-16s : %u  \n", "Item Count", nmp_msg_parsed_data_ptr->msg_item_count);
         printf("%-16s : %u bytes (20 bytes of NMP header is not included) \n", 
                "Item length", nmp_msg_parsed_data_ptr->msg_item_len);
-        dump_bytes((char *)space, "NMP Payload bytes", nmp_msg_ptr, nmp_msg_parsed_data_ptr->msg_item_len);
+        if(g__byte_debug_flag) dump_bytes((char *)space, "NMP Payload bytes", nmp_msg_ptr, nmp_msg_parsed_data_ptr->msg_item_len);
         MAGENTA_PRINT("--------------------------------------------------------------------------------------\n");
     }
 
@@ -1663,7 +1667,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
             }
             else
             {
-                if(debug_flag)
+                if(g__byte_debug_flag)
                 {
                     dump_bytes((char *)space, "These type-1 item bytes are now parsed", 
                                nmp_msg_ptr + offset, (2 + ret));
@@ -1683,7 +1687,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                 GREEN_PRINT("===============================================================\n");
             }
             
-            if(debug_flag)
+            if(g__byte_debug_flag)
             {
                 item_group_bytelen = htons(*((uint16_t *)(nmp_msg_ptr + offset + 2)));
                 dump_bytes((char *)space, "Proceed to parse these Type-2 item bytes", 
@@ -1706,7 +1710,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
             }
             else
             {
-                if(debug_flag)
+                if(g__byte_debug_flag)
                 {
                     dump_bytes((char *)space, "These type-2 item bytes are now parsed", 
                                nmp_msg_ptr + offset, (2 + ret));
@@ -1722,7 +1726,10 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                 GREEN_PRINT("===============================================================\n");
                 GREEN_PRINT("Item Index: %u, Parse this Item-Group          \n", item_index);
                 GREEN_PRINT("===============================================================\n");
-                
+            }
+
+            if(g__byte_debug_flag)
+            {
                 item_group_bytelen = htons(*((uint16_t *)(nmp_msg_ptr + offset + 4)));
                 dump_bytes((char *)space, "Proceed to parse these item-group bytes", 
                            nmp_msg_ptr + offset, 6 + item_group_bytelen);
@@ -1743,7 +1750,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
             }
             else
             {
-                if(debug_flag)
+                if(g__byte_debug_flag)
                 {
                     dump_bytes((char *)space, "These item-group bytes are now parsed", 
                                nmp_msg_ptr + offset, (2 + ret));
@@ -1752,7 +1759,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
                 item_index += 1;
             }
         }
-        if(debug_flag) GREEN_PRINT("---> Parsing offset is now %u \n", offset);
+        if(g__byte_debug_flag) GREEN_PRINT("---> Parsing offset is now %u \n", offset);
 
         parsed_item_count += 1;
 
@@ -1773,6 +1780,7 @@ parse_nmp_msg(uint8_t        *msg_ptr,
 
     if(debug_flag) 
     {
+        printf("\n");
         MAGENTA_PRINT("--------------------------------------------------------------------------------------\n");
         GREEN_PRINT("Message Parsing Complete..."); printf("\n");
         MAGENTA_PRINT("--------------------------------------------------------------------------------------\n");
