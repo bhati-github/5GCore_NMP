@@ -15,6 +15,7 @@
   - [6.3 Simulation of PFCP packet flows in NMP packets](#Simulation-of-PFCP-packet-flows-in-NMP-packets)
     - [6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request)](#Parsed-Message-from-AMF+SMF-to-UPF-Session-Create-Request)
     - [6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response)](#Parsed-Message-from-UPF-to-AMF+SMF-Session-Create-Response)
+  - [6.4 Simulation of NF Registration request (AMF -> NRF) in NMP packets](#Simulation-of-NF-Registration-request-in-NMP-packets)
 - [7. Network Diagram for simulation inside a single virtual machine](#Network-Diagram-for-simulation-inside-a-single-virtual-machine)
 - [8. Performance data ](#Performance-data)
 
@@ -310,6 +311,16 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
  ![resp](https://github.com/bhati-github/5GCore_NMP/assets/49303596/329786d7-9493-45af-807c-63dad80a8d95)
 
 <br />
+
+### 6.4 Simulation snapshots of NF Registration request (AMF --> NRF) over NMP protocol 
+<br />
+
+ ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/728e2263-0030-4bca-bfe8-e4ad9a000447)
+ ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b76cb5d0-5592-48a0-a270-b100d84cc8e5)
+
+<br />
+
+
 
 ## 7. Steps for running the simulation completely inside a single virtual machine
 
