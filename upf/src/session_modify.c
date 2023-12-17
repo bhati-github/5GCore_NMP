@@ -84,7 +84,7 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     dst_node_id = (nmp_n4_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
     nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
-    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SESSION_MODIFY_RESP);
+    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__UPF_SESSION_MODIFY_RESP);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 

@@ -205,28 +205,28 @@ dump_msg_type(uint16_t msg_type)
             printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "PDU_SESSION_RESOURCE_SETUP_RESP"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_CREATE_REQ:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_CREATE_REQ"); printf("\n");
+        case MSG_TYPE__UPF_SESSION_CREATE_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UPF_SESSION_CREATE_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_CREATE_RESP:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_CREATE_RESP"); printf("\n");
+        case MSG_TYPE__UPF_SESSION_CREATE_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "UPF_SESSION_CREATE_RESP"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_MODIFY_REQ:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_MODIFY_REQ"); printf("\n");
+        case MSG_TYPE__UPF_SESSION_MODIFY_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UPF_SESSION_MODIFY_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_MODIFY_RESP:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_MODIFY_RESP"); printf("\n");
+        case MSG_TYPE__UPF_SESSION_MODIFY_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "UPF_SESSION_MODIFY_RESP"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_DELETE_REQ:
-            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "SESSION_DELETE_REQ"); printf("\n");
+        case MSG_TYPE__UPF_SESSION_DELETE_REQ:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "UPF_SESSION_DELETE_REQ"); printf("\n");
             break;
 
-        case MSG_TYPE__SESSION_DELETE_RESP:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SESSION_DELETE_RESP"); printf("\n");
+        case MSG_TYPE__UPF_SESSION_DELETE_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "UPF_SESSION_DELETE_RESP"); printf("\n");
             break;
        
         case MSG_TYPE__NRF_SERVICE_REGISTRATION_REQ:
@@ -478,10 +478,16 @@ dump_item_id(char *space, uint16_t item_id)
                    "ITEM_ID__GUAMI", ITEM_ID__GUAMI, ITEM_ID__GUAMI);
             break;
         
-        case ITEM_ID__SERVICE_INFO_AS_JSON_DATA:
+        case ITEM_ID__SERVICE_INFO_JSON_DATA:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID", 
-                   "ITEM_ID__SERVICE_INFO_AS_JSON_DATA", ITEM_ID__SERVICE_INFO_AS_JSON_DATA, ITEM_ID__SERVICE_INFO_AS_JSON_DATA);
+                   "ITEM_ID__SERVICE_INFO_JSON_DATA", ITEM_ID__SERVICE_INFO_JSON_DATA, ITEM_ID__SERVICE_INFO_JSON_DATA);
             break;
+
+        case ITEM_ID__SESSION_CREATE_JSON_DATA:
+            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID",
+                   "ITEM_ID__SESSION_CREATE_JSON_DATA", ITEM_ID__SESSION_CREATE_JSON_DATA, ITEM_ID__SESSION_CREATE_JSON_DATA);
+            break;
+
         
         ////////////////////////////////////////////////////////////////////
         // Item id's carrying group of individual items 
@@ -617,7 +623,8 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__RAN_NODE_NAME:
         case ITEM_ID__AMF_NAME:
         case ITEM_ID__GUAMI:
-        case ITEM_ID__SERVICE_INFO_AS_JSON_DATA:
+        case ITEM_ID__SERVICE_INFO_JSON_DATA:
+        case ITEM_ID__SESSION_CREATE_JSON_DATA:
             *item_type = ITEM_TYPE_IS_TYPE_2; // value is now a bytestream of variable length 
             return 0;
 
@@ -1402,16 +1409,35 @@ get_type2_item_value(char           *space,
             }
             return (2 + item_len);
 
-        case ITEM_ID__SERVICE_INFO_AS_JSON_DATA:
-            memcpy(nmp_msg_parsed_data_ptr->service_info_json_data, ptr + 2, item_len);
+        case ITEM_ID__SERVICE_INFO_JSON_DATA:
+            memcpy(nmp_msg_parsed_data_ptr->json_data, ptr + 2, item_len);
 
             if(debug_flag)
             {
-                cJSON *json_data = cJSON_Parse((const char *)(nmp_msg_parsed_data_ptr->service_info_json_data));
+                cJSON *json_data = cJSON_Parse((const char *)(nmp_msg_parsed_data_ptr->json_data));
                 if(NULL == json_data)
                 {
-                    printf("SERVICE_INFO_AS_JSON_DATA: Unable to parse received data \n");
+                    printf("SERVICE_INFO_JSON_DATA: Unable to parse received data \n");
                     cJSON_Delete(json_data); 
+                    return -1;
+                }
+                char *json_string = cJSON_Print(json_data);
+                printf("%s%-16s : %u bytes   %s ", space, "Item Value", item_len, json_string);
+                cJSON_free(json_string);
+                cJSON_Delete(json_data);
+            }
+            return (2 + item_len);
+
+        case ITEM_ID__SESSION_CREATE_JSON_DATA:
+            memcpy(nmp_msg_parsed_data_ptr->json_data, ptr + 2, item_len);
+
+            if(debug_flag)
+            {
+                cJSON *json_data = cJSON_Parse((const char *)(nmp_msg_parsed_data_ptr->json_data));
+                if(NULL == json_data)
+                {
+                    printf("SESSION_CREATE_JSON_DATA: Unable to parse received data \n");
+                    cJSON_Delete(json_data);
                     return -1;
                 }
                 char *json_string = cJSON_Print(json_data);

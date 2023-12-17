@@ -73,7 +73,8 @@ enum item_id_t {
     ITEM_ID__RAN_NODE_NAME,
     ITEM_ID__AMF_NAME,
     ITEM_ID__GUAMI,
-    ITEM_ID__SERVICE_INFO_AS_JSON_DATA,
+    ITEM_ID__SERVICE_INFO_JSON_DATA,
+    ITEM_ID__SESSION_CREATE_JSON_DATA,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying group of individual items
@@ -314,8 +315,13 @@ nmp_add_item__guami(uint8_t  *ptr,
 
 int
 nmp_add_item__service_info_as_json_data(uint8_t  *ptr,
-                                        uint8_t  *service_json_info_ptr,
-                                        uint16_t  service_json_info_len);
+                                        uint8_t  *service_info_json_data_ptr,
+                                        uint16_t  service_info_json_data_len);
+
+int
+nmp_add_item__session_create_info_as_json_data(uint8_t  *ptr,
+                                               uint8_t  *session_create_json_data_ptr,
+                                               uint16_t  session_create_json_data_len);
 
 
 ////////////////////////////

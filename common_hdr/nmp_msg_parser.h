@@ -82,8 +82,8 @@ struct nmp_msg_data {
     uint8_t  nrf_registration_req_data[2048];
     uint16_t nrf_registration_req_data_len;
    
-    uint8_t  service_info_json_data[2048]; 
-    uint8_t   msg_response_description[2048];
+    uint8_t  json_data[2048]; 
+    uint8_t  msg_response_description[2048];
 
 } __attribute__((packed));
 

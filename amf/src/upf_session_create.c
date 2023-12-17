@@ -98,7 +98,7 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
     nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
     nmp_hdr_ptr->dst_node_id    = htons(g__amf_config.upf_id);
 
-    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SESSION_CREATE_REQ);
+    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__UPF_SESSION_CREATE_REQ);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 

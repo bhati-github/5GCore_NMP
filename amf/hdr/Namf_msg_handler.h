@@ -4,4 +4,6 @@
 int
 send_service_registration_msg_to_nrf(uint8_t  debug_flag);
 
+extern uint32_t g__amf_ue_session_index;
+
 #endif

@@ -116,6 +116,7 @@ struct amf_config {
 
     uint16_t   my_id;
     uint16_t   nrf_id;
+    uint16_t   smf_id;
     uint16_t   upf_id;
 
     ip_addr_t  my_n1_n2_addr;
@@ -126,6 +127,9 @@ struct amf_config {
     
     ip_addr_t           Nnrf_addr;
     struct sockaddr_in  Nnrf_sockaddr;
+    
+    ip_addr_t           Nsmf_addr;
+    struct sockaddr_in  Nsmf_sockaddr;
     
     ip_addr_t  smf_n4_addr;
     int        smf_n4_socket_id;

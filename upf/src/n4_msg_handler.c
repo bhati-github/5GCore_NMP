@@ -90,11 +90,11 @@ int
 process_rcvd_n4_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
                     uint8_t         debug_flag)
 {
-    if(MSG_TYPE__SESSION_CREATE_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
+    if(MSG_TYPE__UPF_SESSION_CREATE_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
     {
         return process_session_create_request_msg(nmp_n4_rcvd_msg_data_ptr, debug_flag);	
     }
-    else if(MSG_TYPE__SESSION_MODIFY_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
+    else if(MSG_TYPE__UPF_SESSION_MODIFY_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
     {
         return process_session_modify_request_msg(nmp_n4_rcvd_msg_data_ptr, debug_flag);
     }

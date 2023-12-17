@@ -442,13 +442,25 @@ nmp_add_item__guami(uint8_t  *ptr,
 
 int
 nmp_add_item__service_info_as_json_data(uint8_t  *ptr,
-                                        uint8_t  *service_json_info_ptr,
-                                        uint16_t  service_json_info_len)
+                                        uint8_t  *service_info_json_data_ptr,
+                                        uint16_t  service_info_json_data_len)
 {
-    *((uint16_t *)(ptr)) = htons(ITEM_ID__SERVICE_INFO_AS_JSON_DATA);
-    *((uint16_t *)(ptr + 2)) = htons(service_json_info_len);
-    memcpy(ptr + 2 + 2, service_json_info_ptr, service_json_info_len);
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__SERVICE_INFO_JSON_DATA);
+    *((uint16_t *)(ptr + 2)) = htons(service_info_json_data_len);
+    memcpy(ptr + 2 + 2, service_info_json_data_ptr, service_info_json_data_len);
     // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
-    return (2 + 2 + service_json_info_len);
+    return (2 + 2 + service_info_json_data_len);
+}
+
+int
+nmp_add_item__session_create_info_as_json_data(uint8_t  *ptr,
+                                               uint8_t  *session_create_json_data_ptr,
+                                               uint16_t  session_create_json_data_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__SESSION_CREATE_JSON_DATA);
+    *((uint16_t *)(ptr + 2)) = htons(session_create_json_data_len);
+    memcpy(ptr + 2 + 2, session_create_json_data_ptr, session_create_json_data_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + session_create_json_data_len);
 }
  

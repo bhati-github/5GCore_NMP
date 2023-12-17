@@ -9,6 +9,7 @@ upf:
                 ../common_src/nmp_item.c              \
                 ../common_src/nmp_item_group.c        \
                 ../common_src/nmp_msg_parser.c        \
+                ../common_src/cJSON.c                 \
                 ../common_src/common_util.c   -o   upf
 
 clean:
