@@ -1,6 +1,6 @@
-all: upf
+all: nrf
 
-upf:
+nrf:
 	gcc -g -Wall -I. -I./hdr/ -I./../common_hdr/  \
                 src/nrf_main.c                        \
                 src/Nnrf_msg_handler.c                \
