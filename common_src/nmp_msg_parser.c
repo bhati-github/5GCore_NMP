@@ -46,6 +46,9 @@
 #include "common_util.h"
 #include "color_print.h"
 
+// json dependency
+#include "cJSON.h"
+
 uint8_t g__byte_debug_flag = 0;
 
 void
@@ -1404,12 +1407,17 @@ get_type2_item_value(char           *space,
 
             if(debug_flag)
             {
-                printf("%s%-16s : %u bytes (", space, "Item Value", item_len);
-                for(i = 0; i < item_len; i++)
+                cJSON *json_data = cJSON_Parse((const char *)(nmp_msg_parsed_data_ptr->service_info_json_data));
+                if(NULL == json_data)
                 {
-                    printf("%02x", *(ptr + 2 + i));
+                    printf("SERVICE_INFO_AS_JSON_DATA: Unable to parse received data \n");
+                    cJSON_Delete(json_data); 
+                    return -1;
                 }
-                printf(")\n");
+                char *json_string = cJSON_Print(json_data);
+                printf("%s%-16s : %u bytes   %s ", space, "Item Value", item_len, json_string);
+                cJSON_free(json_string);
+                cJSON_Delete(json_data);
             }
             return (2 + item_len);
  
