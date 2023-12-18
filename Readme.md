@@ -411,15 +411,16 @@ First step is to create dummy interfaces inside VM using these commands.
 
 
     
-    Now, open four terminal windows from same vm. 
+    Now, open five terminal windows from same vm. 
     -> 1st terminal executes 'gnb' binary.
-    -> 2nd terminal executes 'amf' binary.
-    -> 3rd terminal executes 'nrf' binary.
-    -> 4th terminal executes 'upf' control plane binary. Actual UPF is not required for NMP demonstration.
+    -> 2nd terminal executes 'nrf' binary.
+    -> 3rd terminal executes 'amf' binary.
+    -> 4th terminal executes 'smf' binary.
+    -> 5th terminal executes 'upf' control plane binary. Actual UPF is not required for NMP demonstration.
     
     (Use -debug option as an extra command line argument to see the parsed messages)
 
-    1. Run NRF in 3rd terminal.
+    1. Run NRF in 2nd terminal.
        cd 5GCore_NMP/nrf/
        make clean;make
        sudo ./nrf -Nnrfip 50.50.50.5 -Namfip 50.50.50.1  -Nsmfip 50.50.50.2
@@ -428,22 +429,32 @@ First step is to create dummy interfaces inside VM using these commands.
        -Namfip 50.50.50.1   (AMF Namf interface IP address)
        -Nsmfip 50.50.50.2   (SMF Nsmf interface IP address)
        
-    2. Run AMF in 2nd terminal as follows:
+    2. Run AMF in 3rd terminal as follows:
        cd 5GCore_NMP/amf/
        make clean;make
-       sudo ./amf -myn1n2ip 10.10.10.2 -myNamfip 50.50.50.1 -Nnrfip 50.50.50.5 -smfn4ip 20.20.20.1 -upfn4ip 20.20.20.2 -upfn3ip 3.3.3.2 -gnbreg 10.10.10.1 3.3.3.1
+       sudo ./amf -myn1n2ip 10.10.10.2 -myNamfip 50.50.50.1 -Nnrfip 50.50.50.5  -Nsmfip 50.50.50.2 -gnbreg 10.10.10.1 3.3.3.1
 
        In above command, options are as follows:
        -myn1n2ip 10.10.10.2      (AMF N1/N2 interface IP address)
        -myNamfip 50.50.50.1      (AMF Namf interface IP address)
        -Nnrfip 50.50.50.5        (NRF Nnrf interface IP address)
-       -smfn4ip 20.20.20.1       (SMF N4 interface IP address)
-       -upfn4ip 20.20.20.2       (UPF N4 interface IP address)
-       -upfn3ip 3.3.3.2          (UPF N3 interface IP address)
+       -Nsmfip 50.50.50.2        (SMF Nsmf interface IP address)
        -gnbreg 10.10.10.1 3.3.3.1  (Register a gnodeB into AMF with its N1/N2 interface and N3 interface details)
                                              
+    3. Run SMF in 4th terminal as follows:
+       cd 5GCore_NMP/smf/
+       make clean;make
+       sudo ./smf -myn4ip 20.20.20.1 -myNsmfip 50.50.50.2 -Nnrfip 50.50.50.5 -Namfip 50.50.50.1 -upfn4ip 20.20.20.2 -upfn3ip 3.3.3.2
+
+       In above command, options are as follows:
+       -myn4ip 20.20.20.1    (SMF N4 interface IP address)
+       -myNsmfip 50.50.50.2  (SMF Nsmf interface IP address)
+       -Nnrfip 50.50.50.5    (NRF Nnrf interface IP address)
+       -Namfip 50.50.50.1    (AMF Namf interface IP address)
+       -upfn4ip 20.20.20.2   (UPF N4 interface IP address)
+       -upfn3ip 3.3.3.2      (UPF N3 interface IP address)
        
-    3. Run UPF in 4th terminal as follows:
+    4. Run UPF in 5th terminal as follows:
        cd 5GCore_NMP/upf/
        make clean;make
        sudo ./upf -myn3ip 3.3.3.2 -myn4ip 20.20.20.2 -smfn4ip 20.20.20.1 -myn6ip 6.6.6.1
@@ -455,7 +466,7 @@ First step is to create dummy interfaces inside VM using these commands.
        -myn6ip 6.6.6.1     (UPF N6 interface IP address)
        
 
-    4. Finally, run gnb in 1st terminal. 
+    5. Finally, run gnb in 1st terminal. 
        sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1
        or
        sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1 -debug
