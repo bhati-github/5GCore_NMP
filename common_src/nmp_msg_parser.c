@@ -61,10 +61,6 @@ get_node_type_string(uint16_t node_type,
             strcpy(string, "AMF");
             break;
 
-        case NODE_TYPE__UE:
-            strcpy(string, "UE");
-            break;
-
         case NODE_TYPE__GNB:
             strcpy(string, "GNB");
             break;
@@ -72,7 +68,15 @@ get_node_type_string(uint16_t node_type,
         case NODE_TYPE__NRF:
             strcpy(string, "NRF");
             break;
+        
+        case NODE_TYPE__SMF:
+            strcpy(string, "SMF");
+            break;
 
+        case NODE_TYPE__UE:
+            strcpy(string, "UE");
+            break;
+        
         case NODE_TYPE__UPF:
             strcpy(string, "UPF");
             break;
@@ -164,6 +168,10 @@ dump_msg_type(uint16_t msg_type)
         case MSG_TYPE__ALL_OK:
             printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "ALL_OK"); printf("\n");
             break;
+        
+        case MSG_TYPE__NOT_OK:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "NOT_OK"); printf("\n");
+            break;
 
         case MSG_TYPE__NG_SETUP_REQ:
             printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "NG_SETUP_REQ"); printf("\n");
@@ -200,9 +208,45 @@ dump_msg_type(uint16_t msg_type)
         case MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT:
             printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT"); printf("\n");
             break;
+        
+        case MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT:
+            printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT"); printf("\n");
+            break;
 
         case MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP:
             printf("%-16s : ", "Msg Type"); GREEN_PRINT("%s", "PDU_SESSION_RESOURCE_SETUP_RESP"); printf("\n");
+            break;
+
+        case MSG_TYPE__NRF_SERVICE_REGISTRATION_REQ:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_REGISTRATION_REQ"); printf("\n");
+            break;
+
+        case MSG_TYPE__NRF_SERVICE_REGISTRATION_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_REGISTRATION_RESP"); printf("\n");
+            break;
+
+        case MSG_TYPE__NRF_SERVICE_DISCOVERY_REQ:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_DISCOVERY_REQ"); printf("\n");
+            break;
+
+        case MSG_TYPE__NRF_SERVICE_DISCOVERY_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_DISCOVERY_RESP"); printf("\n");
+            break;
+
+        case MSG_TYPE__SMF_SESSION_CREATE_REQ:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SMF_SESSION_CREATE_REQ"); printf("\n");
+            break;
+        
+        case MSG_TYPE__SMF_SESSION_CREATE_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SMF_SESSION_CREATE_RESP"); printf("\n");
+            break;
+
+        case MSG_TYPE__SMF_SESSION_MODIFY_REQ:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SMF_SESSION_MODIFY_REQ"); printf("\n");
+            break;
+
+        case MSG_TYPE__SMF_SESSION_MODIFY_RESP:
+            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "SMF_SESSION_MODIFY_RESP"); printf("\n");
             break;
 
         case MSG_TYPE__UPF_SESSION_CREATE_REQ:
@@ -229,22 +273,6 @@ dump_msg_type(uint16_t msg_type)
             printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "UPF_SESSION_DELETE_RESP"); printf("\n");
             break;
        
-        case MSG_TYPE__NRF_SERVICE_REGISTRATION_REQ:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_REGISTRATION_REQ"); printf("\n");
-            break;
-
-        case MSG_TYPE__NRF_SERVICE_REGISTRATION_RESP:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_REGISTRATION_RESP"); printf("\n");
-            break;
-
-        case MSG_TYPE__NRF_SERVICE_DISCOVERY_REQ:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_DISCOVERY_REQ"); printf("\n");
-            break;
-
-        case MSG_TYPE__NRF_SERVICE_DISCOVERY_RESP:
-            printf("%-16s : ", "Msg Type"); YELLOW_PRINT("%s", "NRF_SERVICE_DISCOVERY_RESP"); printf("\n");
-            break;
-
         default:
             printf("%-16s : ", "Msg Type"); RED_PRINT("%s", "Unknown"); printf("\n");
             break;
@@ -382,6 +410,7 @@ dump_item_id(char *space, uint16_t item_id)
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID",
                    "PDR_PDI_MATCH_GTPU_TEID", ITEM_ID__PDR_PDI_MATCH_GTPU_TEID, ITEM_ID__PDR_PDI_MATCH_GTPU_TEID);
             break;
+        
 
         ////////////////////////////////////////////////////////////////////
         // Item id's carrying more than 4 and upto 8 byte value
@@ -404,6 +433,16 @@ dump_item_id(char *space, uint16_t item_id)
         case ITEM_ID__GTPU_PEER_IPV4_ENDPOINT:
             printf("%s%-16s : %s (%u) (0x%08x) \n", space, "Type-1 Item ID", 
                    "GTPU_PEER_IPV4_ENDPOINT", ITEM_ID__GTPU_PEER_IPV4_ENDPOINT, ITEM_ID__GTPU_PEER_IPV4_ENDPOINT);
+            break;
+
+        case ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT:
+            printf("%s%-16s : %s (%u) (0x%08x) \n", space, "Type-1 Item ID",
+                   "UPLINK_GTPU_IPV4_ENDPOINT", ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT, ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT);
+            break;
+
+        case ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT:
+            printf("%s%-16s : %s (%u) (0x%08x) \n", space, "Type-1 Item ID",
+                   "DNLINK_GTPU_IPV4_ENDPOINT", ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT, ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT);
             break;
 
         case ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE:
@@ -483,9 +522,14 @@ dump_item_id(char *space, uint16_t item_id)
                    "ITEM_ID__SERVICE_INFO_JSON_DATA", ITEM_ID__SERVICE_INFO_JSON_DATA, ITEM_ID__SERVICE_INFO_JSON_DATA);
             break;
 
-        case ITEM_ID__SESSION_CREATE_JSON_DATA:
+        case ITEM_ID__SESSION_CREATE_REQ_JSON_DATA:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID",
-                   "ITEM_ID__SESSION_CREATE_JSON_DATA", ITEM_ID__SESSION_CREATE_JSON_DATA, ITEM_ID__SESSION_CREATE_JSON_DATA);
+                   "ITEM_ID__SESSION_CREATE_REQ_JSON_DATA", ITEM_ID__SESSION_CREATE_REQ_JSON_DATA, ITEM_ID__SESSION_CREATE_REQ_JSON_DATA);
+            break;
+        
+        case ITEM_ID__SESSION_CREATE_RESP_JSON_DATA:
+            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-2 Item ID",
+                   "ITEM_ID__SESSION_CREATE_RESP_JSON_DATA", ITEM_ID__SESSION_CREATE_RESP_JSON_DATA, ITEM_ID__SESSION_CREATE_RESP_JSON_DATA);
             break;
 
         
@@ -602,6 +646,8 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__NSSAI:
         case ITEM_ID__GTPU_SELF_IPV4_ENDPOINT:
         case ITEM_ID__GTPU_PEER_IPV4_ENDPOINT:
+        case ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT:
+        case ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT:
         case ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE:
         case ITEM_ID__USER_LOCATION_INFO_TAC:
             *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (8 bytes)
@@ -624,7 +670,8 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__AMF_NAME:
         case ITEM_ID__GUAMI:
         case ITEM_ID__SERVICE_INFO_JSON_DATA:
-        case ITEM_ID__SESSION_CREATE_JSON_DATA:
+        case ITEM_ID__SESSION_CREATE_REQ_JSON_DATA:
+        case ITEM_ID__SESSION_CREATE_RESP_JSON_DATA:
             *item_type = ITEM_TYPE_IS_TYPE_2; // value is now a bytestream of variable length 
             return 0;
 
@@ -849,6 +896,7 @@ get_type1_item_value(char           *space,
             return 2;
 
 
+
         /////////////////////////////////////////////////////////////////////
         // Extract 4 byte items.
         /////////////////////////////////////////////////////////////////////
@@ -973,6 +1021,7 @@ get_type1_item_value(char           *space,
 
 
 
+
         /////////////////////////////////////////////////////////////////////
         // Extract upto 8 byte items.
         /////////////////////////////////////////////////////////////////////
@@ -1062,6 +1111,52 @@ get_type1_item_value(char           *space,
                 printf("%s%-32s :-> 0x%x (%u) \n", space, "GTP endpoint (Peer TEID)",
                         nmp_msg_parsed_data_ptr->peer_v4_endpoint.teid, 
                         nmp_msg_parsed_data_ptr->peer_v4_endpoint.teid);
+
+            }
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            return 8;
+
+        case ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT:
+            nmp_msg_parsed_data_ptr->upf_n3_addr = htonl(*((uint32_t *)ptr));
+            nmp_msg_parsed_data_ptr->upf_n3_teid = htonl(*((uint32_t *)(ptr + 4)));
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : 8 bytes (", space, "Item Value");
+                for(i = 0; i < 8; i++)
+                {
+                    printf("%02x", *(ptr + i));
+                }
+                printf(")\n");
+
+                get_ipv4_addr_string(nmp_msg_parsed_data_ptr->upf_n3_addr, string);
+                printf("%s%-32s :-> %s \n", space, "Uplink GTP endpoint (UPF N3 Ipv4 Addr)", string);
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "Uplink GTP TEID (UPF N3 TEID)",
+                        nmp_msg_parsed_data_ptr->upf_n3_addr,
+                        nmp_msg_parsed_data_ptr->upf_n3_teid);
+
+            }
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            return 8;
+
+        case ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT:
+            nmp_msg_parsed_data_ptr->gnb_n3_addr = htonl(*((uint32_t *)ptr));
+            nmp_msg_parsed_data_ptr->gnb_n3_teid = htonl(*((uint32_t *)(ptr + 4)));
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : 8 bytes (", space, "Item Value");
+                for(i = 0; i < 8; i++)
+                {
+                    printf("%02x", *(ptr + i));
+                }
+                printf(")\n");
+
+                get_ipv4_addr_string(nmp_msg_parsed_data_ptr->gnb_n3_addr, string);
+                printf("%s%-32s :-> %s \n", space, "Dnlink GTP endpoint (gnodeB N3 Ipv4 Addr)", string);
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "Dnlink GTP TEID (gnodeB N3 TEID)",
+                        nmp_msg_parsed_data_ptr->gnb_n3_addr,
+                        nmp_msg_parsed_data_ptr->gnb_n3_teid);
 
             }
             if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
@@ -1428,7 +1523,7 @@ get_type2_item_value(char           *space,
             }
             return (2 + item_len);
 
-        case ITEM_ID__SESSION_CREATE_JSON_DATA:
+        case ITEM_ID__SESSION_CREATE_REQ_JSON_DATA:
             memcpy(nmp_msg_parsed_data_ptr->json_data, ptr + 2, item_len);
 
             if(debug_flag)
@@ -1436,7 +1531,26 @@ get_type2_item_value(char           *space,
                 cJSON *json_data = cJSON_Parse((const char *)(nmp_msg_parsed_data_ptr->json_data));
                 if(NULL == json_data)
                 {
-                    printf("SESSION_CREATE_JSON_DATA: Unable to parse received data \n");
+                    printf("SESSION_CREATE_REQ_JSON_DATA: Unable to parse received data \n");
+                    cJSON_Delete(json_data);
+                    return -1;
+                }
+                char *json_string = cJSON_Print(json_data);
+                printf("%s%-16s : %u bytes   %s ", space, "Item Value", item_len, json_string);
+                cJSON_free(json_string);
+                cJSON_Delete(json_data);
+            }
+            return (2 + item_len);
+
+        case ITEM_ID__SESSION_CREATE_RESP_JSON_DATA:
+            memcpy(nmp_msg_parsed_data_ptr->json_data, ptr + 2, item_len);
+
+            if(debug_flag)
+            {
+                cJSON *json_data = cJSON_Parse((const char *)(nmp_msg_parsed_data_ptr->json_data));
+                if(NULL == json_data)
+                {
+                    printf("SESSION_CREATE_RESP_JSON_DATA: Unable to parse received data \n");
                     cJSON_Delete(json_data);
                     return -1;
                 }

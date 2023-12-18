@@ -46,12 +46,11 @@
 
 #include "amf.h"
 #include "n1_n2_msg_handler.h"
-#include "upf_session.h"
+#include "Namf_msg_handler.h"
 
 int
-validate_rcvd_msg_on_n1_n2_interface(uint8_t *msg_ptr,
-                                     int      msg_len,
-                                     uint32_t request_identifier)
+validate_rcvd_nmp_msg_on_n1_n2_interface(uint8_t *msg_ptr,
+                                         int      msg_len)
 {
     if(msg_len < sizeof(nmp_hdr_t))
     {
@@ -70,12 +69,6 @@ validate_rcvd_msg_on_n1_n2_interface(uint8_t *msg_ptr,
     if(g__amf_config.my_id != htons(nmp_hdr_ptr->dst_node_id))
     {
         printf("Destination node id is not equal to my id \n");
-        return -1;
-    }
-
-    if(request_identifier != htonl(nmp_hdr_ptr->msg_identifier))
-    {
-        printf("Response identifier is not matching with Request identifier \n");
         return -1;
     }
 
@@ -250,11 +243,6 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     uint16_t gnb_index = 0;
     uint16_t amf_ue_ngap_id = 1;
     uint16_t ran_ue_ngap_id = 1;
-    uint32_t ue_ipv4_addr = 0;
-    uint32_t gnb_v4_addr = 0;
-    uint32_t upf_v4_addr = 0;
-    uint32_t ul_teid = 0;
-    uint32_t dl_teid = 0;
     uint32_t msg_id = 0;
     guami_item_t guami_items[4];
     uint16_t guami_item_count = 0;
@@ -619,23 +607,14 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
 
        
         /////////////////////////////////////////////// 
-        // Step-1: Send Session Create message to UPF 
-        //         and get GTP-U tunnel information
+        // Step-1: Send Session Create message to SMF 
         /////////////////////////////////////////////// 
-        ue_ipv4_addr = g__ue_ipv4_addr_base++;
-        gnb_v4_addr = g__amf_config.gnb_data[gnb_index].gnb_n3_addr.u.v4_addr;
-        upf_v4_addr = g__amf_config.upf_n3_addr.u.v4_addr;
-        if(-1 == send_session_create_msg_to_upf(ue_ipv4_addr, 
-                                                nmp_n1_n2_rcvd_msg_data_ptr->imsi,   // TBD: update parameters of this function
-                                                gnb_v4_addr,
-                                                upf_v4_addr,
-                                                &(ul_teid),
-                                                &(dl_teid),
-                                                debug_flag))
+        if(-1 == send_session_create_msg_to_smf(nmp_n1_n2_rcvd_msg_data_ptr->imsi, debug_flag))
         {
             // Send failure message back to gnodeb
             return send_pdu_setup_failure_msg_to_gnodeb(nmp_n1_n2_rcvd_msg_data_ptr, debug_flag);
         }
+    
         
         /////////////////////////////////////////////////// 
         // Step-2: Send PDU Session Establishment Accept 
@@ -691,6 +670,18 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         offset += ret;
         item_count += 1;
 
+        // Add uplink teid info (gnodeB will use this for making uplink gtp-u tunnel packets)
+        ret = nmp_add_item__uplink_gtpu_ipv4_endpoint(ptr + offset, 
+                                                      g__amf_config.smf_sessions[g__amf_ue_session_index].upf_n3_addr,
+                                                      g__amf_config.smf_sessions[g__amf_ue_session_index].upf_n3_teid);
+        if(-1 == ret)
+        {
+            return -1;
+        }
+        offset += ret;
+        item_count += 1;
+        
+        
         // All items are added. Update NMP message header.
         nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
         nmp_hdr_ptr->msg_item_count = htons(item_count);
@@ -738,6 +729,26 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
 
         if(debug_flag) printf("%s: gnb_index = %u \n", __func__, gnb_index);
 
+        // gnodeB sends its own N3 interface teid endpoint. 
+        // UPF will use this for making downlink gtp-u tunnel.
+        g__amf_config.smf_sessions[g__amf_ue_session_index].gnb_n3_addr = nmp_n1_n2_rcvd_msg_data_ptr->gnb_n3_addr;
+        g__amf_config.smf_sessions[g__amf_ue_session_index].gnb_n3_teid = nmp_n1_n2_rcvd_msg_data_ptr->gnb_n3_teid;
+
+        ///////////////////////////////////////////////
+        // Step-1: Send Session Modify message to SMF
+        //         SMF will in-turn send a message 
+        //         to UPF for datapath setup.
+        ///////////////////////////////////////////////
+        if(-1 == send_session_modify_msg_to_smf(nmp_n1_n2_rcvd_msg_data_ptr->imsi,
+                                                g__amf_config.smf_sessions[g__amf_ue_session_index].gnb_n3_addr,
+                                                g__amf_config.smf_sessions[g__amf_ue_session_index].gnb_n3_teid,
+                                                debug_flag))
+        {
+            // Send failure message back to gnodeb
+            return send_pdu_setup_failure_msg_to_gnodeb(nmp_n1_n2_rcvd_msg_data_ptr, debug_flag);
+        }
+         
+
         // Send All Ok message back to gnodeb for completion of procedure.
         return send_all_ok_msg_to_gnodeb(nmp_n1_n2_rcvd_msg_data_ptr,
                                          debug_flag);
@@ -748,5 +759,69 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         return -1;
     }
     return 0;	
+}
+
+
+// AMF listens for incoming messages on N1/N2 interface
+// from RAN network.
+int
+listen_for_n1_n2_messages()
+{
+    int n = 0;
+    int len = 0;
+    char string[128];
+    uint32_t gnb_addr = 0;
+    uint16_t gnb_port = 0;
+    struct sockaddr_in  gnb_sockaddr;
+    nmp_msg_data_t nmp_n1_n2_rcvd_msg_data;
+
+    while(1)
+    {
+        ///////////////////////////////////////////////
+        // Wait for request messages from gnodeB..
+        ///////////////////////////////////////////////
+        len = sizeof(struct sockaddr_in);
+        memset(&gnb_sockaddr, 0x0, sizeof(struct sockaddr_in));
+        n = recvfrom(g__amf_config.my_n1_n2_socket_id,
+                    (char *)g__n1_n2_rcvd_msg_buffer,
+                     MSG_BUFFER_LEN,
+                     MSG_WAITALL,
+                    (struct sockaddr *)&(gnb_sockaddr),
+                    (socklen_t *)&len);
+
+        gnb_addr = htonl(gnb_sockaddr.sin_addr.s_addr);
+        gnb_port = htons(gnb_sockaddr.sin_port);
+
+        if(g__amf_config.debug_switch)
+        {
+            get_ipv4_addr_string(gnb_addr, string);
+            printf("-----------> Rcvd request (%u bytes) from gnodeB (%s:%u) \n",
+                    n, string, gnb_port);
+        }
+
+        if(-1 == validate_rcvd_nmp_msg_on_n1_n2_interface(g__n1_n2_rcvd_msg_buffer, n))
+        {
+            printf("%s: Rcvd N1/N2 message validation failed..Ignore and Continue.. \n", __func__);
+            continue;
+        }
+
+        if(-1 == parse_nmp_msg(g__n1_n2_rcvd_msg_buffer,
+                               n,
+                               &(nmp_n1_n2_rcvd_msg_data),
+                               g__amf_config.debug_switch))
+        {
+            printf("%s: Rcvd N1/N2 message parse error..Ignore and Continue..  \n", __func__);
+            continue;
+        }
+
+        if(-1 == process_rcvd_n1_n2_msg(&(nmp_n1_n2_rcvd_msg_data),
+                                        gnb_addr,
+                                        g__amf_config.debug_switch))
+        {
+            printf("Unable to process rcvd N1/N2 message \n\n");
+        }
+    }
+
+    return 0;
 }
 

@@ -2,6 +2,7 @@
 #define UPF_H
 
 #define MSG_BUFFER_LEN     2048
+#define UPF_UPLINK_TEID_BASE 0x20000
 
 struct upf_config {
     uint8_t    debug_switch;
@@ -17,6 +18,8 @@ struct upf_config {
     ip_addr_t  my_n6_addr;
 
     int        pkt_delay;
+
+    uint32_t   current_uplink_teid;
 
     int                 my_n4_socket_id;
     struct sockaddr_in  smf_n4_sockaddr;

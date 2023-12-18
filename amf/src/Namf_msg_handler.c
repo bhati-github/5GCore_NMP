@@ -56,9 +56,8 @@ uint32_t g__amf_ue_session_index = 1;
 
  
 int
-validate_rcvd_msg_on_Namf_interface(uint8_t *msg_ptr,
-                                    int      msg_len,
-                                    uint32_t request_identifier)
+validate_rcvd_nmp_msg_on_Namf_interface(uint8_t *msg_ptr,
+                                        int      msg_len)
 {
     if(msg_len < sizeof(nmp_hdr_t))
     {
@@ -95,7 +94,6 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
     uint16_t amf_service_info_len = 0;
     uint32_t nrf_addr = 0;
     uint16_t nrf_port = 0;
-    uint32_t request_identifier = 0;
     uint8_t amf_service_info[2048];
     char string[128];
     uint8_t *ptr =  g__Namf_send_msg_buffer;
@@ -126,9 +124,6 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
     msg_id = g__amf_config.my_id << 16;
     msg_id |= (uint16_t )rand();
     nmp_hdr_ptr->msg_identifier = htonl(msg_id);
-
-    // Save request identifier
-    request_identifier = htonl(nmp_hdr_ptr->msg_identifier);
 
     offset = sizeof(nmp_hdr_t);
 
@@ -272,9 +267,8 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
                 n, string, nrf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_Namf_interface(g__Namf_rcvd_msg_buffer,
-                                                 n,
-                                                 request_identifier))
+    if(-1 == validate_rcvd_nmp_msg_on_Namf_interface(g__Namf_rcvd_msg_buffer,
+                                                     n))
     {
         printf("%s: Rcvd message validation error.. \n", __func__);
         return -1;
@@ -301,17 +295,27 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
 
 
 int
-session_create_json_data_maker(uint8_t  *ptr,
-                               uint8_t  *session_create_json_info,
-                               uint16_t *session_create_json_info_len,
-                               uint8_t   debug_flag)
+session_create_req_json_data_maker(uint8_t      *ptr,
+                                   data_64bit_t  imsi,
+                                   uint8_t      *session_create_json_info,
+                                   uint16_t     *session_create_json_info_len,
+                                   uint8_t       debug_flag)
 {
+    char imsi_string[128];
+    char final_imsi_string[128];
     cJSON *member;
     cJSON *plmn_member;
     cJSON *amf_json_info_for_smf = cJSON_CreateObject();
 
     //////////////////////////////////////////////
-    cJSON_AddStringToObject(amf_json_info_for_smf, "supi", "imsi-001021344637253");
+    memset(final_imsi_string, 0x0, 128);
+    sprintf(final_imsi_string, "imsi-");
+
+    memset(imsi_string, 0x0, 128);
+    get_imsi_string(imsi.u8, imsi_string);
+
+    strcat(final_imsi_string, imsi_string);
+    cJSON_AddStringToObject(amf_json_info_for_smf, "supi", final_imsi_string);
     //////////////////////////////////////////////
     
     //////////////////////////////////////////////
@@ -456,7 +460,8 @@ session_create_json_data_maker(uint8_t  *ptr,
 
 
 int
-send_session_create_msg_to_smf(uint8_t  debug_flag)
+send_session_create_msg_to_smf(data_64bit_t imsi,
+                               uint8_t      debug_flag)
 {
     int n = 0;
     int ret = 0;
@@ -466,13 +471,12 @@ send_session_create_msg_to_smf(uint8_t  debug_flag)
     uint16_t item_count = 0;
     uint32_t smf_addr = 0;
     uint16_t smf_port = 0;
-    uint32_t request_identifier = 0;
     char string[128];
     uint8_t *ptr =  g__Namf_send_msg_buffer;
     struct sockaddr_in  smf_sockaddr;
     struct sockaddr_in  target_service_sockaddr;
-    nmp_msg_data_t nmp_Nsmf_send_msg_data;
-    nmp_msg_data_t nmp_Nsmf_rcvd_msg_data;
+    nmp_msg_data_t nmp_Namf_send_msg_data;
+    nmp_msg_data_t nmp_Namf_rcvd_msg_data;
     uint8_t session_create_json_info[2048];
     memset(session_create_json_info, 0x0, 2048);
     uint16_t session_create_json_info_len;
@@ -494,15 +498,13 @@ send_session_create_msg_to_smf(uint8_t  debug_flag)
     msg_id |= (uint16_t )rand();
     nmp_hdr_ptr->msg_identifier = htonl(msg_id);
 
-    // Save request identifier
-    request_identifier = htonl(nmp_hdr_ptr->msg_identifier);
-
     offset = sizeof(nmp_hdr_t);
 
-    if(-1 == session_create_json_data_maker(ptr + offset,
-                                            session_create_json_info,
-                                           &session_create_json_info_len,
-                                            debug_flag))
+    if(-1 == session_create_req_json_data_maker(ptr + offset,
+                                                imsi,
+                                                session_create_json_info,
+                                               &session_create_json_info_len,
+                                                debug_flag))
     {
         printf("%s: Unable to prepare json data towards SMF \n", __func__);
         return -1;
@@ -511,9 +513,18 @@ send_session_create_msg_to_smf(uint8_t  debug_flag)
     /////////////////////////////////////////////
     // Add session create json data as NMP item
     /////////////////////////////////////////////
-    ret = nmp_add_item__session_create_info_as_json_data(ptr + offset,
-                                                         session_create_json_info,
-                                                         session_create_json_info_len);
+    ret = nmp_add_item__session_create_req_info_as_json_data(ptr + offset,
+                                                             session_create_json_info,
+                                                             session_create_json_info_len);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+    // Add user IMSI
+    ret = nmp_add_item__imsi(ptr+ offset, imsi);
     if(-1 == ret)
     {
         return -1;
@@ -528,7 +539,7 @@ send_session_create_msg_to_smf(uint8_t  debug_flag)
 
     if(-1 == parse_nmp_msg(g__Namf_send_msg_buffer,
                            offset,
-                           &(nmp_Nsmf_send_msg_data),
+                           &(nmp_Namf_send_msg_data),
                            debug_flag))
     {
         printf("%s: Send message parsing error.. \n", __func__);
@@ -582,9 +593,8 @@ send_session_create_msg_to_smf(uint8_t  debug_flag)
                 n, string, smf_port);
     }
 
-    if(-1 == validate_rcvd_msg_on_Namf_interface(g__Namf_rcvd_msg_buffer,
-                                                 n,
-                                                 request_identifier))
+    if(-1 == validate_rcvd_nmp_msg_on_Namf_interface(g__Namf_rcvd_msg_buffer,
+                                                     n))
     {
         printf("%s: Rcvd message validation error.. \n", __func__);
         return -1;
@@ -592,7 +602,161 @@ send_session_create_msg_to_smf(uint8_t  debug_flag)
 
     if(-1 == parse_nmp_msg(g__Namf_rcvd_msg_buffer,
                            n,
-                           &(nmp_Nsmf_rcvd_msg_data),
+                           &(nmp_Namf_rcvd_msg_data),
+                           debug_flag))
+    {
+        printf("%s: Rcvd message parsing error.. \n", __func__);
+        return -1;
+    }
+
+    // We must have received gtp-u teid endpoint of UPF N3 interface(for uplink packets).
+    // Store into amf user session database..
+    // This information is also required to be sent to gnodeB as one of the NMP item
+    g__amf_config.smf_sessions[g__amf_ue_session_index].upf_n3_addr = nmp_Namf_rcvd_msg_data.upf_n3_addr; 
+    g__amf_config.smf_sessions[g__amf_ue_session_index].upf_n3_teid = nmp_Namf_rcvd_msg_data.upf_n3_teid;
+    
+    if(debug_flag)
+    {
+        printf("%s: UE Session Create Procedure is completed with SMF \n", __func__);
+    } 
+
+    return 0;
+}
+
+
+int
+send_session_modify_msg_to_smf(data_64bit_t  imsi,
+                               uint32_t   gnb_n3_iface_v4_addr,
+                               uint32_t   dnlink_teid,
+                               uint8_t    debug_flag)
+{
+    int n = 0;
+    int ret = 0;
+    int len = 0;
+    int offset = 0;
+    uint32_t msg_id = 0;
+    uint16_t item_count = 0;
+    uint32_t smf_addr = 0;
+    uint16_t smf_port = 0;
+    char string[128];
+    uint8_t *ptr =  g__Namf_send_msg_buffer;
+    struct sockaddr_in  smf_sockaddr;
+    struct sockaddr_in  target_service_sockaddr;
+    nmp_msg_data_t nmp_Namf_send_msg_data;
+    nmp_msg_data_t nmp_Namf_rcvd_msg_data;
+
+    offset = 0;
+    item_count = 0;
+    nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
+
+    nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
+    nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__SMF);
+    nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
+    nmp_hdr_ptr->dst_node_id    = htons(g__amf_config.smf_id);
+
+    nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__SMF_SESSION_MODIFY_REQ);
+    nmp_hdr_ptr->msg_item_len   = 0;
+    nmp_hdr_ptr->msg_item_count = 0;
+
+    msg_id = g__amf_config.my_id << 16;
+    msg_id |= (uint16_t )rand();
+    nmp_hdr_ptr->msg_identifier = htonl(msg_id);
+
+    offset = sizeof(nmp_hdr_t);
+
+
+    // gnodeB sent its own N3 interface TEID endpoint (used for sending downlink packets by UPF)
+    // Send this teid information to SMF so that SMF can modify the session in UPF.
+    ret = nmp_add_item__dnlink_gtpu_ipv4_endpoint(ptr + offset, 
+                                                  gnb_n3_iface_v4_addr, 
+                                                  dnlink_teid);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+
+    // Add user IMSI
+    ret = nmp_add_item__imsi(ptr+ offset, imsi);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+
+    // All items are added. Update NMP message header.
+    nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
+    nmp_hdr_ptr->msg_item_count = htons(item_count);
+
+    if(-1 == parse_nmp_msg(g__Namf_send_msg_buffer,
+                           offset,
+                           &(nmp_Namf_send_msg_data),
+                           debug_flag))
+    {
+        printf("%s: Send message parsing error.. \n", __func__);
+        return -1;
+    }
+
+    // Send this message to SMF
+    target_service_sockaddr.sin_addr.s_addr = g__amf_config.Nsmf_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__amf_config.Nsmf_sockaddr.sin_port;
+    n = sendto(g__amf_config.my_Namf_socket_id,
+               (char *)g__Namf_send_msg_buffer,
+               offset,
+               MSG_WAITALL,
+               (struct sockaddr *)&(target_service_sockaddr),
+               sizeof(struct sockaddr_in));
+
+    if(n != offset)
+    {
+        printf("%s: sendto() failed during msg send to SMF \n", __func__);
+        return -1;
+    }
+    if(debug_flag)
+    {
+        MAGENTA_PRINT("Session Modify Message sent to SMF ! \n");
+        YELLOW_PRINT("Waiting for response from SMF............... \n");
+        printf("\n");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Step 2: Wait for reponse from SMF.
+    //         We must receive Session Modify Response from SMF
+    //         MSG_TYPE: MSG_TYPE__SMF_SESSION_MODIFY_RESP
+    ///////////////////////////////////////////////////////////////////////////
+    len = sizeof(struct sockaddr_in);
+    memset(&smf_sockaddr, 0x0, sizeof(struct sockaddr_in));
+    n = recvfrom(g__amf_config.my_Namf_socket_id,
+                 (char *)g__Namf_rcvd_msg_buffer,
+                 MSG_BUFFER_LEN,
+                 MSG_WAITALL,
+                 (struct sockaddr *)&(smf_sockaddr),
+                 (socklen_t *)&len);
+
+    if(debug_flag)
+    {
+        smf_addr = htonl(smf_sockaddr.sin_addr.s_addr);
+        smf_port = htons(smf_sockaddr.sin_port);
+
+        get_ipv4_addr_string(smf_addr, string);
+        printf("<----------- Rcvd response (%u bytes) from SMF (%s:%u) \n",
+                n, string, smf_port);
+    }
+
+    if(-1 == validate_rcvd_nmp_msg_on_Namf_interface(g__Namf_rcvd_msg_buffer,
+                                                     n))
+    {
+        printf("%s: Rcvd message validation error.. \n", __func__);
+        return -1;
+    }
+
+    if(-1 == parse_nmp_msg(g__Namf_rcvd_msg_buffer,
+                           n,
+                           &(nmp_Namf_rcvd_msg_data),
                            debug_flag))
     {
         printf("%s: Rcvd message parsing error.. \n", __func__);
@@ -601,10 +765,12 @@ send_session_create_msg_to_smf(uint8_t  debug_flag)
 
     if(debug_flag)
     {
-        printf("%s: UE Session Create Procedure is completed with SMF \n", __func__);
-    } 
+        printf("%s: UE Session Modify Procedure is completed with SMF \n", __func__);
+    }
 
-    g__amf_ue_session_index += 1;
+    // Now, we can increment UE session index inside AMF.
+    g__amf_ue_session_index += 1; 
     return 0;
 }
+
 

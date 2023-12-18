@@ -56,12 +56,13 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     int ret = 0;
     int offset = 0;
     char string[128];
-    char response[256];
     uint16_t response_code = MSG_RESPONSE_CODE__OK;
     uint16_t item_count = 0;
     uint16_t dst_node_id = 0;
     nmp_msg_data_t nmp_n4_send_msg_data;
     struct sockaddr_in  target_service_sockaddr;
+    char response[256];
+    memset(response, 0x0, 256);
 
     printf("Session Modified for User IMSI: ");
     for(i = 0; i < 8; i++)
@@ -73,12 +74,12 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     printf("and User IP : %s \n", string);
 
 
-    // Send response back to AMF
+    // Send response back to SMF
     uint8_t *ptr = g__n4_send_msg_buffer; 
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__UPF);
-    nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__AMF);
+    nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__SMF);
     nmp_hdr_ptr->src_node_id    = htons(g__upf_config.my_id);
 
     dst_node_id = (nmp_n4_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
@@ -124,7 +125,7 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     }
 
     //////////////////////////////////////////////////////////
-    // write this msg on N4 interface NMP socket (towards AMF)
+    // write this msg on N4 interface NMP socket (towards SMF)
     //////////////////////////////////////////////////////////
     target_service_sockaddr.sin_addr.s_addr = g__upf_config.smf_n4_sockaddr.sin_addr.s_addr;
     target_service_sockaddr.sin_port = g__upf_config.smf_n4_sockaddr.sin_port;

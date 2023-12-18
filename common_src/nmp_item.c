@@ -301,6 +301,29 @@ nmp_add_item__gtpu_peer_ipv4_endpoint(uint8_t  *ptr,
 }
 
 int
+nmp_add_item__uplink_gtpu_ipv4_endpoint(uint8_t  *ptr,
+                                        uint32_t  tunnel_ipv4_addr,
+                                        uint32_t  teid)
+{
+    *((uint16_t *)(ptr))     = htons(ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT);
+    *((uint32_t *)(ptr + 2)) = htonl(tunnel_ipv4_addr);
+    *((uint32_t *)(ptr + 6)) = htonl(teid);
+    return (2 + 8);
+}
+
+int
+nmp_add_item__dnlink_gtpu_ipv4_endpoint(uint8_t  *ptr,
+                                        uint32_t  tunnel_ipv4_addr,
+                                        uint32_t  teid)
+{
+    *((uint16_t *)(ptr))     = htons(ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT);
+    *((uint32_t *)(ptr + 2)) = htonl(tunnel_ipv4_addr);
+    *((uint32_t *)(ptr + 6)) = htonl(teid);
+    return (2 + 8);
+}
+
+
+int
 nmp_add_item__far__outer_hdr_create(uint8_t *ptr,
                                     uint32_t v4_addr,
                                     uint32_t teid)
@@ -453,14 +476,26 @@ nmp_add_item__service_info_as_json_data(uint8_t  *ptr,
 }
 
 int
-nmp_add_item__session_create_info_as_json_data(uint8_t  *ptr,
-                                               uint8_t  *session_create_json_data_ptr,
-                                               uint16_t  session_create_json_data_len)
+nmp_add_item__session_create_req_info_as_json_data(uint8_t  *ptr,
+                                                   uint8_t  *session_create_req_json_data_ptr,
+                                                   uint16_t  session_create_req_json_data_len)
 {
-    *((uint16_t *)(ptr)) = htons(ITEM_ID__SESSION_CREATE_JSON_DATA);
-    *((uint16_t *)(ptr + 2)) = htons(session_create_json_data_len);
-    memcpy(ptr + 2 + 2, session_create_json_data_ptr, session_create_json_data_len);
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__SESSION_CREATE_REQ_JSON_DATA);
+    *((uint16_t *)(ptr + 2)) = htons(session_create_req_json_data_len);
+    memcpy(ptr + 2 + 2, session_create_req_json_data_ptr, session_create_req_json_data_len);
     // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
-    return (2 + 2 + session_create_json_data_len);
+    return (2 + 2 + session_create_req_json_data_len);
 }
  
+int
+nmp_add_item__session_create_resp_info_as_json_data(uint8_t  *ptr,
+                                                    uint8_t  *session_create_resp_json_data_ptr,
+                                                    uint16_t  session_create_resp_json_data_len)
+{
+    *((uint16_t *)(ptr)) = htons(ITEM_ID__SESSION_CREATE_RESP_JSON_DATA);
+    *((uint16_t *)(ptr + 2)) = htons(session_create_resp_json_data_len);
+    memcpy(ptr + 2 + 2, session_create_resp_json_data_ptr, session_create_resp_json_data_len);
+    // 2 bytes of item-id + 2 bytes of item-len + actual bytes of item value
+    return (2 + 2 + session_create_resp_json_data_len);
+}
+

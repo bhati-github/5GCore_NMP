@@ -48,6 +48,8 @@ enum item_id_t {
     ITEM_ID__NSSAI,
     ITEM_ID__GTPU_SELF_IPV4_ENDPOINT,
     ITEM_ID__GTPU_PEER_IPV4_ENDPOINT,
+    ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT,
+    ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT,
     ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE,
     ITEM_ID__USER_LOCATION_INFO_TAC,
 
@@ -74,7 +76,8 @@ enum item_id_t {
     ITEM_ID__AMF_NAME,
     ITEM_ID__GUAMI,
     ITEM_ID__SERVICE_INFO_JSON_DATA,
-    ITEM_ID__SESSION_CREATE_JSON_DATA,
+    ITEM_ID__SESSION_CREATE_REQ_JSON_DATA,
+    ITEM_ID__SESSION_CREATE_RESP_JSON_DATA,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying group of individual items
@@ -164,6 +167,8 @@ nmp_add_item__relative_amf_capacity(uint8_t *ptr,
                                     uint8_t  relative_amf_capacity);
 
 
+
+
 ////////////////////////////////////////////////////////
 // Add items which carry 2 byte values
 ////////////////////////////////////////////////////////
@@ -198,6 +203,9 @@ nmp_add_item__rrc_establish_cause(uint8_t *ptr,
 int
 nmp_add_item__msg_response_code(uint8_t *ptr,
                                 uint16_t msg_response_code);
+
+
+
 
 ///////////////////////////////////////////////////////////
 // Add items which carry more than 2 and upto 4 byte value
@@ -235,6 +243,10 @@ int
 nmp_add_item__pdr__pdi_match_gtpu_teid(uint8_t *ptr,
                                        uint32_t gtpu_teid);
 
+
+
+
+
 ///////////////////////////////////////////////////////////
 // Add items which carry more than 4 and upto 8 byte value
 ///////////////////////////////////////////////////////////
@@ -253,6 +265,16 @@ nmp_add_item__gtpu_peer_ipv4_endpoint(uint8_t  *ptr,
                                       uint32_t  teid);
 
 int
+nmp_add_item__uplink_gtpu_ipv4_endpoint(uint8_t  *ptr,
+                                        uint32_t  tunnel_ipv4_addr,
+                                        uint32_t  teid);
+
+int
+nmp_add_item__dnlink_gtpu_ipv4_endpoint(uint8_t  *ptr,
+                                        uint32_t  tunnel_ipv4_addr,
+                                        uint32_t  teid);
+
+int
 nmp_add_item__far__outer_hdr_create(uint8_t *ptr,
                                     uint32_t v4_addr,
                                     uint32_t teid);
@@ -267,6 +289,9 @@ int
 nmp_add_item__slice_support_item(uint8_t *ptr,
                                  uint8_t  sst,
                                  uint32_t sd);
+
+
+
 
 ////////////////////////////////////////////////////////////
 // Add items which carry more than 8 and upto 16 byte value
@@ -284,6 +309,9 @@ nmp_add_item__user_location_info_nr_cgi(uint8_t *ptr,
                                         uint16_t mcc,
                                         uint16_t mnc,
                                         data_64bit_t nr_cell_identity);
+
+
+
 
 /////////////////////////////////////////////////////////
 // More than 16 byte Items (variable length byte stream)
@@ -319,9 +347,17 @@ nmp_add_item__service_info_as_json_data(uint8_t  *ptr,
                                         uint16_t  service_info_json_data_len);
 
 int
-nmp_add_item__session_create_info_as_json_data(uint8_t  *ptr,
-                                               uint8_t  *session_create_json_data_ptr,
-                                               uint16_t  session_create_json_data_len);
+nmp_add_item__session_create_req_info_as_json_data(uint8_t  *ptr,
+                                                   uint8_t  *session_create_req_json_data_ptr,
+                                                   uint16_t  session_create_req_json_data_len);
+
+int
+nmp_add_item__session_create_resp_info_as_json_data(uint8_t  *ptr,
+                                                    uint8_t  *session_create_resp_json_data_ptr,
+                                                    uint16_t  session_create_resp_json_data_len);
+
+
+
 
 
 ////////////////////////////

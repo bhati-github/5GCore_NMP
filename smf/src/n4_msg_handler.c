@@ -43,44 +43,39 @@
 #include "nmp_msg_parser.h"
 #include "common_util.h"
 
-#include "gnb.h"
-#include "n1_n2_msg_handler.h"
-#include "bearer_setup.h"
+#include "smf.h"
+#include "n4_msg_handler.h"
 
 int
-process_bearer_setup_request_msg(nmp_msg_data_t *nmp_n1_rcvd_msg_data_ptr,
-                                 uint8_t         debug_flag)
+validate_rcvd_msg_on_n4_interface(uint8_t *msg_ptr,
+                                  int      msg_len,
+                                  uint32_t request_identifier)
 {
-    char string[128];
+    if(msg_len < sizeof(nmp_hdr_t))
+    {
+        printf("Invalid size of NMP message.. \n");
+        return -1;
+    }
 
-    printf("%s: Handover: Process UE packets with these parameters... \n", __func__);
+    nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)msg_ptr;
 
-    get_ipv4_addr_string(nmp_n1_rcvd_msg_data_ptr->ue_ip_addr.u.v4_addr, string); 
-    printf("UE IPv4 Addr = %s \n", string);
-    printf("UE IMSI      = %02x%02x%02x%02x%02x%02x%02x%02x \n", 
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[0],
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[1],
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[2],
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[3],
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[4],
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[5],
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[6],
-            nmp_n1_rcvd_msg_data_ptr->imsi.u8[7]);
+    if(NODE_TYPE__SMF != htons(nmp_hdr_ptr->dst_node_type))
+    {
+        printf("Destination Node of NMP message is not SMF \n");
+        return -1;
+    }
 
-    get_ipv4_addr_string(nmp_n1_rcvd_msg_data_ptr->self_v4_endpoint.v4_addr, string);
-    printf("Self GTP-U endpoint (Addr) = %s \n", string);
+    if(g__smf_config.my_id != htons(nmp_hdr_ptr->dst_node_id))
+    {
+        printf("Destination node id is not equal to my id \n");
+        return -1;
+    }
 
-    printf("Self GTP-U endpoint (TEID) = 0x%x (%u) \n", 
-            nmp_n1_rcvd_msg_data_ptr->self_v4_endpoint.teid, 
-            nmp_n1_rcvd_msg_data_ptr->self_v4_endpoint.teid);
-
-
-    get_ipv4_addr_string(nmp_n1_rcvd_msg_data_ptr->peer_v4_endpoint.v4_addr, string);
-    printf("Peer GTP-U endpoint (Addr) = %s \n", string);
-
-    printf("Peer GTP-U endpoint (TEID) = 0x%x (%u) \n", 
-            nmp_n1_rcvd_msg_data_ptr->peer_v4_endpoint.teid, 
-            nmp_n1_rcvd_msg_data_ptr->peer_v4_endpoint.teid);
+    if(request_identifier != htonl(nmp_hdr_ptr->msg_identifier))
+    {
+        printf("Response identifier is not matching with Request identifier \n");
+        return -1;
+    }
 
     return 0;
 }

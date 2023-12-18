@@ -60,6 +60,7 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     char response[256];
     uint16_t item_count = 0;
     uint16_t dst_node_id = 0;
+    uint32_t uplink_teid = 0;
     nmp_msg_data_t nmp_n4_send_msg_data;
     struct sockaddr_in  target_service_sockaddr;
 
@@ -74,12 +75,12 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     printf("%s \n", string);
 
 
-    // Send response back to AMF
+    // Send response back to SMF
     uint8_t *ptr = g__n4_send_msg_buffer; 
 
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
     nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__UPF);
-    nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__AMF);
+    nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__SMF);
     nmp_hdr_ptr->src_node_id    = htons(g__upf_config.my_id);
 
     dst_node_id = (nmp_n4_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
@@ -114,6 +115,20 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     offset += ret;
     item_count += 1;
 
+    // uplink teid info
+    uplink_teid = g__upf_config.current_uplink_teid++; 
+    ret = nmp_add_item__uplink_gtpu_ipv4_endpoint(ptr + offset, 
+                                                  g__upf_config.my_n3_addr.u.v4_addr, 
+                                                  uplink_teid);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+
+
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
 
@@ -127,7 +142,7 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     }
 
     ///////////////////////////////////////////////////////////
-    // write this msg on N4 interface NMP socket (towards AMF)
+    // write this msg on N4 interface NMP socket (towards SMF)
     ///////////////////////////////////////////////////////////
     target_service_sockaddr.sin_addr.s_addr = g__upf_config.smf_n4_sockaddr.sin_addr.s_addr;
     target_service_sockaddr.sin_port = g__upf_config.smf_n4_sockaddr.sin_port;

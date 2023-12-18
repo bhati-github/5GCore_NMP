@@ -1,8 +1,21 @@
 #ifndef GNB_H
 #define GNB_H
 
-#define MAX_USERS          65535
 #define MSG_BUFFER_LEN     2048
+#define GNB_DNLINK_TEID_BASE 0x100 
+
+typedef struct {
+    data_64bit_t  imsi;
+
+    // uplink gtp-u packet will have these tunnel parameters.
+    uint32_t upf_n3_addr;
+    uint32_t upf_n3_teid;
+
+    // dnlink gtp-u packet will have these tunnel parameters.
+    uint32_t gnb_n3_addr;
+    uint32_t gnb_n3_teid;
+
+} ue_session_data_t;
 
 struct gnb_config {
     uint8_t    debug_switch;
@@ -16,6 +29,9 @@ struct gnb_config {
     ip_addr_t  amf_n1_n2_addr;
 
     int        pkt_delay;
+
+    data_64bit_t         ue_imsi_base;
+    ue_session_data_t    ue_session_data[MAX_USERS];
 
     int                  my_n1_n2_socket_id;
     struct sockaddr_in   amf_n1_n2_sockaddr;

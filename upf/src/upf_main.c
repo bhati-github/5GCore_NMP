@@ -260,10 +260,6 @@ main(int argc, char **argv)
 
     ///////////////////////////////////////////////////////////
     // Check if ip address of SMF N4 interface is set by user
-    // Since SMF is integrated into AMF for demostration of 
-    // NMP protocol, this is the reason for AMF to directly 
-    // use SMF-N4 interface in amf code. 
-    // In reality, there is no N4 interface in AMF.
     ///////////////////////////////////////////////////////////
     if(g__smf_n4_ip_is_set)
     {
@@ -307,8 +303,10 @@ main(int argc, char **argv)
     g__upf_config.smf_n4_sockaddr.sin_addr.s_addr = htonl(g__upf_config.smf_n4_addr.u.v4_addr);
     g__upf_config.smf_n4_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
 
-    g__upf_config.smf_id = AMF_ID_BASE;  // Currently, SMF is integrated within AMF for NMP demonstration, we have to use dst_id as AMF_ID_BASE
+    g__upf_config.smf_id = SMF_ID_BASE;  
     g__upf_config.my_id  = UPF_ID_BASE;
+
+    g__upf_config.current_uplink_teid = UPF_UPLINK_TEID_BASE;
 
     GREEN_PRINT("Start listening for data-path setup messages on N4 interface. \n");
     printf("\n");

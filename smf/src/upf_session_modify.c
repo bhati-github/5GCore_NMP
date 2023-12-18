@@ -44,15 +44,15 @@
 #include "nmp_msg_parser.h"
 #include "common_util.h"
 
-#include "amf.h"
+#include "smf.h"
 #include "n4_msg_handler.h"
 #include "upf_session.h"
 
 int
 send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
                                data_64bit_t imsi,
-                               uint32_t     new_gnb_v4_addr,
-                               uint32_t     upf_v4_addr,
+                               uint32_t     latest_gnb_n3_iface_v4_addr,
+                               uint32_t     teid_rcvd_from_gnb,
                                uint8_t      debug_flag)
 {
     int n = 0;
@@ -78,8 +78,8 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     // Get pdr and far for this user session
     /////////////////////////////////////////
     if(-1 == get_pdr_and_far_for_session_modify(ue_ipv4_addr,
-                                                new_gnb_v4_addr,
-                                                upf_v4_addr,
+                                                latest_gnb_n3_iface_v4_addr,
+                                                teid_rcvd_from_gnb,
                                                 &session_index))
     {
         printf("%s: Unable to get pdr and far for session creation in upf \n", __func__);
@@ -88,16 +88,16 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
 
     uint8_t *ptr = g__n4_send_msg_buffer;
     nmp_hdr_t *nmp_hdr_ptr = (nmp_hdr_t *)ptr;
-    nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__AMF);
+    nmp_hdr_ptr->src_node_type  = htons(NODE_TYPE__SMF);
     nmp_hdr_ptr->dst_node_type  = htons(NODE_TYPE__UPF);
-    nmp_hdr_ptr->src_node_id    = htons(g__amf_config.my_id);
-    nmp_hdr_ptr->dst_node_id    = htons(g__amf_config.upf_id);
+    nmp_hdr_ptr->src_node_id    = htons(g__smf_config.my_id);
+    nmp_hdr_ptr->dst_node_id    = htons(g__smf_config.upf_id);
 
     nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__UPF_SESSION_MODIFY_REQ);
     nmp_hdr_ptr->msg_item_len   = 0;
     nmp_hdr_ptr->msg_item_count = 0;
 
-    msg_id = g__amf_config.my_id << 16;
+    msg_id = g__smf_config.my_id << 16;
     msg_id |= (uint16_t )rand();
     nmp_hdr_ptr->msg_identifier = htonl(msg_id);
 
@@ -126,7 +126,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
 
 
     // Create N3 PDR
-    pdr_ptr = &(g__amf_config.upf_session_data[session_index].n3_pdr);
+    pdr_ptr = &(g__smf_config.upf_session_data[session_index].n3_pdr);
     ret = nmp_add_item_group__n3_pdr(ptr + offset,
                                      pdr_ptr->rule_id,
                                      pdr_ptr->precedence,
@@ -144,7 +144,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
 
 
     // Create N6 PDR
-    pdr_ptr = &(g__amf_config.upf_session_data[session_index].n6_pdr);
+    pdr_ptr = &(g__smf_config.upf_session_data[session_index].n6_pdr);
     ret = nmp_add_item_group__n6_pdr(ptr + offset,
                                      pdr_ptr->rule_id,
                                      pdr_ptr->precedence,
@@ -160,7 +160,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     item_count += 1;
 
     // Create N3 FAR
-    far_ptr = &(g__amf_config.upf_session_data[session_index].n3_far);
+    far_ptr = &(g__smf_config.upf_session_data[session_index].n3_far);
     ret = nmp_add_item_group__n3_far(ptr + offset,
                                      far_ptr->far_id,
                                      far_ptr->action_flags,
@@ -176,7 +176,7 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     item_count += 1;
 
     // Create N6 FAR
-    far_ptr = &(g__amf_config.upf_session_data[session_index].n6_far);
+    far_ptr = &(g__smf_config.upf_session_data[session_index].n6_far);
     ret = nmp_add_item_group__n6_far(ptr + offset,
                                      far_ptr->far_id,
                                      far_ptr->action_flags,
@@ -202,9 +202,9 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     }
 
     // Send this message to UPF
-    target_service_sockaddr.sin_addr.s_addr = g__amf_config.upf_n4_sockaddr.sin_addr.s_addr;
-    target_service_sockaddr.sin_port = g__amf_config.upf_n4_sockaddr.sin_port;
-    n = sendto(g__amf_config.smf_n4_socket_id,
+    target_service_sockaddr.sin_addr.s_addr = g__smf_config.upf_n4_sockaddr.sin_addr.s_addr;
+    target_service_sockaddr.sin_port = g__smf_config.upf_n4_sockaddr.sin_port;
+    n = sendto(g__smf_config.my_n4_socket_id,
                (char *)g__n4_send_msg_buffer,
                offset,
                MSG_WAITALL,
@@ -222,14 +222,14 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
     ///////////////////////////////////////////////
     len = sizeof(struct sockaddr_in);
     memset(&upf_sockaddr, 0x0, sizeof(struct sockaddr_in));
-    n = recvfrom(g__amf_config.smf_n4_socket_id,
+    n = recvfrom(g__smf_config.my_n4_socket_id,
                  (char *)g__n4_rcvd_msg_buffer,
                  MSG_BUFFER_LEN,
                  MSG_WAITALL,
                  (struct sockaddr *)&(upf_sockaddr),
                  (socklen_t *)&len);
 
-    if(g__amf_config.debug_switch)
+    if(g__smf_config.debug_switch)
     {
         upf_addr = htonl(upf_sockaddr.sin_addr.s_addr);
         upf_port = htons(upf_sockaddr.sin_port);

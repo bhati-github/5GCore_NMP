@@ -71,6 +71,17 @@ struct nmp_msg_data {
     ipv6_addr_t far_outer_v6_hdr_create_addr;
     uint32_t    far_outer_v6_hdr_create_teid;
 
+    uint32_t  uplink_teid;
+    uint32_t  dnlink_teid;
+
+    // uplink gtp-u packet will have these tunnel parameters.
+    uint32_t upf_n3_addr;
+    uint32_t upf_n3_teid;
+
+    // dnlink gtp-u packet will have these tunnel parameters.
+    uint32_t gnb_n3_addr;
+    uint32_t gnb_n3_teid;
+
     ip_addr_t  ue_ip_addr;
 
     v4_teid_endpoint_t  self_v4_endpoint;

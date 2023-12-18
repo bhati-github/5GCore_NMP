@@ -67,7 +67,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     uint32_t msg_id = 0;
     uint32_t amf_addr = 0;
     uint32_t tunnel_ipv4_addr = 0;
-    uint32_t uplink_teid = 0;
+    uint32_t dnlink_teid = 0;
     uint16_t amf_port = 0;
     uint16_t rrc_etsablish_cause = 24;
     uint16_t mcc = 404;
@@ -82,7 +82,12 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     uint32_t request_identifier = 0;
     nmp_msg_data_t nmp_n1_n2_send_msg_data;
     nmp_msg_data_t nmp_n1_n2_rcvd_msg_data;
-    
+   
+    data_64bit_t user_imsi;
+    memcpy(user_imsi.u8, g__gnb_config.ue_imsi_base.u8, 8);
+    user_imsi.u64 += user_id;
+
+ 
     ///////////////////////////////////////////////////////////////////////////
     // Step 1: Send Initial UE Message to AMF
     //         MSG_TYPE: MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ
@@ -550,6 +555,15 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     offset += ret;
     item_count += 1;
 
+    // Add user IMSI
+    ret = nmp_add_item__imsi(ptr+ offset, user_imsi);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;    
+
     // All items are added. Update NMP message header.
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);
@@ -620,19 +634,17 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         return -1;
     }
 
-    if(nmp_n1_n2_rcvd_msg_data.msg_response_code)
+    if(MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT != nmp_n1_n2_rcvd_msg_data.msg_type)
     {
-        if(MSG_RESPONSE_CODE__OK == nmp_n1_n2_rcvd_msg_data.msg_response_code)
-        {
-            printf("Initial UE Msg (Registration Request) response is [Ok] \n");
-            return 0;
-        }
-        else
-        {
-            printf("Initial UE Msg (Registration Request) response is [Not Ok] \n");
-            return -1;
-        }
+        printf("We did not received DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT \n");
+        printf("Something wrong in core network.. \n");
+        return -1;
     }
+    
+    // We must have received uplink teid endpoint info
+    // Store in gnb teid database.. 
+    g__gnb_config.ue_session_data[user_id].upf_n3_addr = nmp_n1_n2_rcvd_msg_data.upf_n3_addr; 
+    g__gnb_config.ue_session_data[user_id].upf_n3_teid = nmp_n1_n2_rcvd_msg_data.upf_n3_teid;
 
 
 
@@ -680,10 +692,29 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     offset += ret;
     item_count += 1;
 
-    // Add GTP-U TEID endpoint for uplink direction (gtp-u tunnel from gNB to UPF)
+    // Add user IMSI
+    ret = nmp_add_item__imsi(ptr+ offset, user_imsi);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+    // gnodeB will create a TEID endpoint on its N3 interface.
+    // This TEID endpoint is used for sending downlink packets by UPF.
+    // Add GTP-U TEID endpoint for downlink direction (gtp-u tunnel from UPF to gnodeB)
     tunnel_ipv4_addr = g__gnb_config.my_n3_addr.u.v4_addr;  // gnodeB N3 interface IP
-    uplink_teid = 0x100;
-    ret = nmp_add_item__gtpu_self_ipv4_endpoint(ptr + offset, tunnel_ipv4_addr, uplink_teid);
+    dnlink_teid = GNB_DNLINK_TEID_BASE + user_id;
+
+    // Save this teid info into gnb database also..
+    g__gnb_config.ue_session_data[user_id].gnb_n3_addr = tunnel_ipv4_addr;
+    g__gnb_config.ue_session_data[user_id].gnb_n3_teid = dnlink_teid;
+
+    // Add actual item into NMP payload..  
+    ret = nmp_add_item__dnlink_gtpu_ipv4_endpoint(ptr + offset, 
+                                                  tunnel_ipv4_addr, 
+                                                  dnlink_teid);
     if(-1 == ret)
     {
         return -1;

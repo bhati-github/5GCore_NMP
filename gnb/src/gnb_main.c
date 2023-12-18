@@ -290,6 +290,16 @@ main(int argc, char **argv)
     // gnodeB thread will have an incremental id
     g__gnb_config.my_id  = GNB_ID_BASE;
 
+    // Update User IMSI base value..
+    g__gnb_config.ue_imsi_base.u8[0] = 0x40; 
+    g__gnb_config.ue_imsi_base.u8[1] = 0x10; 
+    g__gnb_config.ue_imsi_base.u8[2] = 0x11;
+    g__gnb_config.ue_imsi_base.u8[3] = 0x22;
+    g__gnb_config.ue_imsi_base.u8[4] = 0x33;
+    g__gnb_config.ue_imsi_base.u8[5] = 0x44;
+    g__gnb_config.ue_imsi_base.u8[6] = 0x55;
+    g__gnb_config.ue_imsi_base.u8[7] = 0x66;
+
     // Send NGSetupRequest to AMF
     if(-1 == perform_ng_setup_procedure(g__gnb_config.debug_switch))
     {

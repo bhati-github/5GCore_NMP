@@ -45,7 +45,6 @@
 
 #include "gnb.h"
 #include "n1_n2_msg_handler.h"
-#include "bearer_setup.h"
 
 int
 validate_rcvd_msg_on_n1_n2_interface(uint8_t *msg_ptr,
@@ -80,16 +79,6 @@ int
 process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                        uint8_t         debug_flag)
 {
-    if(MSG_TYPE__BEARER_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
-    {
-        return process_bearer_setup_request_msg(nmp_n1_n2_rcvd_msg_data_ptr, debug_flag);	
-    }
-    else
-    {
-        printf("%s: Unknown N1/N2 message \n", __func__);
-        return -1;
-    }
-
     return 0;
 }
 
