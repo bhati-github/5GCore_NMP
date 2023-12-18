@@ -212,6 +212,10 @@ UDP port for NMP protocol is 1208 (just a random selection).
   ![5g-core-diagram](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e142a087-3ece-45a5-9b4d-7d19b308e53e)
 
 <br />
+This sample network is created inside a virtual machine using "dummy interfaces".
+
+Steps to create these interfaces and simulating call flows over NMP are described in detail later in this document.
+<br />
 
 - N1/N2 interface is used for call setup packets between gnodeB and AMF.
   As part of this demonstration, all messages on this interface are carried by NMP protocol.
@@ -228,13 +232,6 @@ UDP port for NMP protocol is 1208 (just a random selection).
 - Overall, colored blocks in above diagram are implemented and all of them communicates over NMP protocol
   except N3 and N6 interface for obvious reasons as these interfaces are meant to carry user data packets.
   
-  
-<br />
-<br />
-
-This sample network is created inside a virtual machine using "dummy interfaces". Steps to create these interfaces 
-and simulating call flows over NMP are described in detail later in this document.
-
 <br />
 
 ### 6.1 Simulation snapshots of NG Setup with AMF in NMP packets
