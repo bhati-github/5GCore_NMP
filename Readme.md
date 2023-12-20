@@ -235,6 +235,15 @@ Steps to create these interfaces and simulating call flows over NMP are describe
   
 <br />
 
+![startup-pic](https://github.com/bhati-github/5GCore_NMP/assets/49303596/78b65a0c-3003-47bf-9b7c-4c7cec8481b9)
+
+<br />
+
+![ue-0-logs](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e24ada20-3758-4672-af26-fc782825ecc1)
+
+<br />
+
+
 ### 6.1 Simulation snapshots of NG Setup with AMF in NMP packets
   ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
 <br />
