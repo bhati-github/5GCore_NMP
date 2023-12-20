@@ -327,7 +327,7 @@ First step is to create dummy interfaces inside VM using these commands.
 
     // For gnodeB N1/N2
     sudo ip link add eth1 type dummy
-    sudo ip addr add 10.10.10.1/24 dev eth1
+    sudo ip addr add 2.2.2.1/24 dev eth1
     sudo ip link set eth1 up
 
     // For gnodeB N3
@@ -337,22 +337,22 @@ First step is to create dummy interfaces inside VM using these commands.
     
     // For AMF N1/N2
     sudo ip link add eth3 type dummy
-    sudo ip addr add 10.10.10.2/24 dev eth3
+    sudo ip addr add 2.2.2.2/24 dev eth3
     sudo ip link set eth3 up
     
     // For AMF Namf
     sudo ip link add eth4 type dummy
-    sudo ip addr add 50.50.50.1/24 dev eth4
+    sudo ip addr add 5.5.5.1/24 dev eth4
     sudo ip link set eth4 up
 
     // For SMF Nsmf
     sudo ip link add eth5 type dummy
-    sudo ip addr add 50.50.50.2/24 dev eth5
+    sudo ip addr add 5.5.5.2/24 dev eth5
     sudo ip link set eth5 up
     
     // For SMF N4
     sudo ip link add eth6 type dummy
-    sudo ip addr add 20.20.20.1/24 dev eth6
+    sudo ip addr add 4.4.4.1/24 dev eth6
     sudo ip link set eth6 up
     
     // For UPF N3
@@ -362,7 +362,7 @@ First step is to create dummy interfaces inside VM using these commands.
     
     // For UPF N4
     sudo ip link add eth8 type dummy
-    sudo ip addr add 20.20.20.2/24 dev eth8
+    sudo ip addr add 4.4.4.2/24 dev eth8
     sudo ip link set eth8 up
     
     // For UPF N6
@@ -372,37 +372,37 @@ First step is to create dummy interfaces inside VM using these commands.
     
     // For AF Naf
     sudo ip link add eth10 type dummy
-    sudo ip addr add 50.50.50.3/24 dev eth10
+    sudo ip addr add 5.5.5.3/24 dev eth10
     sudo ip link set eth10 up
     
     // For AUSF Nausf
     sudo ip link add eth11 type dummy
-    sudo ip addr add 50.50.50.4/24 dev eth11
+    sudo ip addr add 5.5.5.4/24 dev eth11
     sudo ip link set eth11 up
     
     // For NRF Nnrf
     sudo ip link add eth12 type dummy
-    sudo ip addr add 50.50.50.5/24 dev eth12
+    sudo ip addr add 5.5.5.5/24 dev eth12
     sudo ip link set eth12 up
    
     // For NSSF Nnssf
     sudo ip link add eth13 type dummy
-    sudo ip addr add 50.50.50.6/24 dev eth13
+    sudo ip addr add 5.5.5.6/24 dev eth13
     sudo ip link set eth13 up
    
     // For NEF Nnef
     sudo ip link add eth14 type dummy
-    sudo ip addr add 50.50.50.7/24 dev eth14
+    sudo ip addr add 5.5.5.7/24 dev eth14
     sudo ip link set eth14 up
    
     // For PCF Npcf
     sudo ip link add eth15 type dummy
-    sudo ip addr add 50.50.50.8/24 dev eth15
+    sudo ip addr add 5.5.5.8/24 dev eth15
     sudo ip link set eth15 up
 
     // For UDM Nudm
     sudo ip link add eth16 type dummy
-    sudo ip addr add 50.50.50.9/24 dev eth16
+    sudo ip addr add 5.5.5.9/24 dev eth16
     sudo ip link set eth16 up
 
 
@@ -420,58 +420,58 @@ First step is to create dummy interfaces inside VM using these commands.
     1. Run NRF in 2nd terminal.
        cd 5GCore_NMP/nrf/
        make clean;make
-       sudo ./nrf -Nnrfip 50.50.50.5 -Namfip 50.50.50.1  -Nsmfip 50.50.50.2
+       sudo ./nrf -Nnrfip 5.5.5.5 -Namfip 5.5.5.1  -Nsmfip 5.5.5.2
 
-       -Nnrfip 50.50.50.5   (NRF Nnrf interface IP address)
-       -Namfip 50.50.50.1   (AMF Namf interface IP address)
-       -Nsmfip 50.50.50.2   (SMF Nsmf interface IP address)
+       -Nnrfip 5.5.5.5   (NRF Nnrf interface IP address)
+       -Namfip 5.5.5.1   (AMF Namf interface IP address)
+       -Nsmfip 5.5.5.2   (SMF Nsmf interface IP address)
        
     2. Run AMF in 3rd terminal as follows:
        cd 5GCore_NMP/amf/
        make clean;make
-       sudo ./amf -myn1n2ip 10.10.10.2 -myNamfip 50.50.50.1 -Nnrfip 50.50.50.5  -Nsmfip 50.50.50.2 -gnbreg 10.10.10.1 3.3.3.1
+       sudo ./amf -myn1n2ip 2.2.2.2 -myNamfip 5.5.5.1 -Nnrfip 5.5.5.5 -Nsmfip 5.5.5.2 -gnbreg 2.2.2.1 3.3.3.1
 
        In above command, options are as follows:
-       -myn1n2ip 10.10.10.2      (AMF N1/N2 interface IP address)
-       -myNamfip 50.50.50.1      (AMF Namf interface IP address)
-       -Nnrfip 50.50.50.5        (NRF Nnrf interface IP address)
-       -Nsmfip 50.50.50.2        (SMF Nsmf interface IP address)
-       -gnbreg 10.10.10.1 3.3.3.1  (Register a gnodeB into AMF with its N1/N2 interface and N3 interface details)
+       -myn1n2ip 2.2.2.2         (AMF N1/N2 interface IP address)
+       -myNamfip 5.5.5.1         (AMF Namf interface IP address)
+       -Nnrfip 5.5.5.5           (NRF Nnrf interface IP address)
+       -Nsmfip 5.5.5.2           (SMF Nsmf interface IP address)
+       -gnbreg 2.2.2.1 3.3.3.1  (Register a gnodeB into AMF with its N1/N2 interface and N3 interface details)
                                              
     3. Run SMF in 4th terminal as follows:
        cd 5GCore_NMP/smf/
        make clean;make
-       sudo ./smf -myn4ip 20.20.20.1 -myNsmfip 50.50.50.2 -Nnrfip 50.50.50.5 -Namfip 50.50.50.1 -upfn4ip 20.20.20.2 -upfn3ip 3.3.3.2
+       sudo ./smf -myn4ip 4.4.4.1 -myNsmfip 5.5.5.2 -Namfip 5.5.5.1 -Nnrfip 5.5.5.5 -upfn4ip 4.4.4.2 -upfn3ip 3.3.3.2
 
        In above command, options are as follows:
-       -myn4ip 20.20.20.1    (SMF N4 interface IP address)
-       -myNsmfip 50.50.50.2  (SMF Nsmf interface IP address)
-       -Nnrfip 50.50.50.5    (NRF Nnrf interface IP address)
-       -Namfip 50.50.50.1    (AMF Namf interface IP address)
-       -upfn4ip 20.20.20.2   (UPF N4 interface IP address)
+       -myn4ip 4.4.4.1       (SMF N4 interface IP address)
+       -myNsmfip 5.5.5.2     (SMF Nsmf interface IP address)
+       -Namfip 5.5.5.1       (AMF Namf interface IP address)
+       -Nnrfip 5.5.5.5       (NRF Nnrf interface IP address)
+       -upfn4ip 4.4.4.2      (UPF N4 interface IP address)
        -upfn3ip 3.3.3.2      (UPF N3 interface IP address)
        
     4. Run UPF in 5th terminal as follows:
        cd 5GCore_NMP/upf/
        make clean;make
-       sudo ./upf -myn3ip 3.3.3.2 -myn4ip 20.20.20.2 -smfn4ip 20.20.20.1 -myn6ip 6.6.6.1
+       sudo ./upf -myn3ip 3.3.3.2 -myn4ip 4.4.4.2 -smfn4ip 4.4.4.1 -myn6ip 6.6.6.1
 
        In above command, options are as follows:
        -myn3ip 3.3.3.2     (UPF N3 interface IP address)
-       -myn4ip 20.20.20.2  (UPF N4 interface IP address)
-       -smfn4ip 20.20.20.1 (SMF N4 interface IP address)
+       -myn4ip 4.4.4.2     (UPF N4 interface IP address)
+       -smfn4ip 4.4.4.1    (SMF N4 interface IP address)
        -myn6ip 6.6.6.1     (UPF N6 interface IP address)
        
 
     5. Finally, run gnb in 1st terminal. 
-       sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1
+       sudo ./gnb -myn1n2ip 2.2.2.1 -myn3ip 3.3.3.1 -amfn1n2ip 2.2.2.2 -c 1
        or
-       sudo ./gnb -myn1n2ip 10.10.10.1 -myn3ip 3.3.3.1 -amfn1n2ip 10.10.10.2 -c 1 -debug
+       sudo ./gnb -myn1n2ip 2.2.2.1 -myn3ip 3.3.3.1 -amfn1n2ip 2.2.2.2 -c 1 -debug
        
        In above command, options are as follows:
-       -myn1n2ip 10.10.10.1  (gnodeB N1/N2 interface IP address)
+       -myn1n2ip 2.2.2.1     (gnodeB N1/N2 interface IP address)
        -myn3ip  3.3.3.1      (gnodeB N3 interface IP address)
-       -amfn1n2ip 10.10.10.2 (AMF N1/N2 interface IP address)
+       -amfn1n2ip 2.2.2.2    (AMF N1/N2 interface IP address)
        -c 10  (Simmulate upto 10 UE attach requests)
        -debug (Show complete NMP message parsing) 
 	
