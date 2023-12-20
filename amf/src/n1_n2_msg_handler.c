@@ -253,7 +253,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         printf("\n\n");
-        printf("gnodeB <------- AMF  [ NG_SETUP_REQ ] \n");
+        printf("gnodeB -------> AMF  [ NG_SETUP_REQ ] \n");
         
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
