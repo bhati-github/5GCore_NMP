@@ -209,7 +209,8 @@ UDP port for NMP protocol is 1208 (just a random selection).
 ## 6. Demonstration in a sample network
 <br />
 
-  ![5g-core-diagram](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e142a087-3ece-45a5-9b4d-7d19b308e53e)
+  ![vm-network-visio](https://github.com/bhati-github/5GCore_NMP/assets/49303596/74a6c76e-6c9d-412e-bc81-32ff03666682)
+
 
 <br />
 This sample network is created inside a virtual machine using "dummy interfaces".
