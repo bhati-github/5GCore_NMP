@@ -239,7 +239,8 @@ Steps to create these interfaces and simulating call flows over NMP are describe
 
 <br />
 
-![ue-0-logs](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e3a74dfe-2f0f-4bf8-98c4-67f72a3eb55d)
+![ue-0-logs](https://github.com/bhati-github/5GCore_NMP/assets/49303596/5f92266d-8d70-428b-afe8-74ab236c956a)
+
 
 
 <br />
