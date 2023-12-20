@@ -186,6 +186,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         return -1;
     }
 
+    printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ INITIAL_UE_MSG_REGISTRATION_REQ ] \n");
+
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from AMF. We must receive Downlink NAS 
     //         Transport Messsage from AMF
@@ -241,8 +243,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         }
     }
 
-
-
+    printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_AUTH_REQ ] \n");
 
       
     ///////////////////////////////////////////////////////////////////////////
@@ -336,6 +337,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         printf("%s: sendto() failed during msg send to AMF \n", __func__);
         return -1;
     }
+    
+    printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_AUTH_RESP ] \n");
 
     ///////////////////////////////////////////////////////////////////////////
     // Step 4: Wait for reponse from AMF. We must receive Downlink NAS
@@ -392,6 +395,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         }
     }
 
+    printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT ] \n");
 
     
 
@@ -487,6 +491,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         return -1;
     }
     
+    printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE ] \n");
     
 
 
@@ -592,6 +597,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         printf("%s: sendto() failed during msg send to AMF \n", __func__);
         return -1;
     }
+    
+    printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ ] \n");
 
     ///////////////////////////////////////////////////////////////////////////
     // Step 7: Wait for reponse from AMF. We must receive Downlink NAS
@@ -640,6 +647,8 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         printf("Something wrong in core network.. \n");
         return -1;
     }
+    
+    printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT ] \n");
     
     // We must have received uplink teid endpoint info
     // Store in gnb teid database.. 
@@ -760,8 +769,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
         return -1;
     }
 
-    
-
+    printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ PDU_SESSION_RESOURCE_SETUP_RESP ] \n");
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -809,11 +817,12 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
 
     if(MSG_TYPE__ALL_OK == nmp_n1_n2_rcvd_msg_data.msg_type)
     {
+        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ All Ok ] \n");
         return 0;
     }
     else
     {
-        RED_PRINT("Initial UE Registration and PDU Session Establishment [Not Ok] \n");
+        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m \x1b[31m [ All Ok ] \x1b[0m \n");
         return -1;
     }
 }

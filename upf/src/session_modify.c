@@ -64,7 +64,7 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     char response[256];
     memset(response, 0x0, 256);
 
-    printf("SMF ----------> UPF  [ UPF_SESSION_MODIFY_REQ ] \n");
+    printf("\033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_MODIFY_REQ ] \n");
 
     // Send response back to SMF
     uint8_t *ptr = g__n4_send_msg_buffer; 
@@ -143,7 +143,7 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     get_ipv4_addr_string(nmp_n4_rcvd_msg_data_ptr->ue_ip_addr.u.v4_addr, string);
     printf("%s \n", string);
 
-    printf("SMF <---------- UPF  [ UPF_SESSION_MODIFY_RESP ] \n");
+    printf("\033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_MODIFY_RESP ] \n");
     return 0;	
 }
 

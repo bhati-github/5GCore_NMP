@@ -153,7 +153,7 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         return -1;
     }
 
-    printf("gnodeB -------> AMF  [ ALL_OK ]\n");
+    printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ All Ok ] \n");
     return 0;
 }
 
@@ -216,7 +216,7 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
         return -1;
     }
 
-    printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT ]\n");
+    printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT ] \n");
     return 0;
 }
 
@@ -253,7 +253,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         printf("\n\n");
-        printf("gnodeB -------> AMF  [ NG_SETUP_REQ ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ NG_SETUP_REQ ] \n");
         
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -371,13 +371,13 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
-        printf("gnodeB <------- AMF  [ NG_SETUP_RESP ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ NG_SETUP_RESP ] \n");
         return 0;
     }
     else if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         printf("\n\n");
-        printf("gnodeB -------> AMF  [ INITIAL_UE_MSG_REGISTRATION_REQ ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ INITIAL_UE_MSG_REGISTRATION_REQ ] \n");
  
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -475,12 +475,12 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
-        printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_AUTH_REQ ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_AUTH_REQ ] \n");
         return 0;
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_AUTH_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("gnodeB -------> AMF  [ UPLINK_NAS_TRANSPORT_AUTH_RESP ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_AUTH_RESP ] \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -577,12 +577,12 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
-        printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT ] \n");
         return 0;
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("gnodeB -------> AMF  [ UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE ] (UE Registration is Complete) \n");
+        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE ] (UE Registration is Complete) \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -600,7 +600,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("gnodeB -------> AMF  [ UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ ] \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -721,12 +721,12 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
-        printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT ] \n");
         return 0;
     }
     else if(MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("gnodeB -------> AMF  [ PDU_SESSION_RESOURCE_SETUP_RESP ] \n");
+        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ PDU_SESSION_RESOURCE_SETUP_RESP ] \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {

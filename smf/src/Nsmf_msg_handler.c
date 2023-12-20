@@ -309,7 +309,7 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
     if(MSG_TYPE__SMF_SESSION_CREATE_REQ == nmp_Nsmf_rcvd_msg_data_ptr->msg_type)
     {
         printf("\n");
-        printf("AMF ----------> SMF  [ SMF_SESSION_CREATE_REQ ] \n");
+        printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_REQ ] \n");
 
         ue_ipv4_addr = g__ue_ipv4_addr_base;  // SMF wil allocate UE Ipv4 address
         upf_n3_iface_v4_addr = g__smf_config.upf_n3_addr.u.v4_addr;
@@ -400,12 +400,12 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
             return -1;
         }
         
-        printf("AMF <---------- SMF  [ SMF_SESSION_CREATE_RESP ] \n");
+        printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_RESP ] \n");
         return 0;
     }
     else if(MSG_TYPE__SMF_SESSION_MODIFY_REQ == nmp_Nsmf_rcvd_msg_data_ptr->msg_type)
     {
-        printf("AMF ----------> SMF  [ SMF_SESSION_MODIFY_REQ ] \n");
+        printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_REQ ] \n");
 
         ue_ipv4_addr = g__ue_ipv4_addr_base; // Use last value of ue ipv4 addr derived during session create process.
         upf_n3_iface_v4_addr = g__smf_config.upf_n3_addr.u.v4_addr;
@@ -488,7 +488,7 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
             return -1;
         }
 
-        printf("AMF <---------- SMF  [ SMF_SESSION_MODIFY_RESP ] \n");
+        printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_RESP ] \n");
 
         // Increment user ipv4 address base for next user..
         g__ue_ipv4_addr_base++;

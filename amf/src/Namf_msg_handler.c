@@ -565,8 +565,7 @@ send_session_create_msg_to_smf(data_64bit_t imsi,
         YELLOW_PRINT("Waiting for response from SMF............... \n");
         printf("\n");
     }
-
-    printf("AMF ----------> SMF  [ SMF_SESSION_CREATE_REQ ] \n");
+    printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_REQ ] \n");
     
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from SMF.
@@ -608,7 +607,7 @@ send_session_create_msg_to_smf(data_64bit_t imsi,
         return -1;
     }
     
-    printf("AMF <---------- SMF  [ SMF_SESSION_CREATE_RESP ] \n");
+    printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_RESP ] \n");
  
     // We must have received gtp-u teid endpoint of UPF N3 interface(for uplink packets).
     // Store into amf user session database..
@@ -719,7 +718,7 @@ send_session_modify_msg_to_smf(data_64bit_t  imsi,
         printf("\n");
     }
     
-    printf("AMF ----------> SMF  [ SMF_SESSION_MODIFY_REQ ] \n");
+    printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_REQ ] \n");
 
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from SMF.
@@ -761,7 +760,7 @@ send_session_modify_msg_to_smf(data_64bit_t  imsi,
         return -1;
     }
 
-    printf("AMF <---------- SMF  [ SMF_SESSION_MODIFY_RESP ] \n");
+    printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_RESP ] \n");
 
     // Now, we can increment UE session index inside AMF.
     g__amf_ue_session_index += 1; 
