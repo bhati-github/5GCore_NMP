@@ -27,7 +27,7 @@
     which can be used for information exchange between telecommunication network nodes.
 -   Simulate NGAP procedure packet flows over NMP protocol instead of SCTP protocol
 -   Simulate N4 interface packet flows over NMP protocol instead of PFCP protocol
--   It is a generic information exchange protocol which can be used across IP networks.
+
 
 <br />
 <br />
@@ -40,10 +40,7 @@
 -  It is known that HTTP REST based APIs are used currently in 5G core network for inter-node communications. HTTP REST (Representational State Transfer) concept is
    to send complete state even if you wish to modify a single 2 byte element in target node. So, for just trying to communicate a 2 byte change in state, you are
    transferring entire state (in KB) towards target node. Imagine if your state grows to 10 MB in size for some reason, are you going to send your complete state
-   of 10 MB (spanning across multiple fragmented packets) towards target node? This protocol serves as an alternative for such issues..
-
--  Use of SCTP protocol can be bypassed with this protocol for NGAP procedures between gnodeB and AMF.
--  Use of PFCP protocol can be bypassed with this protocol between SMF and UPF.
+   of 10 MB (spanning across multiple fragmented packets) towards target node? This protocol serves as an alternative for such issues..  
 
 <br />
 <br />
