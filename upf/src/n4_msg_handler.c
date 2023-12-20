@@ -162,11 +162,7 @@ listen_for_n4_messages()
         if(-1 == process_rcvd_n4_msg(&(nmp_n4_rcvd_msg_data),
                                      g__upf_config.debug_switch))
         {
-            printf("Unable to process rcvd N4 message \n\n");
-        }
-        else
-        {
-            printf("Successfully processed rcvd N4 message \n\n");
+            printf("Error: Unable to process rcvd N4 message \n\n");
         }
     }
 

@@ -266,6 +266,7 @@ main(int argc, char **argv)
                     return -1;
                 }
                 gnb_index = g__amf_config.gnb_count;
+                printf("gnb_index = %u \n", gnb_index);
                 gnb_data_ptr = &(g__amf_config.gnb_data[gnb_index]);
                 gnb_data_ptr->gnb_id = GNB_ID_BASE + gnb_index;
                 gnb_data_ptr->gnb_n1_n2_addr.ip_version = IP_VER_IS_V4;
@@ -420,9 +421,8 @@ main(int argc, char **argv)
     g__amf_config.Nsmf_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
 
 
-    printf("Simulating AMF ..... \n");
+    printf("Simulating AMF ..... \n\n");
 
-    printf("Send service registration message to NRF \n");
     send_service_registration_msg_to_nrf(g__amf_config.debug_switch); 
     
     printf("Listen for N1/N2 messages from gnodeB \n");

@@ -64,6 +64,9 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     nmp_msg_data_t nmp_n4_send_msg_data;
     struct sockaddr_in  target_service_sockaddr;
 
+    printf("\n");
+    printf("SMF ----------> UPF  [ UPF_SESSION_CREATE_REQ ] \n");
+
     printf("Session Created for IMSI(");
     for(i = 0; i < 8; i++)
     {
@@ -158,7 +161,7 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
         return -1;
     }
 
-    printf("%s: Session Create Response Msg Sent.. \n", __func__);
+    printf("SMF <---------- UPF  [ UPF_SESSION_CREATE_RESP ] \n");
     return 0;	
 }
 

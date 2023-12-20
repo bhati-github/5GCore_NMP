@@ -458,9 +458,6 @@ main(int argc, char **argv)
     g__smf_config.upf_n4_sockaddr.sin_addr.s_addr = htonl(g__smf_config.upf_n4_addr.u.v4_addr);
     g__smf_config.upf_n4_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
 
-    printf("UPF N4 Addr = %u \n", g__smf_config.upf_n4_sockaddr.sin_addr.s_addr);
-    printf("UPF N4 Port = %u \n", g__smf_config.upf_n4_sockaddr.sin_port);
-
     //////////////////////////////////////////////////////////////////////////////////////
     // Register NRF with SMF
     //////////////////////////////////////////////////////////////////////////////////////
@@ -479,9 +476,8 @@ main(int argc, char **argv)
     g__smf_config.Namf_sockaddr.sin_port        = htons(UDP_PORT_IS_NMP);
 
  
-    printf("Simulating AMF ..... \n");
+    printf("Simulating SMF ..... \n\n");
 
-    printf("Send service registration message to NRF \n");
     send_service_registration_msg_to_nrf(g__smf_config.debug_switch); 
     
     printf("Listen for messages on Nsmf interface \n");

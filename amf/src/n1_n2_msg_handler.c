@@ -153,7 +153,7 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         return -1;
     }
 
-    printf("%s: Msg sent successfully to gnodeb \n", __func__);
+    printf("gnodeB -------> AMF  [ ALL_OK ]\n");
     return 0;
 }
 
@@ -216,9 +216,8 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
         return -1;
     }
 
-    printf("%s: Msg sent successfully to gnodeb \n", __func__);
+    printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT ]\n");
     return 0;
-
 }
 
 
@@ -253,7 +252,9 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
 
     if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = NG_SETUP_REQ \n", __func__);
+        printf("\n\n");
+        printf("gnodeB <------- AMF  [ NG_SETUP_REQ ] \n");
+        
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
             get_ipv4_addr_string(gnb_n1_n2_addr, string);
@@ -355,6 +356,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
+        memset(&target_service_sockaddr, 0x0, sizeof(struct sockaddr_in));
         target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
         target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
         n = sendto(g__amf_config.my_n1_n2_socket_id,
@@ -369,11 +371,13 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
+        printf("gnodeB <------- AMF  [ NG_SETUP_RESP ] \n");
         return 0;
     }
     else if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = INITIAL_UE_MSG_REGISTRATION_REQ \n", __func__);
+        printf("\n\n");
+        printf("gnodeB -------> AMF  [ INITIAL_UE_MSG_REGISTRATION_REQ ] \n");
  
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -456,6 +460,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
+        memset(&target_service_sockaddr, 0x0, sizeof(struct sockaddr_in));
         target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
         target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
         n = sendto(g__amf_config.my_n1_n2_socket_id,
@@ -470,11 +475,12 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
+        printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_AUTH_REQ ] \n");
         return 0;
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_AUTH_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_AUTH_RESP \n", __func__);
+        printf("gnodeB -------> AMF  [ UPLINK_NAS_TRANSPORT_AUTH_RESP ] \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -556,6 +562,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
+        memset(&target_service_sockaddr, 0x0, sizeof(struct sockaddr_in));
         target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
         target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
         n = sendto(g__amf_config.my_n1_n2_socket_id,
@@ -570,11 +577,12 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
+        printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT ] \n");
         return 0;
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE \n", __func__);
+        printf("gnodeB -------> AMF  [ UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE ] (UE Registration is Complete) \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -592,7 +600,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ \n", __func__);
+        printf("gnodeB -------> AMF  [ UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ ] \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -631,7 +639,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         dst_node_id = (nmp_n1_n2_rcvd_msg_data_ptr->msg_identifier >> 16) & 0xffff;
         nmp_hdr_ptr->dst_node_id    = htons(dst_node_id);
 
-        nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT);
+        nmp_hdr_ptr->msg_type       = htons(MSG_TYPE__DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT);
         nmp_hdr_ptr->msg_item_len   = 0;
         nmp_hdr_ptr->msg_item_count = 0;
 
@@ -698,6 +706,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
         ////////////////////////////////////////////////
         // write this msg on n1 socket (towards gnodeb)
         ////////////////////////////////////////////////
+        memset(&target_service_sockaddr, 0x0, sizeof(struct sockaddr_in));
         target_service_sockaddr.sin_addr.s_addr = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_addr.s_addr;
         target_service_sockaddr.sin_port = g__amf_config.gnb_data[gnb_index].gnb_n1_n2_sockaddr.sin_port;
         n = sendto(g__amf_config.my_n1_n2_socket_id,
@@ -712,11 +721,12 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
             return -1;
         }
 
+        printf("gnodeB <------- AMF  [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT ] \n");
         return 0;
     }
     else if(MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = PDU_SESSION_RESOURCE_SETUP_RESP \n", __func__);
+        printf("gnodeB -------> AMF  [ PDU_SESSION_RESOURCE_SETUP_RESP ] \n");
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {

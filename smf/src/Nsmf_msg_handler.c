@@ -233,13 +233,10 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
         printf("%s: sendto() failed during msg send to NRF \n", __func__);
         return -1;
     }
-    if(debug_flag)
-    {
-        MAGENTA_PRINT("Service Registration Message sent to NRF ! \n");
-        YELLOW_PRINT("Waiting for response from NRF............... \n");
-        printf("\n");
-    }
-
+    
+    printf("SMF  ------->  NRF   [ NRF_SERVICE_REGISTRATION_REQ ] \n");
+    YELLOW_PRINT("Waiting for response from NRF............... ");
+    printf("\n");
 
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from NRF. 
@@ -281,10 +278,10 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
         return -1;
     }
 
-    GREEN_PRINT("------------------------------------------------\n");
+    printf("SMF  <-------  NRF   [ NRF_SERVICE_REGISTRATION_RESP ] \n");
     GREEN_PRINT("Service Registration Procedure is [OK] with NRF \n");
-    GREEN_PRINT("------------------------------------------------\n");
     printf("\n\n");
+
     return 0;
 }
 
@@ -311,9 +308,10 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
 
     if(MSG_TYPE__SMF_SESSION_CREATE_REQ == nmp_Nsmf_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = SMF_SESSION_CREATE_REQ \n", __func__);
+        printf("\n");
+        printf("AMF ----------> SMF  [ SMF_SESSION_CREATE_REQ ] \n");
 
-        ue_ipv4_addr = g__ue_ipv4_addr_base++;  // SMF wil allocate UE Ipv4 address
+        ue_ipv4_addr = g__ue_ipv4_addr_base;  // SMF wil allocate UE Ipv4 address
         upf_n3_iface_v4_addr = g__smf_config.upf_n3_addr.u.v4_addr;
         if(-1 == send_session_create_msg_to_upf(ue_ipv4_addr, 
                                                 nmp_Nsmf_rcvd_msg_data_ptr->imsi,   // TBD: update parameters of this function
@@ -402,16 +400,12 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
             return -1;
         }
         
-        if(debug_flag)
-        {
-            printf("Session Create Response sent back to AMF \n");
-        }
-
+        printf("AMF <---------- SMF  [ SMF_SESSION_CREATE_RESP ] \n");
         return 0;
     }
     else if(MSG_TYPE__SMF_SESSION_MODIFY_REQ == nmp_Nsmf_rcvd_msg_data_ptr->msg_type)
     {
-        if(debug_flag) printf("%s: Rcvd MsgType = SMF_SESSION_MODIFY_REQ \n", __func__);
+        printf("AMF ----------> SMF  [ SMF_SESSION_MODIFY_REQ ] \n");
 
         ue_ipv4_addr = g__ue_ipv4_addr_base; // Use last value of ue ipv4 addr derived during session create process.
         upf_n3_iface_v4_addr = g__smf_config.upf_n3_addr.u.v4_addr;
@@ -494,10 +488,10 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
             return -1;
         }
 
-        if(debug_flag)
-        {
-            printf("Session Modify Response sent back to AMF \n");
-        }
+        printf("AMF <---------- SMF  [ SMF_SESSION_MODIFY_RESP ] \n");
+
+        // Increment user ipv4 address base for next user..
+        g__ue_ipv4_addr_base++;
 
         return 0;
     }

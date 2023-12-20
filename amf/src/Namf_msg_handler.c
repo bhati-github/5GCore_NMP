@@ -235,12 +235,10 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
         printf("%s: sendto() failed during msg send to NRF \n", __func__);
         return -1;
     }
-    if(debug_flag)
-    {
-        MAGENTA_PRINT("Service Registration Message sent to NRF ! \n");
-        YELLOW_PRINT("Waiting for response from NRF............... \n");
-        printf("\n");
-    }
+        
+    printf("AMF  ------->  NRF   [ NRF_SERVICE_REGISTRATION_REQ ] \n");
+    YELLOW_PRINT("Waiting for response from NRF............... ");
+    printf("\n");
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -283,10 +281,10 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
         return -1;
     }
 
-    GREEN_PRINT("------------------------------------------------\n");
+    printf("AMF  <-------  NRF   [ NRF_SERVICE_REGISTRATION_RESP ] \n");
     GREEN_PRINT("Service Registration Procedure is [OK] with NRF \n");
-    GREEN_PRINT("------------------------------------------------\n");
     printf("\n\n");
+
     return 0;
 }
 
@@ -568,7 +566,8 @@ send_session_create_msg_to_smf(data_64bit_t imsi,
         printf("\n");
     }
 
-
+    printf("AMF ----------> SMF  [ SMF_SESSION_CREATE_REQ ] \n");
+    
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from SMF.
     //         We must receive Session Create Response from SMF
@@ -608,18 +607,15 @@ send_session_create_msg_to_smf(data_64bit_t imsi,
         printf("%s: Rcvd message parsing error.. \n", __func__);
         return -1;
     }
-
+    
+    printf("AMF <---------- SMF  [ SMF_SESSION_CREATE_RESP ] \n");
+ 
     // We must have received gtp-u teid endpoint of UPF N3 interface(for uplink packets).
     // Store into amf user session database..
     // This information is also required to be sent to gnodeB as one of the NMP item
     g__amf_config.smf_sessions[g__amf_ue_session_index].upf_n3_addr = nmp_Namf_rcvd_msg_data.upf_n3_addr; 
     g__amf_config.smf_sessions[g__amf_ue_session_index].upf_n3_teid = nmp_Namf_rcvd_msg_data.upf_n3_teid;
     
-    if(debug_flag)
-    {
-        printf("%s: UE Session Create Procedure is completed with SMF \n", __func__);
-    } 
-
     return 0;
 }
 
@@ -722,6 +718,8 @@ send_session_modify_msg_to_smf(data_64bit_t  imsi,
         YELLOW_PRINT("Waiting for response from SMF............... \n");
         printf("\n");
     }
+    
+    printf("AMF ----------> SMF  [ SMF_SESSION_MODIFY_REQ ] \n");
 
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from SMF.
@@ -763,10 +761,7 @@ send_session_modify_msg_to_smf(data_64bit_t  imsi,
         return -1;
     }
 
-    if(debug_flag)
-    {
-        printf("%s: UE Session Modify Procedure is completed with SMF \n", __func__);
-    }
+    printf("AMF <---------- SMF  [ SMF_SESSION_MODIFY_RESP ] \n");
 
     // Now, we can increment UE session index inside AMF.
     g__amf_ue_session_index += 1; 

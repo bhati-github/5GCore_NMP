@@ -217,6 +217,8 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
         return -1;
     }
 
+    printf("SMF ----------> UPF  [ UPF_SESSION_MODIFY_REQ ] \n");
+
     ///////////////////////////////////////////////
     // Wait for reponse from upf on N4 interface
     ///////////////////////////////////////////////
@@ -256,10 +258,10 @@ send_session_modify_msg_to_upf(uint32_t     ue_ipv4_addr,
         return -1;
     }
 
+    printf("SMF <---------- UPF  [ UPF_SESSION_MODIFY_RESP ] \n");
+
     if(MSG_RESPONSE_CODE__OK == nmp_n4_rcvd_msg_data.msg_response_code)
     {
-        printf("%s: Msg response from UPF is [Ok] \n", __func__);
-        printf("Response Description: %s \n", nmp_n4_rcvd_msg_data.msg_response_description);
         return 0;
     }
     else

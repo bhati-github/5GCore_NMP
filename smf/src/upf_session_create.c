@@ -218,6 +218,8 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
         return -1;
     }
 
+    printf("SMF ----------> UPF  [ UPF_SESSION_CREATE_REQ ] \n");
+
     ///////////////////////////////////////////////
     // Wait for reponse from upf
     ///////////////////////////////////////////////
@@ -256,6 +258,8 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
         printf("%s: Message parsing error.. \n", __func__);
         return -1;
     }
+    
+    printf("SMF <---------- UPF  [ UPF_SESSION_CREATE_RESP ] \n");
 
     if(MSG_RESPONSE_CODE__OK == nmp_n4_rcvd_msg_data.msg_response_code)
     {
