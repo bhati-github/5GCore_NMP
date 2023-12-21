@@ -13,8 +13,8 @@
     - [6.1.2  Parsed Message from AMF to gnodeB (NG Setup Response)](#Parsed-Message-from-AMF-to-gnodeB-NG-Setup-Response)
   - [6.2 Simulation of Initial UE Registration Message and PDU Setup Request in NMP packets](#Simulation-of-Initial-UE-Registration-Message-and-PDU-Setup-Request-in-NMP-packets)
   - [6.3 Simulation of PFCP packet flows in NMP packets](#Simulation-of-PFCP-packet-flows-in-NMP-packets)
-    - [6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request)](#Parsed-Message-from-AMF+SMF-to-UPF-Session-Create-Request)
-    - [6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response)](#Parsed-Message-from-UPF-to-AMF+SMF-Session-Create-Response)
+    - [6.3.1 Parsed Message from SMF to UPF (Session Create Request)](#Parsed-Message-from-SMF-to-UPF-Session-Create-Request)
+    - [6.3.2 Parsed Message from UPF to SMF (Session Create Response)](#Parsed-Message-from-UPF-to-SMF-Session-Create-Response)
   - [6.4 Simulation of NF Registration request (AMF -> NRF) in NMP packets](#Simulation-of-NF-Registration-request-in-NMP-packets)
 - [7. Network Diagram for simulation inside a single virtual machine](#Network-Diagram-for-simulation-inside-a-single-virtual-machine)
 - [8. Performance data ](#Performance-data)
@@ -302,20 +302,21 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 
 <br />
 
-##### 6.3.1 Parsed Message from AMF+SMF to UPF (Session Create Request) 
+##### 6.3.1 Parsed Message from SMF to UPF (Session Create Request) 
 <br />
 
- ![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/06939c7f-83a3-4333-b998-c896f2177647)
- ![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/d111ac22-242e-4d4f-822f-43becf95a422)
- ![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e1af0a3c-5ae1-4960-9dbf-7011601adbbb)
- ![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/497cedd9-a0d0-44ad-a9e2-67142e7c218e)
+![1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/81be6394-3e49-4dfe-9360-8d7315a9611d)
+![2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/fcc865f2-1319-4c1c-9cad-66222410d3e3)
+![3](https://github.com/bhati-github/5GCore_NMP/assets/49303596/e29f9b1a-447c-4d82-81d2-1df5dd85f45e)
+![4](https://github.com/bhati-github/5GCore_NMP/assets/49303596/6c1c8fa6-b947-43cf-905a-4e3786c4e243)
 
 <br />
 
-##### 6.3.2 Parsed Message from UPF to AMF+SMF (Session Create Response) 
+##### 6.3.2 Parsed Message from UPF to SMF (Session Create Response) 
 <br />
 
- ![resp](https://github.com/bhati-github/5GCore_NMP/assets/49303596/329786d7-9493-45af-807c-63dad80a8d95)
+![resp-1](https://github.com/bhati-github/5GCore_NMP/assets/49303596/253814d0-6ead-4210-a75c-afe298814bdc)
+![resp-2](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b23994f1-c5be-4e1e-bd08-082f5f863125)
 
 <br />
 
