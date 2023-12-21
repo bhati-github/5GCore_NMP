@@ -335,88 +335,89 @@ First step is to create dummy interfaces inside VM using these commands.
 
 <br />
 
-    // For gnodeB N1/N2
+    #// For gnodeB N1/N2
     sudo ip link add eth1 type dummy
     sudo ip addr add 2.2.2.1/24 dev eth1
     sudo ip link set eth1 up
 
-    // For gnodeB N3
+    #// For gnodeB N3
     sudo ip link add eth2 type dummy
     sudo ip addr add 3.3.3.1/24 dev eth2
     sudo ip link set eth2 up
     
-    // For AMF N1/N2
+    #// For AMF N1/N2
     sudo ip link add eth3 type dummy
     sudo ip addr add 2.2.2.2/24 dev eth3
     sudo ip link set eth3 up
     
-    // For AMF Namf
+    #// For AMF Namf
     sudo ip link add eth4 type dummy
     sudo ip addr add 5.5.5.1/24 dev eth4
     sudo ip link set eth4 up
 
-    // For SMF Nsmf
+    #// For SMF Nsmf
     sudo ip link add eth5 type dummy
     sudo ip addr add 5.5.5.2/24 dev eth5
     sudo ip link set eth5 up
     
-    // For SMF N4
+    #// For SMF N4
     sudo ip link add eth6 type dummy
     sudo ip addr add 4.4.4.1/24 dev eth6
     sudo ip link set eth6 up
     
-    // For UPF N3
+    #// For UPF N3
     sudo ip link add eth7 type dummy
     sudo ip addr add 3.3.3.2/24 dev eth7
     sudo ip link set eth7 up
     
-    // For UPF N4
+    #// For UPF N4
     sudo ip link add eth8 type dummy
     sudo ip addr add 4.4.4.2/24 dev eth8
     sudo ip link set eth8 up
     
-    // For UPF N6
+    #// For UPF N6
     sudo ip link add eth9 type dummy
     sudo ip addr add 6.6.6.1/24 dev eth9
     sudo ip link set eth9 up
     
-    // For AF Naf
+    #// For AF Naf
     sudo ip link add eth10 type dummy
     sudo ip addr add 5.5.5.3/24 dev eth10
     sudo ip link set eth10 up
     
-    // For AUSF Nausf
+    #// For AUSF Nausf
     sudo ip link add eth11 type dummy
     sudo ip addr add 5.5.5.4/24 dev eth11
     sudo ip link set eth11 up
     
-    // For NRF Nnrf
+    #// For NRF Nnrf
     sudo ip link add eth12 type dummy
     sudo ip addr add 5.5.5.5/24 dev eth12
     sudo ip link set eth12 up
    
-    // For NSSF Nnssf
+    #// For NSSF Nnssf
     sudo ip link add eth13 type dummy
     sudo ip addr add 5.5.5.6/24 dev eth13
     sudo ip link set eth13 up
    
-    // For NEF Nnef
+    #// For NEF Nnef
     sudo ip link add eth14 type dummy
     sudo ip addr add 5.5.5.7/24 dev eth14
     sudo ip link set eth14 up
    
-    // For PCF Npcf
+    #// For PCF Npcf
     sudo ip link add eth15 type dummy
     sudo ip addr add 5.5.5.8/24 dev eth15
     sudo ip link set eth15 up
 
-    // For UDM Nudm
+    #// For UDM Nudm
     sudo ip link add eth16 type dummy
     sudo ip addr add 5.5.5.9/24 dev eth16
     sudo ip link set eth16 up
 
-
-
+    You can copy paste above commands into create_5g_network.sh file and simply execute this bash script inside your vm. 
+    
+<br />
     
     Now, open five terminal windows from same vm. 
     -> 1st terminal executes 'gnb' binary.
