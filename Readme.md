@@ -499,7 +499,7 @@ Thankyou so much for reading such a big file. Please contact me on my email id f
 <br />
 <br />
 
-If you liked this demostration project, please give it a "star" and spread this in your circle.
+If you liked this demostration project, please give it a "star" and spread in your circle.
 
 <br />
 <br />
