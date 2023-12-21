@@ -226,8 +226,6 @@ Steps to create these interfaces and simulating call flows over NMP are describe
    
 - N6 interface is towards Internet. De-capsulated GTP-U packets towards Internet are not part of this demonstration.
    
-- SMF is currently integrated within AMF for simplicity in NMP demonstration.
-  
 - Overall, colored blocks in above diagram are implemented and all of them communicates over NMP protocol
   except N3 and N6 interface for obvious reasons as these interfaces are meant to carry user data packets.
   
