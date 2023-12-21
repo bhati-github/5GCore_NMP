@@ -107,7 +107,9 @@ UDP port for NMP protocol is 1208 (just a random selection).
 
 ## 5. Explaination of items to be carried by NMP message
 
-![item-description](https://github.com/bhati-github/5GCore_NMP/assets/49303596/22b25119-1322-4a4e-8b8f-79bd990f13ae)
+<br />
+
+![item-description](https://github.com/bhati-github/5GCore_NMP/assets/49303596/135d223f-5b81-4bc8-9a60-de012a3bb654)
 
 <br />
 
