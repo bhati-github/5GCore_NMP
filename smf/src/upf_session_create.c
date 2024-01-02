@@ -58,8 +58,9 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
 {
     int n = 0;
     int ret = 0;
-    int offset = 0;
     int len = 0;
+    int offset = 0;
+    char time_string[128];
     char string[128];
     uint32_t session_index = 0;
     uint32_t msg_id = 0;
@@ -212,13 +213,15 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
                (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
+    get_current_time(time_string);
+
     if(n != offset)
     {
         printf("%s: sendto() failed during msg send to UPF \n", __func__);
         return -1;
     }
 
-    printf("\033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_REQ ] \n");
+    printf("[%s] \033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_REQ ] \n", time_string);
 
     ///////////////////////////////////////////////
     // Wait for reponse from upf
@@ -231,6 +234,8 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
                  MSG_WAITALL,
                  (struct sockaddr *)&(upf_sockaddr),
                  (socklen_t *)&len);
+
+    get_current_time(time_string);
 
     if(debug_flag)
     {
@@ -259,7 +264,7 @@ send_session_create_msg_to_upf(uint32_t      ue_ipv4_addr,
         return -1;
     }
     
-    printf("\033[31;1m SMF \x1b[0m <---------- \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_RESP ] \n");
+    printf("[%s] \033[31;1m SMF \x1b[0m <---------- \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_RESP ] \n", time_string);
 
     if(MSG_RESPONSE_CODE__OK == nmp_n4_rcvd_msg_data.msg_response_code)
     {

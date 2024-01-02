@@ -87,6 +87,7 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
     int ret = 0;
     int len = 0;
     int offset = 0;
+    char time_string[128];
     uint32_t msg_id = 0;
     uint16_t item_count = 0;
     uint16_t smf_service_info_len = 0;
@@ -228,15 +229,15 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
                (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
 
+    get_current_time(time_string);
+
     if(n != offset)
     {
         printf("%s: sendto() failed during msg send to NRF \n", __func__);
         return -1;
     }
     
-    printf("SMF  ------->  NRF   [ NRF_SERVICE_REGISTRATION_REQ ] \n");
-    YELLOW_PRINT("Waiting for response from NRF............... ");
-    printf("\n");
+    printf("[%s] SMF  ------->  NRF   [ NRF_SERVICE_REGISTRATION_REQ ] \n", time_string);
 
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from NRF. 
@@ -251,6 +252,8 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
                  MSG_WAITALL,
                  (struct sockaddr *)&(nrf_sockaddr),
                  (socklen_t *)&len);
+    
+    get_current_time(time_string);
 
     if(debug_flag)
     {
@@ -278,7 +281,7 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
         return -1;
     }
 
-    printf("SMF  <-------  NRF   [ NRF_SERVICE_REGISTRATION_RESP ] \n");
+    printf("[%s] SMF  <-------  NRF   [ NRF_SERVICE_REGISTRATION_RESP ] \n", time_string);
     GREEN_PRINT("Service Registration Procedure is [OK] with NRF \n");
     printf("\n\n");
 
@@ -289,11 +292,13 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
 
 int
 process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
+                      char           *msg_rcvd_time_string,
                       uint8_t         debug_flag)
 {
     int n = 0;
     int ret = 0;
     int offset = 0;
+    char time_string[128];
     uint32_t msg_id = 0;
     uint16_t item_count = 0;
     uint32_t ue_ipv4_addr = 0;
@@ -309,7 +314,7 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
     if(MSG_TYPE__SMF_SESSION_CREATE_REQ == nmp_Nsmf_rcvd_msg_data_ptr->msg_type)
     {
         printf("\n");
-        printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_REQ ] \n");
+        printf("[%s] \x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_REQ ] \n", msg_rcvd_time_string);
 
         ue_ipv4_addr = g__ue_ipv4_addr_base;  // SMF wil allocate UE Ipv4 address
         upf_n3_iface_v4_addr = g__smf_config.upf_n3_addr.u.v4_addr;
@@ -394,18 +399,20 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
                    (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
 
+        get_current_time(time_string);
+
         if(n != offset)
         {
             printf("%s: sendto() failed during msg send to AMF \n", __func__);
             return -1;
         }
         
-        printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_RESP ] \n");
+        printf("[%s] \x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_RESP ] \n", time_string);
         return 0;
     }
     else if(MSG_TYPE__SMF_SESSION_MODIFY_REQ == nmp_Nsmf_rcvd_msg_data_ptr->msg_type)
     {
-        printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_REQ ] \n");
+        printf("[%s] \x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_REQ ] \n", msg_rcvd_time_string);
 
         ue_ipv4_addr = g__ue_ipv4_addr_base; // Use last value of ue ipv4 addr derived during session create process.
         upf_n3_iface_v4_addr = g__smf_config.upf_n3_addr.u.v4_addr;
@@ -482,13 +489,15 @@ process_rcvd_Nsmf_msg(nmp_msg_data_t *nmp_Nsmf_rcvd_msg_data_ptr,
                    (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
 
+        get_current_time(time_string);
+
         if(n != offset)
         {
             printf("%s: sendto() failed during msg send to AMF \n", __func__);
             return -1;
         }
 
-        printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_RESP ] \n");
+        printf("[%s] \x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_RESP ] \n", time_string);
 
         // Increment user ipv4 address base for next user..
         g__ue_ipv4_addr_base++;
@@ -509,6 +518,7 @@ listen_for_Nsmf_messages()
 {
     int n = 0;
     int len = 0;
+    char msg_rcvd_time_string[128];
     char string[128];
     uint32_t amf_addr = 0;
     uint16_t amf_port = 0;
@@ -528,6 +538,8 @@ listen_for_Nsmf_messages()
                      MSG_WAITALL,
                     (struct sockaddr *)&(amf_sockaddr),
                     (socklen_t *)&len);
+
+        get_current_time(msg_rcvd_time_string);
 
         amf_addr = htonl(amf_sockaddr.sin_addr.s_addr);
         amf_port = htons(amf_sockaddr.sin_port);
@@ -555,6 +567,7 @@ listen_for_Nsmf_messages()
         }
 
         if(-1 == process_rcvd_Nsmf_msg(&(nmp_Nsmf_rcvd_msg_data),
+                                       msg_rcvd_time_string,
                                        g__smf_config.debug_switch))
         {
             printf("Unable to process rcvd Nsmf message \n");

@@ -8,6 +8,9 @@ dump_bytes(char    *space,
            int      len);
 
 void
+get_current_time(char *final_time);
+
+void
 get_ipv4_addr_string(uint32_t ipv4_addr, char *dst);
 
 void

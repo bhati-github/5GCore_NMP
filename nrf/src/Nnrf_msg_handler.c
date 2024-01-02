@@ -117,6 +117,7 @@ process_service_registration_request_msg(nmp_msg_data_t *Nnrf_rcvd_nmp_msg_data_
     int n = 0;
     int ret = 0;
     int offset = 0;
+    char time_string[128];
     char src_string[128];
     char response[256];
     uint16_t response_code = MSG_RESPONSE_CODE__OK;
@@ -143,6 +144,10 @@ process_service_registration_request_msg(nmp_msg_data_t *Nnrf_rcvd_nmp_msg_data_
     // Store information about fiveg service into NRF repository..
     if(NODE_TYPE__AMF == Nnrf_rcvd_nmp_msg_data_ptr->src_node_type)
     {
+        printf("\n");
+        get_current_time(time_string);
+        printf("[%s] NRF <---------- AMF [ NRF_SERVICE_REGISTRATION_REQ ] \n", time_string);
+
         memcpy(g__nrf_config.amf_service_info,
                Nnrf_rcvd_nmp_msg_data_ptr->nrf_registration_req_data,
                Nnrf_rcvd_nmp_msg_data_ptr->nrf_registration_req_data_len);
@@ -152,6 +157,9 @@ process_service_registration_request_msg(nmp_msg_data_t *Nnrf_rcvd_nmp_msg_data_
     }
     else if(NODE_TYPE__SMF == Nnrf_rcvd_nmp_msg_data_ptr->src_node_type)
     {
+        printf("\n");
+        get_current_time(time_string);
+        printf("[%s] NRF <---------- SMF [ NRF_SERVICE_REGISTRATION_REQ ] \n", time_string);
         memcpy(g__nrf_config.smf_service_info,
                Nnrf_rcvd_nmp_msg_data_ptr->nrf_registration_req_data,
                Nnrf_rcvd_nmp_msg_data_ptr->nrf_registration_req_data_len);
@@ -223,7 +231,9 @@ process_service_registration_request_msg(nmp_msg_data_t *Nnrf_rcvd_nmp_msg_data_
     }
 
     get_node_type_string(Nnrf_rcvd_nmp_msg_data_ptr->src_node_type, src_string);
-    printf("%s: Msg sent successfully to source node %s \n", __func__, src_string);
+
+    get_current_time(time_string);
+    printf("[%s] NRF ----------> %s [ NRF_SERVICE_REGISTRATION_RESP ] \n", time_string, src_string);
     return 0;
 }
 
@@ -412,10 +422,6 @@ listen_for_Nnrf_messages()
                                        g__nrf_config.debug_switch))
         {
             printf("Unable to process rcvd Nnrf message \n\n");
-        }
-        else
-        {
-            printf("Successfully processed rcvd Nnrf message \n\n");
         }
     }
 

@@ -16,6 +16,7 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
 int
 process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                        uint32_t        gnb_n1_addr,
+                       char           *msg_rcvd_time_string,
                        uint8_t         debug_flag);
 
 int

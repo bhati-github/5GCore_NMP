@@ -88,15 +88,16 @@ validate_rcvd_msg_on_n4_interface(uint8_t *msg_ptr,
 
 int
 process_rcvd_n4_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
+                    char           *msg_rcvd_time_string,
                     uint8_t         debug_flag)
 {
     if(MSG_TYPE__UPF_SESSION_CREATE_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
     {
-        return process_session_create_request_msg(nmp_n4_rcvd_msg_data_ptr, debug_flag);	
+        return process_session_create_request_msg(nmp_n4_rcvd_msg_data_ptr, msg_rcvd_time_string, debug_flag);	
     }
     else if(MSG_TYPE__UPF_SESSION_MODIFY_REQ == nmp_n4_rcvd_msg_data_ptr->msg_type)
     {
-        return process_session_modify_request_msg(nmp_n4_rcvd_msg_data_ptr, debug_flag);
+        return process_session_modify_request_msg(nmp_n4_rcvd_msg_data_ptr, msg_rcvd_time_string, debug_flag);
     }
     else
     {
@@ -113,6 +114,7 @@ listen_for_n4_messages()
 {
     int n = 0;
     int len = 0;
+    char msg_rcvd_time_string[128];
     char string[128];
     uint32_t smf_addr = 0;
     uint16_t smf_port = 0;
@@ -132,6 +134,8 @@ listen_for_n4_messages()
                      MSG_WAITALL,
                      (struct sockaddr *)&(smf_sockaddr),
                      (socklen_t *)&len);
+
+        get_current_time(msg_rcvd_time_string);
 
         smf_addr = htonl(smf_sockaddr.sin_addr.s_addr);
         smf_port = htons(smf_sockaddr.sin_port);
@@ -160,6 +164,7 @@ listen_for_n4_messages()
 
 
         if(-1 == process_rcvd_n4_msg(&(nmp_n4_rcvd_msg_data),
+                                     msg_rcvd_time_string,
                                      g__upf_config.debug_switch))
         {
             printf("Error: Unable to process rcvd N4 message \n\n");

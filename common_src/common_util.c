@@ -39,6 +39,8 @@
 #include <errno.h>
 #include <getopt.h>
 #include <signal.h>
+#include <time.h>
+#include <sys/time.h>
 #include <sys/param.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -87,6 +89,25 @@ dump_bytes(char    *space,
         }
     }
     printf("\n");
+}
+
+void
+get_current_time(char *final_time)
+{
+    struct timeval current_time;
+    time_t t;
+    struct tm *info;
+    char microsec[32];
+    char time_string[128];
+    memset(time_string, 0x0, 128);
+
+    gettimeofday(&current_time, NULL);
+    t = current_time.tv_sec;
+    info = localtime(&t);
+    strftime(time_string, sizeof(time_string), "%Z %a %d-%m-%Y %H:%M:%S:", info);
+    sprintf(microsec, "%ld", current_time.tv_usec);
+    strcat(time_string, microsec);
+    strcpy(final_time, time_string);
 }
 
 void

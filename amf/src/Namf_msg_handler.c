@@ -89,6 +89,7 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
     int ret = 0;
     int len = 0;
     int offset = 0;
+    char time_string[128];
     uint32_t msg_id = 0;
     uint16_t item_count = 0;
     uint16_t amf_service_info_len = 0;
@@ -236,7 +237,8 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
         return -1;
     }
         
-    printf("AMF  ------->  NRF   [ NRF_SERVICE_REGISTRATION_REQ ] \n");
+    get_current_time(time_string);
+    printf("[%s] AMF  ------->  NRF   [ NRF_SERVICE_REGISTRATION_REQ ] \n", time_string);
     YELLOW_PRINT("Waiting for response from NRF............... ");
     printf("\n");
 
@@ -281,7 +283,8 @@ send_service_registration_msg_to_nrf(uint8_t  debug_flag)
         return -1;
     }
 
-    printf("AMF  <-------  NRF   [ NRF_SERVICE_REGISTRATION_RESP ] \n");
+    get_current_time(time_string);
+    printf("[%s] AMF  <-------  NRF   [ NRF_SERVICE_REGISTRATION_RESP ] \n", time_string);
     GREEN_PRINT("Service Registration Procedure is [OK] with NRF \n");
     printf("\n\n");
 
@@ -465,6 +468,7 @@ send_session_create_msg_to_smf(data_64bit_t imsi,
     int ret = 0;
     int len = 0;
     int offset = 0;
+    char time_string[128];
     uint32_t msg_id = 0;
     uint16_t item_count = 0;
     uint32_t smf_addr = 0;
@@ -559,13 +563,9 @@ send_session_create_msg_to_smf(data_64bit_t imsi,
         printf("%s: sendto() failed during msg send to SMF \n", __func__);
         return -1;
     }
-    if(debug_flag)
-    {
-        MAGENTA_PRINT("Session Create Message sent to SMF ! \n");
-        YELLOW_PRINT("Waiting for response from SMF............... \n");
-        printf("\n");
-    }
-    printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_REQ ] \n");
+   
+    get_current_time(time_string); 
+    printf("[%s] \x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_REQ ] \n", time_string);
     
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from SMF.
@@ -607,7 +607,8 @@ send_session_create_msg_to_smf(data_64bit_t imsi,
         return -1;
     }
     
-    printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_RESP ] \n");
+    get_current_time(time_string);
+    printf("[%s] \x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_CREATE_RESP ] \n", time_string);
  
     // We must have received gtp-u teid endpoint of UPF N3 interface(for uplink packets).
     // Store into amf user session database..
@@ -629,6 +630,7 @@ send_session_modify_msg_to_smf(data_64bit_t  imsi,
     int ret = 0;
     int len = 0;
     int offset = 0;
+    char time_string[128];
     uint32_t msg_id = 0;
     uint16_t item_count = 0;
     uint32_t smf_addr = 0;
@@ -717,8 +719,9 @@ send_session_modify_msg_to_smf(data_64bit_t  imsi,
         YELLOW_PRINT("Waiting for response from SMF............... \n");
         printf("\n");
     }
-    
-    printf("\x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_REQ ] \n");
+
+    get_current_time(time_string);    
+    printf("[%s] \x1b[36m AMF \x1b[0m ----------> \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_REQ ] \n", time_string);
 
     ///////////////////////////////////////////////////////////////////////////
     // Step 2: Wait for reponse from SMF.
@@ -760,7 +763,8 @@ send_session_modify_msg_to_smf(data_64bit_t  imsi,
         return -1;
     }
 
-    printf("\x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_RESP ] \n");
+    get_current_time(time_string);
+    printf("[%s] \x1b[36m AMF \x1b[0m <---------- \033[31;1m SMF \x1b[0m [ SMF_SESSION_MODIFY_RESP ] \n", time_string);
 
     // Now, we can increment UE session index inside AMF.
     g__amf_ue_session_index += 1; 

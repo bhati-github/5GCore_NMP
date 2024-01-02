@@ -100,6 +100,7 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
 {
     int n = 0;
     int offset = 0;
+    char time_string[128];
     int gnb_index = 0;
     uint8_t *ptr = g__n1_n2_send_msg_buffer;
     uint16_t dst_node_id = 0;
@@ -147,13 +148,16 @@ send_all_ok_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                MSG_WAITALL,
                (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
+
+    get_current_time(time_string);
+
     if(n != offset)
     {
         printf("%s: sendto() failed \n", __func__);
         return -1;
     }
 
-    printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ All Ok ] \n");
+    printf("[%s] \x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ All Ok ] \n", time_string);
     return 0;
 }
 
@@ -163,6 +167,7 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
 {
     int n = 0;
     int offset = 0;
+    char time_string[128];
     int gnb_index = 0;
     uint8_t *ptr = g__n1_n2_send_msg_buffer;
     uint16_t dst_node_id = 0;
@@ -210,13 +215,16 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
                MSG_WAITALL,
                (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
+    
+    get_current_time(time_string);
+    
     if(n != offset)
     {
         printf("%s: sendto() failed \n", __func__);
         return -1;
     }
 
-    printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT ] \n");
+    printf("[%s] \x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REJECT ] \n", time_string);
     return 0;
 }
 
@@ -224,11 +232,13 @@ send_pdu_setup_failure_msg_to_gnodeb(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr
 int
 process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                        uint32_t        gnb_n1_n2_addr,
+                       char           *msg_rcvd_time_string,
                        uint8_t         debug_flag)
 {
     int n = 0;
     int ret = 0;
     int offset = 0;
+    char time_string[128];
     uint16_t item_count = 0;
     uint16_t dst_node_id = 0;
     nmp_hdr_t *nmp_hdr_ptr = NULL;
@@ -253,7 +263,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     if(MSG_TYPE__NG_SETUP_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         printf("\n\n");
-        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ NG_SETUP_REQ ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ NG_SETUP_REQ ] \n", msg_rcvd_time_string);
         
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -365,19 +375,22 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                    MSG_WAITALL,
                    (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
+        
+        get_current_time(time_string);
+        
         if(n != offset)
         {
             printf("%s: sendto() failed \n", __func__);
             return -1;
         }
 
-        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ NG_SETUP_RESP ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ NG_SETUP_RESP ] \n", time_string);
         return 0;
     }
     else if(MSG_TYPE__INITIAL_UE_MSG_REGISTRATION_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
         printf("\n\n");
-        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ INITIAL_UE_MSG_REGISTRATION_REQ ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ INITIAL_UE_MSG_REGISTRATION_REQ ] \n", msg_rcvd_time_string);
  
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -469,18 +482,21 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                    MSG_WAITALL,
                    (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
+        
+        get_current_time(time_string);
+        
         if(n != offset)
         {
             printf("%s: sendto() failed \n", __func__);
             return -1;
         }
 
-        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_AUTH_REQ ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_AUTH_REQ ] \n", time_string);
         return 0;
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_AUTH_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_AUTH_RESP ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_AUTH_RESP ] \n", msg_rcvd_time_string);
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -571,18 +587,21 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                    MSG_WAITALL,
                    (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
+        
+        get_current_time(time_string);
+        
         if(n != offset)
         {
             printf("%s: sendto() failed \n", __func__);
             return -1;
         }
 
-        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_REGISTRATION_ACCEPT ] \n", time_string);
         return 0;
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE ] (UE Registration is Complete) \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_REGISTRATION_COMPLETE ]\n", msg_rcvd_time_string);
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -600,7 +619,7 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
     }
     else if(MSG_TYPE__UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ UPLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_REQ ] \n", msg_rcvd_time_string);
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -715,18 +734,21 @@ process_rcvd_n1_n2_msg(nmp_msg_data_t *nmp_n1_n2_rcvd_msg_data_ptr,
                    MSG_WAITALL,
                    (struct sockaddr *)&(target_service_sockaddr),
                    sizeof(struct sockaddr_in));
+        
+        get_current_time(time_string);
+        
         if(n != offset)
         {
             printf("%s: sendto() failed \n", __func__);
             return -1;
         }
 
-        printf("\x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m <------- \x1b[36m AMF \x1b[0m [ DNLINK_NAS_TRANSPORT_PDU_SESSION_ESTABLISH_ACCEPT ] \n", time_string);
         return 0;
     }
     else if(MSG_TYPE__PDU_SESSION_RESOURCE_SETUP_RESP == nmp_n1_n2_rcvd_msg_data_ptr->msg_type)
     {
-        printf("\x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ PDU_SESSION_RESOURCE_SETUP_RESP ] \n");
+        printf("[%s] \x1b[35m gnodeB \x1b[0m -------> \x1b[36m AMF \x1b[0m [ PDU_SESSION_RESOURCE_SETUP_RESP ] \n", msg_rcvd_time_string);
 
         if(-1 == get_gnb_index_from_v4_addr(gnb_n1_n2_addr, &gnb_index))
         {
@@ -779,6 +801,7 @@ listen_for_n1_n2_messages()
 {
     int n = 0;
     int len = 0;
+    char msg_rcvd_time_string[128];
     char string[128];
     uint32_t gnb_addr = 0;
     uint16_t gnb_port = 0;
@@ -798,6 +821,8 @@ listen_for_n1_n2_messages()
                      MSG_WAITALL,
                     (struct sockaddr *)&(gnb_sockaddr),
                     (socklen_t *)&len);
+
+        get_current_time(msg_rcvd_time_string);
 
         gnb_addr = htonl(gnb_sockaddr.sin_addr.s_addr);
         gnb_port = htons(gnb_sockaddr.sin_port);
@@ -826,6 +851,7 @@ listen_for_n1_n2_messages()
 
         if(-1 == process_rcvd_n1_n2_msg(&(nmp_n1_n2_rcvd_msg_data),
                                         gnb_addr,
+                                        msg_rcvd_time_string,
                                         g__amf_config.debug_switch))
         {
             printf("Unable to process rcvd N1/N2 message \n\n");

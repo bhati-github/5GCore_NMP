@@ -49,12 +49,14 @@
 
 int
 process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
+                                   char           *msg_rcvd_time_string,
                                    uint8_t         debug_flag)
 {
     int i = 0;
     int n = 0;
     int ret = 0;
     int offset = 0;
+    char time_string[128];
     char string[128];
     uint16_t response_code = MSG_RESPONSE_CODE__OK;
     uint16_t item_count = 0;
@@ -64,7 +66,7 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     char response[256];
     memset(response, 0x0, 256);
 
-    printf("\033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_MODIFY_REQ ] \n");
+    printf("[%s] \033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_MODIFY_REQ ] \n", msg_rcvd_time_string);
 
     // Send response back to SMF
     uint8_t *ptr = g__n4_send_msg_buffer; 
@@ -127,6 +129,9 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
                MSG_WAITALL,
                (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
+
+    get_current_time(time_string);
+
     if(n != offset)
     {
         printf("%s: sendto() failed for Session Modify Response Message. \n", __func__);
@@ -143,7 +148,7 @@ process_session_modify_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     get_ipv4_addr_string(nmp_n4_rcvd_msg_data_ptr->ue_ip_addr.u.v4_addr, string);
     printf("%s \n", string);
 
-    printf("\033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_MODIFY_RESP ] \n");
+    printf("[%s] \033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_MODIFY_RESP ] \n", time_string);
     return 0;	
 }
 

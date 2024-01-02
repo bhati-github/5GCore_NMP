@@ -49,12 +49,14 @@
 
 int
 process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
+                                   char           *msg_rcvd_time_string,
                                    uint8_t         debug_flag)
 {
     int i = 0;
     int n = 0;
     int ret = 0;
     int offset = 0;
+    char time_string[128];
     char string[128];
     uint16_t response_code = MSG_RESPONSE_CODE__OK;
     char response[256];
@@ -65,7 +67,7 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
     struct sockaddr_in  target_service_sockaddr;
 
     printf("\n");
-    printf("\033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_REQ ] \n");
+    printf("[%s] \033[31;1m SMF \x1b[0m ----------> \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_REQ ] \n", msg_rcvd_time_string);
 
     printf("Session Created for IMSI(");
     for(i = 0; i < 8; i++)
@@ -155,13 +157,16 @@ process_session_create_request_msg(nmp_msg_data_t *nmp_n4_rcvd_msg_data_ptr,
                MSG_WAITALL,
                (struct sockaddr *)&(target_service_sockaddr),
                sizeof(struct sockaddr_in));
+    
+    get_current_time(time_string);
+
     if(n != offset)
     {
         printf("%s: sendto() failed for Session Create Response Message. \n", __func__);
         return -1;
     }
 
-    printf("\033[31;1m SMF \x1b[0m <---------- \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_RESP ] \n");
+    printf("[%s] \033[31;1m SMF \x1b[0m <---------- \033[32;1m UPF \x1b[0m [ UPF_SESSION_CREATE_RESP ] \n", time_string);
     return 0;	
 }
 
