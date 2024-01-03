@@ -16,7 +16,7 @@
     - [6.3.1 Parsed Message from SMF to UPF (Session Create Request)](#Parsed-Message-from-SMF-to-UPF-Session-Create-Request)
     - [6.3.2 Parsed Message from UPF to SMF (Session Create Response)](#Parsed-Message-from-UPF-to-SMF-Session-Create-Response)
   - [6.4 Simulation of NF Registration request (AMF -> NRF) in NMP packets](#Simulation-of-NF-Registration-request-in-NMP-packets)
-- [7. Network Diagram for simulation inside a single virtual machine](#Network-Diagram-for-simulation-inside-a-single-virtual-machine)
+- [7. Steps for simulation inside virtual machine](#Steps-for-simulation-inside-virtual-machine)
 - [8. Performance data ](#Performance-data)
 
 <br />
@@ -324,7 +324,7 @@ In this simulation, SMF is integrated within AMF and this is the reason that N4 
 
 
 
-## 7. Steps for running the simulation completely inside a single virtual machine
+## 7. Steps for simulation inside virtual machine
 
 First step is to create dummy interfaces inside VM using these commands.
 
