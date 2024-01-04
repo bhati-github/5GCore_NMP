@@ -241,10 +241,6 @@ Steps to create these interfaces and simulating call flows over NMP are describe
 ### 6.1 Simulation snapshots of NG Setup with AMF in NMP packets
   ![ng-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/2cbb3e06-1140-4b83-96b5-3582695f2124)
 <br />
-  ![ng-setup-pcap](https://github.com/bhati-github/5GCore_NMP/assets/49303596/586614ca-1358-4477-9701-ca66fe9ac9df)
-Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP is carrying NGAP protocol messages.
-<br />
-<br />
   
 #### 6.1.1 Parsed Message from gnodeB to AMF (NG Setup Request Message over NMP protocol)
 <br />
@@ -267,8 +263,9 @@ Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP i
   
   ![sequence](https://github.com/bhati-github/5GCore_NMP/assets/49303596/1ed44f2b-759b-46b0-bfa2-e6f98ce87231)
 
+  ![ng-setup-and-ue-reg](https://github.com/bhati-github/5GCore_NMP/assets/49303596/b38e2843-d3ac-4e19-a84a-8a7c2f3880ad)
 
-  ![ue-setup](https://github.com/bhati-github/5GCore_NMP/assets/49303596/dae0a14b-21e0-4c74-9e02-febb9a92da51)
+ 
 Above pcap snapshot is taken from a real 5G core network. As you can see, SCTP is carrying NGAP procedure messages.
 <br />
 In below snapshots, you can see that same NGAP procedures are carried over NMP protocol.
