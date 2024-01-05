@@ -37,9 +37,12 @@ struct nmp_msg_data {
     uint8_t   nas_pdu[128];
     uint8_t   ran_node_name[256];
     uint8_t   amf_name[256];
+    data_64bit_t  timestamp;
 
     uint8_t   default_paging_drx;
     uint8_t   relative_amf_capacity;
+    uint8_t   ue_context_request;
+    uint8_t   rrc_establish_cause;
     uint8_t   nssai_sst;
     uint8_t   ul_qos_profile;
     uint8_t   dl_qos_profile;
@@ -54,7 +57,6 @@ struct nmp_msg_data {
     uint16_t  guami_amf_region_id;
     uint16_t  guami_amf_set_id;
     uint16_t  guami_amf_pointer;
-    uint16_t  rrc_establish_cause;
     uint16_t  user_loc_info_mcc;
     uint16_t  user_loc_info_mnc;
     uint32_t  user_loc_info_tac;

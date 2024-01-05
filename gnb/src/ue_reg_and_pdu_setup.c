@@ -63,6 +63,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     uint8_t nas_pdu[128];
     memset(nas_pdu, 0x0, 128);
     uint8_t uplink_qos_profile = 0;
+    uint8_t ue_context_request = 0;
     uint16_t item_count = 0;
     uint16_t nas_pdu_len = 0;
     uint32_t msg_id = 0;
@@ -70,7 +71,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     uint32_t tunnel_ipv4_addr = 0;
     uint32_t dnlink_teid = 0;
     uint16_t amf_port = 0;
-    uint16_t rrc_etsablish_cause = 24;
+    uint8_t rrc_etsablish_cause = 3;
     uint16_t mcc = 404;
     uint16_t mnc = 10;
     uint16_t amf_ue_ngap_id = 1;
@@ -115,7 +116,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
 
     offset = sizeof(nmp_hdr_t);
 
-    // Add RAN-UE-NGAP-ID
+    // Add Item: RAN-UE-NGAP-ID
     ret = nmp_add_item__ran_ue_ngap_id(ptr + offset, ran_ue_ngap_id);
     if(-1 == ret)
     {
@@ -124,7 +125,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     offset += ret;
     item_count += 1;
 
-    // Add NAS-PDU (This is a item which carrries a byte stream)
+    // Add Item: NAS-PDU (This is a item which carrries a byte stream)
     // This byte stream consists of following data..
     // -> 5gs registration tye
     // -> nas key set identifier
@@ -140,7 +141,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     offset += ret;
     item_count += 1;
 
-    // Add UserLocation Information
+    // Add Gropu of Items: UserLocation Information
     ret = nmp_add_item_group__user_location_info(ptr + offset, mcc, mnc, nr_cell_identity, tac);
     if(-1 == ret)
     {
@@ -149,7 +150,7 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     offset += ret;
     item_count += 1;
      
-    // Add RRC Establishment Cause
+    // Add Item: RRC Establishment Cause
     ret = nmp_add_item__rrc_establish_cause(ptr + offset, rrc_etsablish_cause);
     if(-1 == ret)
     {
@@ -157,7 +158,18 @@ perform_ue_reg_and_pdu_setup_procedure(uint16_t user_id,
     }
     offset += ret;
     item_count += 1;
-    
+   
+    // Add Item: UEContextRequest 
+    ret = nmp_add_item__ue_context_request(ptr + offset, ue_context_request);
+    if(-1 == ret)
+    {
+        return -1;
+    }
+    offset += ret;
+    item_count += 1;
+
+
+
     // All items are added. Update NMP message header.
     nmp_hdr_ptr->msg_item_len   = htons(offset - sizeof(nmp_hdr_t));
     nmp_hdr_ptr->msg_item_count = htons(item_count);

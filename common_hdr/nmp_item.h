@@ -16,6 +16,8 @@ enum item_id_t {
     ITEM_ID__FAR_DST_INTERFACE,
     ITEM_ID__DEFAULT_PAGING_DRX,
     ITEM_ID__RELATIVE_AMF_CAPACITY,
+    ITEM_ID__UE_CONTEXT_REQUEST,
+    ITEM_ID__RRC_ESTABLISH_CAUSE,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying 2 byte value
@@ -26,7 +28,6 @@ enum item_id_t {
     ITEM_ID__PDR_PRECEDENCE,
     ITEM_ID__PDR_FAR_ID,
     ITEM_ID__FAR_RULE_ID,
-    ITEM_ID__RRC_ESTABLISH_CAUSE,
     ITEM_ID__MSG_RESPONSE_CODE,
 
     ////////////////////////////////////////////////////////
@@ -51,7 +52,6 @@ enum item_id_t {
     ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT,
     ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT,
     ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE,
-    ITEM_ID__USER_LOCATION_INFO_TAC,
 
     ////////////////////////////////////////////////////////
     // Item id's carrying more than 8 and upto 16 byte value
@@ -59,6 +59,7 @@ enum item_id_t {
     ITEM_ID__UE_IDENTIFIER_SECRET,
     ITEM_ID__UE_IPV6_ADDR,
     ITEM_ID__USER_LOCATION_INFO_NR_CGI,
+    ITEM_ID__USER_LOCATION_INFO_TAI,
 
     ////////////////////////////////////////////////////////
     // Also known as Type-2 items.
@@ -166,6 +167,13 @@ int
 nmp_add_item__relative_amf_capacity(uint8_t *ptr,
                                     uint8_t  relative_amf_capacity);
 
+int
+nmp_add_item__ue_context_request(uint8_t *ptr,
+                                 uint8_t  ue_context_request);
+
+int
+nmp_add_item__rrc_establish_cause(uint8_t *ptr,
+                                  uint8_t rrc_establish_cause);
 
 
 
@@ -195,10 +203,6 @@ nmp_add_item__pdr__far_id(uint8_t  *ptr,
 int
 nmp_add_item__far__rule_id(uint8_t *ptr,
                            uint16_t rule_id);
-
-int
-nmp_add_item__rrc_establish_cause(uint8_t *ptr,
-                                  uint16_t rrc_establish_cause);
 
 int
 nmp_add_item__msg_response_code(uint8_t *ptr,

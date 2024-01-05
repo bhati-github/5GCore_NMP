@@ -135,6 +135,70 @@ get_default_paging_drx_string(uint8_t  default_paging_drx,
     }
 }
 
+static void
+get_rrc_establish_cause_string(uint8_t  rrc_establish_cause,
+                               char    *string)
+{
+    if(0 == rrc_establish_cause)
+    {
+        strcpy(string, "Emergency");
+    }
+    else if(1 == rrc_establish_cause)
+    {
+        strcpy(string, "HighPriorityAccess");
+    }
+    else if(2 == rrc_establish_cause)
+    {
+        strcpy(string, "mt-Access");
+    }
+    else if(3 == rrc_establish_cause)
+    {
+        strcpy(string, "mo-Signalling");
+    }
+    else if(4 == rrc_establish_cause)
+    {
+        strcpy(string, "mo-Data");
+    }
+    else if(5 == rrc_establish_cause)
+    {
+        strcpy(string, "mo-VoiceCall");
+    }
+    else if(6 == rrc_establish_cause)
+    {
+        strcpy(string, "mo-VideoCall");
+    }
+    else if(7 == rrc_establish_cause)
+    {
+        strcpy(string, "mo-SMS");
+    }
+    else if(8 == rrc_establish_cause)
+    {
+        strcpy(string, "mps-PriorityAccess");
+    }
+    else if(9 == rrc_establish_cause)
+    {
+        strcpy(string, "mcs-PriorityAccess");
+    }
+    else
+    {
+        strcpy(string, "Unknown Cause");
+    }
+}
+
+static void
+get_ue_context_request_string(uint8_t  ue_context_request,
+                              char    *string)
+{
+    if(0 == ue_context_request)
+    {
+        strcpy(string, "Requested");
+    }
+    else
+    {
+        strcpy(string, "Unknown");
+    }
+}
+
 
 static void
 dump_src_to_dst_node_data(uint16_t src_node_type,
@@ -322,6 +386,16 @@ dump_item_id(char *space, uint16_t item_id)
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
                    "RELATIVE_AMF_CAPACITY", ITEM_ID__RELATIVE_AMF_CAPACITY, ITEM_ID__RELATIVE_AMF_CAPACITY);
             break;
+        
+        case ITEM_ID__UE_CONTEXT_REQUEST:
+            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
+                   "UE_CONTEXT_REQUEST", ITEM_ID__UE_CONTEXT_REQUEST, ITEM_ID__UE_CONTEXT_REQUEST);
+             break;
+        
+        case ITEM_ID__RRC_ESTABLISH_CAUSE:
+            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
+                   "RRC_ESTABLISH_CAUSE", ITEM_ID__RRC_ESTABLISH_CAUSE, ITEM_ID__RRC_ESTABLISH_CAUSE);
+             break;
 
 
         ////////////////////////////////////////////////////////////////////
@@ -357,11 +431,6 @@ dump_item_id(char *space, uint16_t item_id)
                    "FAR_RULE_ID", ITEM_ID__FAR_RULE_ID, ITEM_ID__FAR_RULE_ID);
             break;
 
-        case ITEM_ID__RRC_ESTABLISH_CAUSE:
-            printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
-                   "RRC_ESTABLISH_CAUSE", ITEM_ID__RRC_ESTABLISH_CAUSE, ITEM_ID__RRC_ESTABLISH_CAUSE);
-            break;
-        
         case ITEM_ID__MSG_RESPONSE_CODE:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
                    "MSG_RESPONSE_CODE", ITEM_ID__MSG_RESPONSE_CODE, ITEM_ID__MSG_RESPONSE_CODE);
@@ -450,10 +519,6 @@ dump_item_id(char *space, uint16_t item_id)
                    "FAR_OUTER_IPV4_HDR_CREATE", ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE, ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE);
             break;
 
-        case ITEM_ID__USER_LOCATION_INFO_TAC:
-            printf("%s%-16s : %s (%u) (0x%08x) \n", space, "Type-1 Item ID", 
-                   "USER_LOCATION_INFO_TAC", ITEM_ID__USER_LOCATION_INFO_TAC, ITEM_ID__USER_LOCATION_INFO_TAC);
-            break;
 
 
         ////////////////////////////////////////////////////////////////////
@@ -472,6 +537,11 @@ dump_item_id(char *space, uint16_t item_id)
         case ITEM_ID__USER_LOCATION_INFO_NR_CGI:
             printf("%s%-16s : %s (%u) (0x%04x) \n", space, "Type-1 Item ID", 
                    "USER_LOCATION_INFO_NR_CGI", ITEM_ID__USER_LOCATION_INFO_NR_CGI, ITEM_ID__USER_LOCATION_INFO_NR_CGI);
+            break;
+        
+        case ITEM_ID__USER_LOCATION_INFO_TAI:
+            printf("%s%-16s : %s (%u) (0x%08x) \n", space, "Type-1 Item ID", 
+                   "USER_LOCATION_INFO_TAI", ITEM_ID__USER_LOCATION_INFO_TAI, ITEM_ID__USER_LOCATION_INFO_TAI);
             break;
 
         ////////////////////////////////////////////////////////////////////
@@ -614,6 +684,8 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__FAR_DST_INTERFACE:
         case ITEM_ID__DEFAULT_PAGING_DRX:
         case ITEM_ID__RELATIVE_AMF_CAPACITY:
+        case ITEM_ID__UE_CONTEXT_REQUEST:
+        case ITEM_ID__RRC_ESTABLISH_CAUSE:
             *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (1 byte)
             return 0;
 
@@ -624,7 +696,6 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__PDR_PRECEDENCE:
         case ITEM_ID__PDR_FAR_ID:
         case ITEM_ID__FAR_RULE_ID:
-        case ITEM_ID__RRC_ESTABLISH_CAUSE:
         case ITEM_ID__MSG_RESPONSE_CODE:
             *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (2 bytes)
             return 0;
@@ -649,7 +720,6 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__UPLINK_GTPU_IPV4_ENDPOINT:
         case ITEM_ID__DNLINK_GTPU_IPV4_ENDPOINT:
         case ITEM_ID__FAR_OUTER_IPV4_HDR_CREATE:
-        case ITEM_ID__USER_LOCATION_INFO_TAC:
             *item_type = ITEM_TYPE_IS_TYPE_1; // value is fixed size (8 bytes)
             return 0;
 
@@ -657,6 +727,7 @@ get_item_type(uint16_t item_id,
         case ITEM_ID__UE_IDENTIFIER_SECRET:
         case ITEM_ID__UE_IPV6_ADDR:
         case ITEM_ID__USER_LOCATION_INFO_NR_CGI:
+        case ITEM_ID__USER_LOCATION_INFO_TAI:
             *item_type = ITEM_TYPE_IS_TYPE_1;  // value is fixed size (16 bytes)
             return 0;
 
@@ -800,6 +871,35 @@ get_type1_item_value(char           *space,
             if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
             return 1; 
 
+        case ITEM_ID__UE_CONTEXT_REQUEST:
+            nmp_msg_parsed_data_ptr->ue_context_request = *(ptr);
+
+            if(debug_flag)
+            {
+                memset(string, 0x0, 128);
+                get_ue_context_request_string(nmp_msg_parsed_data_ptr->ue_context_request, string);
+                printf("%s%-16s : 1 byte (0x%02x) \n", space, "Item Value", *(ptr));
+                printf("%s%-32s :-> %u (%s) \n", space, "UE Context Request",
+                                 nmp_msg_parsed_data_ptr->ue_context_request,
+                                 string);
+            }
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            return 1;
+        
+        case ITEM_ID__RRC_ESTABLISH_CAUSE:
+            nmp_msg_parsed_data_ptr->rrc_establish_cause = *ptr;
+
+            if(debug_flag)
+            {
+                memset(string, 0x0, 128);
+                get_rrc_establish_cause_string(nmp_msg_parsed_data_ptr->rrc_establish_cause, string);
+                printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
+                printf("%s%-32s :-> %u (%s) \n", space, "RRC Establishment Cause", 
+                             nmp_msg_parsed_data_ptr->rrc_establish_cause,
+                             string);
+            }
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+1 bytes are parsed", ptr - 2, 3);
+            return 1;
 
 
         /////////////////////////////////////////////////////////////////////
@@ -867,18 +967,6 @@ get_type1_item_value(char           *space,
             {
                 printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
                 printf("%s%-32s :-> %u \n", space, "FAR Rule Id", nmp_msg_parsed_data_ptr->far_rule_id);
-            }
-            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
-            return 2;
-
-        case ITEM_ID__RRC_ESTABLISH_CAUSE:
-            nmp_msg_parsed_data_ptr->rrc_establish_cause = htons(*((uint16_t *)ptr));
-
-            if(debug_flag)
-            {
-                printf("%s%-16s : 2 bytes (%02x%02x) \n", space, "Item Value", *(ptr), *(ptr + 1));
-                printf("%s%-32s :-> %u \n", space, "RRC Establishment Cause", 
-                             nmp_msg_parsed_data_ptr->rrc_establish_cause);
             }
             if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+4 bytes are parsed", ptr - 2, 4);
             return 2;
@@ -1185,34 +1273,6 @@ get_type1_item_value(char           *space,
             if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
             return 8;
 
-        case ITEM_ID__USER_LOCATION_INFO_TAC:
-            nmp_msg_parsed_data_ptr->user_loc_info_mcc = htons(*((uint16_t *)ptr));
-            nmp_msg_parsed_data_ptr->user_loc_info_mnc = htons(*((uint16_t *)(ptr + 2)));
-            nmp_msg_parsed_data_ptr->user_loc_info_tac = htonl(*((uint32_t *)(ptr + 4)));
-
-            if(debug_flag)
-            {
-                printf("%s%-16s : 8 bytes (", space, "Item Value");
-                for(i = 0; i < 8; i++)
-                {
-                    printf("%02x", *(ptr + i));
-                }
-                printf(")\n");
-
-                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MCC)", 
-                        nmp_msg_parsed_data_ptr->user_loc_info_mcc,
-                        nmp_msg_parsed_data_ptr->user_loc_info_mcc);
-                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MNC)", 
-                        nmp_msg_parsed_data_ptr->user_loc_info_mnc,
-                        nmp_msg_parsed_data_ptr->user_loc_info_mnc);
-                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (TAC)",
-                        nmp_msg_parsed_data_ptr->user_loc_info_tac,
-                        nmp_msg_parsed_data_ptr->user_loc_info_tac);
-
-            }
-            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
-            return 8;
-
 
         /////////////////////////////////////////////////////////////////////
         // Extract 16 byte items.
@@ -1287,6 +1347,37 @@ get_type1_item_value(char           *space,
             if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+16 bytes are parsed", ptr - 2, 18);
             return 16;
 
+        case ITEM_ID__USER_LOCATION_INFO_TAI:
+            nmp_msg_parsed_data_ptr->user_loc_info_mcc = htons(*((uint16_t *)ptr));
+            nmp_msg_parsed_data_ptr->user_loc_info_mnc = htons(*((uint16_t *)(ptr + 2)));
+            nmp_msg_parsed_data_ptr->user_loc_info_tac = htonl(*((uint32_t *)(ptr + 4)));
+            memcpy(nmp_msg_parsed_data_ptr->timestamp.u8, ptr + 8, 8);
+
+            if(debug_flag)
+            {
+                printf("%s%-16s : 8 bytes (", space, "Item Value");
+                for(i = 0; i < 8; i++)
+                {
+                    printf("%02x", *(ptr + i));
+                }
+                printf(")\n");
+
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MCC)",
+                        nmp_msg_parsed_data_ptr->user_loc_info_mcc,
+                        nmp_msg_parsed_data_ptr->user_loc_info_mcc);
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (MNC)",
+                        nmp_msg_parsed_data_ptr->user_loc_info_mnc,
+                        nmp_msg_parsed_data_ptr->user_loc_info_mnc);
+                printf("%s%-32s :-> 0x%x (%u) \n", space, "User Location Info (TAC)",
+                        nmp_msg_parsed_data_ptr->user_loc_info_tac,
+                        nmp_msg_parsed_data_ptr->user_loc_info_tac);
+                printf("%s%-32s :-> 0x%lx (%lu) \n", space, "User Location Info (Timestamp)",
+                        nmp_msg_parsed_data_ptr->timestamp.u64,
+                        nmp_msg_parsed_data_ptr->timestamp.u64);
+
+            }
+            if(g__byte_debug_flag) dump_bytes(space, "Type-1 item, 2+8 bytes are parsed", ptr - 2, 10);
+            return 16;
 
         default:
             printf("Error: Unknown Type-1 Item \n");
